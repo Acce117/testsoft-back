@@ -1,7 +1,14 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinTable,
+    ManyToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { AuthItem } from './auth_item.entity';
 
 @Entity({
     name: 'user',
@@ -41,4 +48,12 @@ export class User extends BaseModel {
 
     @Column({ default: 2, type: 'bigint' })
     country_id: number;
+
+    @ManyToMany(() => AuthItem)
+    @JoinTable({
+        name: 'auth_assignment',
+        inverseJoinColumn: { name: 'item_id' },
+        joinColumn: { name: 'user_id' },
+    })
+    auth_item: AuthItem[];
 }

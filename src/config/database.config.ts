@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { UserSubscriber } from 'src/site/models/user.subscriber';
+import { UserSubscriber } from 'src/tenant/models/user.subscriber';
 
 const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
     return {

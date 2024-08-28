@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UserService } from './user.service';
+import { UserService } from '../../tenant/services/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../dto/create_user.dto';
 import { UserCredentials } from '../dto/userCredentials.dto';
-import { User } from '../models/user.entity';
+import { User } from '../../tenant/models/user.entity';
 import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
@@ -48,6 +48,6 @@ export class SiteService {
     }
 
     private generateToken(payload: object) {
-        return this.jwtService.sign(payload, {});
+        return this.jwtService.sign(payload);
     }
 }

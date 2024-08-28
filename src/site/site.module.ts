@@ -8,25 +8,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SiteController } from './controllers/site.controller';
 import { SiteService } from './services/site.service';
-import { UserController } from './controllers/user.controller';
-import { UserService } from './services/user.service';
-import { User } from './models/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtMiddleware } from 'src/common/middlewares/jwtMiddleware';
 import jwtConfig from 'src/config/jwt.config';
+import { TenantModule } from 'src/tenant/tenant.module';
 
 @Module({
-    controllers: [SiteController, UserController],
-    providers: [SiteService, UserService],
+    controllers: [SiteController],
+    providers: [SiteService],
     imports: [
         ConfigModule,
-        JwtModule,
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature(),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: jwtConfig,
             inject: [ConfigService],
         }),
+
+        TenantModule,
     ],
     exports: [TypeOrmModule],
 })

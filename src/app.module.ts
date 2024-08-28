@@ -7,11 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PsiTestModule } from './psiTest/psiTest.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TenantModule } from './tenant/tenant.module';
 
 @Module({
     imports: [
         SiteModule,
         PsiTestModule,
+        TenantModule,
         CommonModule,
         ConfigModule.forRoot(),
         TypeOrmModule.forRootAsync({

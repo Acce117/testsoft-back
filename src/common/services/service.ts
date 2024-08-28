@@ -2,8 +2,8 @@ import { QueryFactory } from './query-factory';
 
 export abstract class AbstractService {
     protected model = null;
-
-    constructor(readonly queryFactory: QueryFactory) {
+    readonly queryFactory: QueryFactory;
+    constructor() {
         this.queryFactory = new QueryFactory();
     }
 
@@ -12,13 +12,16 @@ export abstract class AbstractService {
     }
 
     getOne(params, id?) {
-        let query = this.queryFactory.estructuralQuery(params, this.model);
+        let query = this.queryFactory.structuralQuery(params, this.model);
 
         if (id)
             query = query.where(
                 `${this.model.alias}.${this.model.primaryKey} = :id`,
                 { id },
             );
+        else if (params.where) {
+            query.where(params.where);
+        }
 
         return query.getOne();
     }
