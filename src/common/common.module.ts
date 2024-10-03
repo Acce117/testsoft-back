@@ -1,5 +1,9 @@
 import { Global, Module } from '@nestjs/common';
+import { QueryFactory } from './services/query-factory';
 
-@Module({})
+@Module({
+    providers: [QueryFactory],
+    exports: [QueryFactory],
+})
 @Global()
 export class CommonModule {}

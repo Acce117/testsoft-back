@@ -4,5 +4,5 @@ import { Group } from '../models/group.entity';
 
 @Injectable()
 export class GroupService extends AbstractService {
-    protected model: any = Group;
+    protected model = Group;
 }

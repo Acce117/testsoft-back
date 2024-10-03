@@ -8,12 +8,14 @@ import { PsiTestModule } from './psiTest/psiTest.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
+import { ExecuteTestModule } from './executeTest/executeTest.module';
 
 @Module({
     imports: [
         SiteModule,
         PsiTestModule,
         TenantModule,
+        ExecuteTestModule,
         CommonModule,
         ConfigModule.forRoot(),
         TypeOrmModule.forRootAsync({

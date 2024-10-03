@@ -1,11 +1,9 @@
+import { Inject } from '@nestjs/common';
 import { QueryFactory } from './query-factory';
-
-export abstract class AbstractService {
+import { IService } from './service.interface';
+export abstract class AbstractService implements IService {
     protected model = null;
-    readonly queryFactory: QueryFactory;
-    constructor() {
-        this.queryFactory = new QueryFactory();
-    }
+    @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
     getAll(params) {
         return this.queryFactory.selectQuery(params, this.model).getMany();

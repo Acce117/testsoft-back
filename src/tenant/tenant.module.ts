@@ -6,9 +6,10 @@ import { Group } from './models/group.entity';
 import { UserService } from './services/user.service';
 import { User } from './models/user.entity';
 import { AuthItem } from './models/auth_item.entity';
+import { UserController } from './controllers/user.controller';
 
 @Module({
-    controllers: [GroupController],
+    controllers: [GroupController, UserController],
     providers: [GroupService, UserService],
     imports: [TypeOrmModule.forFeature([Group, User, AuthItem])],
     exports: [UserService],

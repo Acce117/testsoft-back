@@ -4,7 +4,7 @@ import { BaseEntity, SelectQueryBuilder } from 'typeorm';
 @Injectable()
 export class QueryFactory {
     public structuralQuery(params, model, query?) {
-        if (!query) query = model.createQueryBuilder();
+        if (!query) query = model.createQueryBuilder(model.alias);
 
         if (params.select) query = query.select(params.select);
         if (params.relations) query = this.setRelations(query, params, model);
@@ -18,7 +18,7 @@ export class QueryFactory {
                 params.where,
                 model.alias,
             );
-            query.where(resultString, resultParams);
+            query = query.where(resultString, resultParams);
         }
 
         return query;

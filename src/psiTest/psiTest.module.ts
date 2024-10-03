@@ -7,10 +7,12 @@ import { TypePsiTest } from './models/typePsiTest.entity';
 import { TestSerie } from './models/testSerie.entity';
 import { Question } from './models/question.entity';
 import { Answer } from './models/answer.entity';
+import { SeriesService } from './services/seriesService.service';
+import { TypeQuestion } from './models/typeQuestion.entity';
 
 @Module({
     controllers: [PsiTestController],
-    providers: [PsiTestService],
+    providers: [PsiTestService, SeriesService],
     imports: [
         TypeOrmModule.forFeature([
             PsiTest,
@@ -18,7 +20,9 @@ import { Answer } from './models/answer.entity';
             TestSerie,
             Question,
             Answer,
+            TypeQuestion,
         ]),
     ],
+    exports: [PsiTestService],
 })
 export class PsiTestModule {}
