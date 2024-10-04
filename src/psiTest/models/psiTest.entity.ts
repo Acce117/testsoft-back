@@ -3,12 +3,16 @@ import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
+    ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TypePsiTest } from './typePsiTest.entity';
 import { TestSerie } from './testSerie.entity';
+import { Equation } from './equation.entity';
+import { Category } from './category.entity';
 
 @Entity({
     name: 'test',
@@ -52,4 +56,21 @@ export class PsiTest extends BaseModel {
 
     @OneToMany(() => TestSerie, (serie) => serie.test)
     series: TestSerie[];
+
+    @OneToOne(() => Equation, (equation) => equation.test)
+    equation: Equation;
+
+    @ManyToMany(() => Category, (category) => category.tests)
+    @JoinTable({
+        name: 'test_category',
+        joinColumn: {
+            name: 'fk_id_test',
+            referencedColumnName: 'id_test',
+        },
+        inverseJoinColumn: {
+            name: 'fk_id_category',
+            referencedColumnName: 'id_category',
+        },
+    })
+    category: Category[];
 }

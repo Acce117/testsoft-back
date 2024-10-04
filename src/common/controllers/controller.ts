@@ -37,10 +37,11 @@ export class BaseController implements IController {
     @Post()
     async create(@Body() body) {
         const queryRunner = this.dataSource.createQueryRunner();
-        await queryRunner.startTransaction();
 
         let result = null;
         try {
+            await queryRunner.startTransaction();
+
             result = await this.service.create(body);
 
             queryRunner.commitTransaction();

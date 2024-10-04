@@ -9,6 +9,9 @@ import { Question } from './models/question.entity';
 import { Answer } from './models/answer.entity';
 import { SeriesService } from './services/seriesService.service';
 import { TypeQuestion } from './models/typeQuestion.entity';
+import { Category } from './models/category.entity';
+import { CorrectAnswer } from './models/correctAnswer.entity';
+import { Equation } from './models/equation.entity';
 
 @Module({
     controllers: [PsiTestController],
@@ -21,6 +24,9 @@ import { TypeQuestion } from './models/typeQuestion.entity';
             Question,
             Answer,
             TypeQuestion,
+            Category,
+            CorrectAnswer,
+            Equation,
         ]),
     ],
     exports: [PsiTestService],

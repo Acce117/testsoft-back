@@ -23,6 +23,7 @@ export class ExecuteTestController implements IController {
             queryRunner.startTransaction();
 
             params.user_id = jwtPayload.user_id;
+
             result = await this.service.executeTest(params);
 
             queryRunner.commitTransaction();

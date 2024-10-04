@@ -39,8 +39,8 @@ export class ExecuteTestService {
         );
 
         this.validateTest(data, test);
-        return this.processAnswers(data, test);
-        //TODO process result
+        const testApplication = this.processAnswers(data, test);
+        return this.processResult(testApplication);
     }
 
     private validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -98,10 +98,7 @@ export class ExecuteTestService {
             );
         }
 
-        return {
-            data,
-            test,
-        };
+        return testApplication;
     }
 
     private findQuestion(series, questionKey) {
@@ -115,5 +112,9 @@ export class ExecuteTestService {
         }
 
         return question;
+    }
+
+    processResult(testApplication: TestApplication) {
+        return testApplication;
     }
 }
