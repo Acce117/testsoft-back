@@ -1,8 +1,9 @@
-import { BaseController } from 'src/common/controllers/controller';
+import { PsiTestDto } from '../dto/psiTest.dto';
 import { PsiTestService } from '../services/psiTest.service';
-import { Controller, Inject } from '@nestjs/common';
+import { CrudBaseController } from 'src/common/controllers/controller';
 
-@Controller('psi_test')
-export class PsiTestController extends BaseController {
-    @Inject(PsiTestService) service: PsiTestService;
-}
+export class PsiTestController extends CrudBaseController(
+    'psi_test',
+    PsiTestService,
+    PsiTestDto,
+) {}
