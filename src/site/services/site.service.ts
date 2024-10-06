@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../../tenant/services/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -9,19 +9,15 @@ import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class SiteService {
-    constructor(
-        private readonly jwtService: JwtService,
-        private readonly userService: UserService,
-    ) {}
+    @Inject(JwtService) private readonly jwtService: JwtService;
+    @Inject(UserService) private readonly userService: UserService;
 
     public async signIn(user: CreateUserDto) {
         const newUser = await this.userService.create(user);
 
-        const userPjo = instanceToPlain(newUser);
-
         return {
-            token: this.generateToken(userPjo),
-            user: userPjo,
+            token: this.generateToken(newUser),
+            user: newUser,
         };
     }
 

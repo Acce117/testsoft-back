@@ -1,34 +1,47 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable, Type } from '@nestjs/common';
 import { QueryFactory } from './query-factory';
-import { IService } from './service.interface';
-export abstract class AbstractService implements IService {
-    protected model = null;
-    @Inject(QueryFactory) readonly queryFactory: QueryFactory;
+import { ICrudService } from './service.interface';
+import { instanceToPlain } from 'class-transformer';
 
-    getAll(params) {
-        return this.queryFactory.selectQuery(params, this.model).getMany();
-    }
+export function CrudBaseService(model: any): Type<ICrudService> {
+    @Injectable()
+    class AbstractService implements ICrudService {
+        protected model = model;
+        @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
-    getOne(params, id?) {
-        let query = this.queryFactory.structuralQuery(params, this.model);
-
-        if (id)
-            query = query.where(
-                `${this.model.alias}.${this.model.primaryKey} = :id`,
-                { id },
-            );
-        else if (params.where) {
-            query.where(params.where);
+        getAll(params) {
+            return this.queryFactory.selectQuery(params, this.model).getMany();
         }
 
-        return query.getOne();
+        getOne(params, id?) {
+            let query = this.queryFactory.structuralQuery(params, this.model);
+
+            if (id)
+                query = query.where(
+                    `${this.model.alias}.${this.model.primaryKey} = :id`,
+                    { id },
+                );
+            else if (params.where) {
+                query.where(params.where);
+            }
+
+            return query.getOne();
+        }
+
+        //TODO still workin on it
+        /**
+         * It doew not work with table inheritance and related data
+         */
+        create(data) {
+            const model = this.model
+                .createQueryBuilder()
+                .insert()
+                .values(data)
+                .execute();
+
+            return instanceToPlain(model);
+        }
     }
 
-    //TODO still workin on it
-    /**
-     * It doew not work with table inheritance and related data
-     */
-    create(data) {
-        return this.model.createQueryBuilder().insert().values(data).execute();
-    }
+    return AbstractService;
 }

@@ -9,21 +9,20 @@ import {
     Type,
     UseInterceptors,
 } from '@nestjs/common';
-import { AbstractService } from '../services/service';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { IController } from './controller.interface';
-import { IService } from '../services/service.interface';
+import { ICrudService } from '../services/service.interface';
 import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 
 export function CrudBaseController(
     prefix: string,
-    service: IService,
+    service: ICrudService,
     createDto: any = null,
 ): Type<IController> {
     @Controller(prefix)
     class CrudController implements IController {
-        @Inject(service) service: AbstractService;
+        @Inject(service) service: ICrudService;
         @InjectDataSource() dataSource: DataSource;
 
         @Get()

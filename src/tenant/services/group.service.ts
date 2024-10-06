@@ -1,8 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { AbstractService } from 'src/common/services/service';
+import { CrudBaseService } from 'src/common/services/service';
 import { Group } from '../models/group.entity';
 
-@Injectable()
-export class GroupService extends AbstractService {
-    protected model = Group;
-}
+export class GroupService extends CrudBaseService(Group) {}
