@@ -17,7 +17,7 @@ import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 
 export function CrudBaseController(
     prefix: string,
-    service: ICrudService,
+    service: object,
     createDto: any = null,
 ): Type<IController> {
     @Controller(prefix)
