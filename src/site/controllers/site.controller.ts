@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
-import { CreateUserDto } from '../dto/create_user.dto';
+import { CreateUserDto } from '../dto/register_user.dto';
 
 @Controller()
 export class SiteController {

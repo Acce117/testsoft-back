@@ -2,7 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../../tenant/services/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../dto/create_user.dto';
+import { CreateUserDto } from '../dto/register_user.dto';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { User } from '../../tenant/models/user.entity';
 import { instanceToPlain } from 'class-transformer';
