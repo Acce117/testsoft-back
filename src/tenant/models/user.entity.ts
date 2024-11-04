@@ -4,11 +4,14 @@ import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
     Entity,
+    JoinColumn,
     JoinTable,
     ManyToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AuthItem } from './auth_item.entity';
+import { Country } from './country.entity';
 
 @Entity({
     name: 'user',
@@ -46,8 +49,12 @@ export class User extends BaseModel {
     @Column({ default: 0, type: 'tinyint' })
     deleted: number;
 
-    @Column({ default: 2, type: 'bigint' })
-    country_id: number;
+    @OneToOne(() => Country)
+    @JoinColumn({
+        name: 'country_id',
+        referencedColumnName: 'country_id',
+    })
+    country: Country;
 
     @ManyToMany(() => AuthItem)
     @JoinTable({
