@@ -1,14 +1,17 @@
+// import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
     Entity,
     JoinColumn,
-    ManyToOne,
-    OneToMany,
     PrimaryGeneratedColumn,
+    Tree,
+    TreeChildren,
+    TreeParent,
 } from 'typeorm';
 
 @Entity({ name: 'group' })
+@Tree('materialized-path')
 export class Group extends BaseModel {
     static readonly alias: string = 'group';
     static readonly primaryKey: string = 'id_group';
@@ -21,10 +24,25 @@ export class Group extends BaseModel {
     })
     name_group: string;
 
-    @ManyToOne(() => Group, (group) => group.children, { nullable: true })
-    @JoinColumn({ name: 'father_group' })
+    @Column({
+        nullable: true,
+    })
+    father_group: number;
+
+    // @Column({
+    //     name: 'mpath',
+    //     nullable: true,
+    // })
+    // @Exclude()
+    // mpath?: string;
+
+    @JoinColumn({
+        name: 'father_group',
+        referencedColumnName: 'id_group',
+    })
+    @TreeParent()
     parent: Group;
 
-    @OneToMany(() => Group, (group) => group.parent)
+    @TreeChildren()
     children: Group[];
 }

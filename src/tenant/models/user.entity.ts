@@ -43,7 +43,7 @@ export class User extends BaseModel {
     @Column({ type: 'varchar', nullable: false })
     email: string;
 
-    @Column({ type: 'varchar', nullable: false, length: 1, enum: ['F', 'M'] })
+    @Column({ type: 'varchar', nullable: false, length: 1 })
     sex: string;
 
     @Column({ default: 0, type: 'tinyint' })
