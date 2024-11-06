@@ -5,13 +5,6 @@ import { TreeRepository } from 'typeorm';
 
 export class GroupService extends CrudBaseService(Group) {
     constructor(@InjectRepository(Group) readonly repo: TreeRepository<Group>) {
-        // repo.metadata.columns = repo.metadata.columns.map((x) => {
-        //     if (x.databaseName === 'mpath') {
-        //         x.isVirtual = false;
-        //     }
-        //     return x;
-        // });
-
         super();
     }
 

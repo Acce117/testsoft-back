@@ -5,7 +5,7 @@ import { ICrudService } from './service.interface';
 export function CrudBaseService(model: any): Type<ICrudService> {
     @Injectable()
     class AbstractService implements ICrudService {
-        protected model = model;
+        model = model;
         @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
         getAll(params) {
