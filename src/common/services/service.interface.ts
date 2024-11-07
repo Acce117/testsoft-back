@@ -1,5 +1,5 @@
 export interface ICrudService {
-    model: object;
+    model: any;
     getAll(params);
     getOne(params, id?);
     create(data);
