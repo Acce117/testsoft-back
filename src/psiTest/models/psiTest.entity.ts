@@ -13,6 +13,8 @@ import { TypePsiTest } from './typePsiTest.entity';
 import { TestSerie } from './testSerie.entity';
 import { Equation } from './equation.entity';
 import { Category } from './category.entity';
+import { User } from 'src/tenant/models/user.entity';
+import { Group } from 'src/tenant/models/group.entity';
 
 @Entity({
     name: 'test',
@@ -73,4 +75,20 @@ export class PsiTest extends BaseModel {
         },
     })
     category: Category[];
+
+    @ManyToMany(() => User)
+    @JoinTable({
+        name: 'test_author',
+        joinColumn: { name: 'test_id' },
+        inverseJoinColumn: { name: 'user_id' },
+    })
+    authors: User[];
+
+    @ManyToMany(() => Group, (group) => group.psiTests)
+    @JoinTable({
+        name: 'group_for_test',
+        joinColumn: { name: 'fk_id_test' },
+        inverseJoinColumn: { name: 'fk_id_group' },
+    })
+    groups: Group[];
 }

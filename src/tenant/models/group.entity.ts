@@ -1,9 +1,12 @@
 // import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/models/baseModel';
+import { PsiTest } from 'src/psiTest/models/psiTest.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
+    ManyToMany,
     PrimaryGeneratedColumn,
     Tree,
     TreeChildren,
@@ -29,13 +32,6 @@ export class Group extends BaseModel {
     })
     father_group: number;
 
-    // @Column({
-    //     name: 'mpath',
-    //     nullable: true,
-    // })
-    // @Exclude()
-    // mpath?: string;
-
     @JoinColumn({
         name: 'father_group',
         referencedColumnName: 'id_group',
@@ -45,4 +41,12 @@ export class Group extends BaseModel {
 
     @TreeChildren()
     children: Group[];
+
+    @ManyToMany(() => PsiTest, (psiTest) => psiTest.groups)
+    @JoinTable({
+        name: 'group_for_test',
+        joinColumn: { name: 'fk_id_group' },
+        inverseJoinColumn: { name: 'fk_id_test' },
+    })
+    psiTests: PsiTest[];
 }

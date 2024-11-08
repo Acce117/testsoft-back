@@ -11,6 +11,7 @@ import {
 import { TestSerie } from './testSerie.entity';
 import { Answer } from './answer.entity';
 import { TypeQuestion } from './typeQuestion.entity';
+import { Image } from './image.entity';
 
 @Entity()
 export class Question extends BaseModel {
@@ -41,4 +42,7 @@ export class Question extends BaseModel {
         referencedColumnName: 'id_type_question',
     })
     type: TypeQuestion;
+
+    @OneToOne(() => Image, (image) => image.question)
+    image: Image;
 }

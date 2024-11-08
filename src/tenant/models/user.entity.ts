@@ -63,4 +63,20 @@ export class User extends BaseModel {
         joinColumn: { name: 'user_id' },
     })
     auth_item: AuthItem[];
+
+    @ManyToMany(() => User)
+    @JoinTable({
+        name: 'leadership',
+        joinColumn: { name: 'fk_user_origin' },
+        inverseJoinColumn: { name: 'fk_user_destination' },
+    })
+    leadership: User[];
+
+    @ManyToMany(() => User)
+    @JoinTable({
+        name: 'incompatibility',
+        joinColumn: { name: 'fk_user_origin' },
+        inverseJoinColumn: { name: 'fk_user_destination' },
+    })
+    incompatibility: User[];
 }

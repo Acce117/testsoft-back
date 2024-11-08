@@ -12,6 +12,7 @@ import { TypeQuestion } from './models/typeQuestion.entity';
 import { Category } from './models/category.entity';
 import { CorrectAnswer } from './models/correctAnswer.entity';
 import { Equation } from './models/equation.entity';
+import { Image } from './models/image.entity';
 
 @Module({
     controllers: [PsiTestController],
@@ -27,6 +28,7 @@ import { Equation } from './models/equation.entity';
             Category,
             CorrectAnswer,
             Equation,
+            Image,
         ]),
     ],
     exports: [PsiTestService],
