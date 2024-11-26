@@ -7,11 +7,13 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
+    OneToMany,
     PrimaryGeneratedColumn,
     Tree,
     TreeChildren,
     TreeParent,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity({ name: 'group' })
 @Tree('materialized-path')
@@ -49,4 +51,7 @@ export class Group extends BaseModel {
         inverseJoinColumn: { name: 'fk_id_test' },
     })
     psiTests: PsiTest[];
+
+    @OneToMany(() => User, (user) => user.group)
+    users: User[];
 }

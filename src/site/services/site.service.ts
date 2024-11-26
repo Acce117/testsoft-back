@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../dto/register_user.dto';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { User } from '../../tenant/models/user.entity';
-import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class SiteService {
@@ -22,7 +21,7 @@ export class SiteService {
     }
 
     public async login(credentials: UserCredentials) {
-        const user = await this.userService.getOne({
+        const user: User = await this.userService.getOne({
             where: {
                 username: credentials.username,
                 deleted: 0,
@@ -35,12 +34,11 @@ export class SiteService {
         )
             throw new UnauthorizedException('Wrong credentials');
 
-        const userPjo = instanceToPlain(user);
+        return { token: this.generateToken({ user_id: user.user_id }) };
+    }
 
-        return {
-            token: this.generateToken(userPjo),
-            user: userPjo,
-        };
+    public me(id_user) {
+        return this.userService.getOne([], id_user);
     }
 
     private generateToken(payload: object) {

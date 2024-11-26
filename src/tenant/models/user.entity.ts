@@ -7,11 +7,13 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
+    ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AuthItem } from './auth_item.entity';
 import { Country } from './country.entity';
+import { Group } from './group.entity';
 
 @Entity({
     name: 'user',
@@ -79,4 +81,11 @@ export class User extends BaseModel {
         inverseJoinColumn: { name: 'fk_user_destination' },
     })
     incompatibility: User[];
+
+    @ManyToOne(() => Group, (group) => group.users)
+    @JoinColumn({
+        name: 'id_group',
+        referencedColumnName: 'id_group',
+    })
+    group: Group;
 }
