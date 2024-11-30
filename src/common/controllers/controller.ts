@@ -7,6 +7,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     Type,
     UseInterceptors,
 } from '@nestjs/common';
@@ -29,7 +30,7 @@ export function CrudBaseController(
 
         @Get()
         @UseInterceptors(ClassSerializerInterceptor)
-        async getAll(@Body() params) {
+        async getAll(@Query() params) {
             try {
                 const result = await this.service.getAll(params);
                 return instanceToPlain(result);
@@ -39,7 +40,7 @@ export function CrudBaseController(
         }
 
         @Get(':id')
-        async getOne(@Param('id') id: number, @Body() params) {
+        async getOne(@Param('id') id: number, @Query() params) {
             try {
                 const result = await this.service.getOne(params, id);
                 return instanceToPlain(result);
