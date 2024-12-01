@@ -45,7 +45,10 @@ export class QueryFactory {
                     ? model
                     : (model.alias as unknown as { alias: string });
 
-            query.leftJoinAndSelect(`${alias}.${relation.name}`, relation.name);
+            query.leftJoinAndSelect(
+                `${alias}.${relation.name || relation[`[name]`]}`,
+                relation.name || relation['[name]'],
+            );
             if (relation.relations)
                 query = this.setRelations(query, relation, relation.name);
             // } else {
