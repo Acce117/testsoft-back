@@ -37,30 +37,30 @@ export class QueryFactory {
     private setRelations(
         query: SelectQueryBuilder<BaseEntity>,
         params,
-        model,
+        model: { alias: string } | string,
     ): SelectQueryBuilder<BaseEntity> {
         params.relations.forEach((relation) => {
-            if (typeof relation === 'string') {
-                relation = relation.split('.');
-                let alias = `${model.alias}`;
+            const alias =
+                typeof model === 'string'
+                    ? model
+                    : (model.alias as unknown as { alias: string });
 
-                relation.forEach((rel) => {
-                    query.leftJoinAndSelect(`${alias}.${rel}`, rel);
-                    alias = rel;
-                });
-            } else {
-                const { resultString, resultParams } = this.buildWhere(
-                    relation.where,
-                    relation.name,
-                );
+            query.leftJoinAndSelect(`${alias}.${relation.name}`, relation.name);
+            if (relation.relations)
+                query = this.setRelations(query, relation, relation.name);
+            // } else {
+            //     const { resultString, resultParams } = this.buildWhere(
+            //         relation.where,
+            //         relation.name,
+            //     );
 
-                query.leftJoinAndSelect(
-                    `${model.alias}.${relation.name}`,
-                    relation.name,
-                    resultString,
-                    resultParams,
-                );
-            }
+            //     query.leftJoinAndSelect(
+            //         `${model.alias}.${relation.name}`,
+            //         relation.name,
+            //         resultString,
+            //         resultParams,
+            //     );
+            // }
         });
 
         return query;
