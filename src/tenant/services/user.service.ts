@@ -3,13 +3,20 @@ import { User } from '../models/user.entity';
 
 export class UserService extends CrudBaseService(User) {
     public async userTests(user_id: number) {
-        // const user: User = await this.getOne(
-        //     {
-        //         relations: ['group.psiTests'],
-        //     },
-        //     user_id,
-        // );
+        const user: User = await this.getOne(
+            {
+                relations: [
+                    {
+                        name: 'groups',
+                        relations: [{ name: 'psiTests' }],
+                    },
+                ],
+            },
+            user_id,
+        );
 
-        // return user?.group ? user.group.psiTests : [];
+        return user?.groups
+            ? user.groups.forEach((group) => group.psiTests)
+            : [];
     }
 }
