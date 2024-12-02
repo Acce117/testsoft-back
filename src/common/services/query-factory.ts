@@ -40,30 +40,38 @@ export class QueryFactory {
         model: { alias: string } | string,
     ): SelectQueryBuilder<BaseEntity> {
         params.relations.forEach((relation) => {
-            const alias =
+            let alias =
                 typeof model === 'string'
                     ? model
                     : (model.alias as unknown as { alias: string });
 
-            query.leftJoinAndSelect(
-                `${alias}.${relation.name || relation[`[name]`]}`,
-                relation.name || relation['[name]'],
-            );
-            if (relation.relations)
-                query = this.setRelations(query, relation, relation.name);
-            // } else {
-            //     const { resultString, resultParams } = this.buildWhere(
-            //         relation.where,
-            //         relation.name,
-            //     );
+            if (typeof relation === 'string') {
+                relation = relation.split('.');
 
-            //     query.leftJoinAndSelect(
-            //         `${model.alias}.${relation.name}`,
-            //         relation.name,
-            //         resultString,
-            //         resultParams,
-            //     );
-            // }
+                relation.forEach((rel) => {
+                    query.leftJoinAndSelect(`${alias}.${rel}`, rel);
+                    alias = rel;
+                });
+            } else if (typeof relation === 'object') {
+                query.leftJoinAndSelect(
+                    `${alias}.${relation.name || relation[`[name]`]}`,
+                    relation.name || relation['[name]'],
+                );
+                if (relation.relations)
+                    query = this.setRelations(query, relation, relation.name);
+                //     const { resultString, resultParams } = this.buildWhere(
+                //         relation.where,
+                //         relation.name,
+                //     );
+
+                //     query.leftJoinAndSelect(
+                //         `${model.alias}.${relation.name}`,
+                //         relation.name,
+                //         resultString,
+                //         resultParams,
+                //     );
+                // }
+            }
         });
 
         return query;
