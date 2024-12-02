@@ -10,11 +10,20 @@ import { UserController } from './controllers/user.controller';
 import { Country } from './models/country.entity';
 import { CountryService } from './services/country.service';
 import { CountryController } from './controllers/country.controller';
+import { AuthAssignment } from './models/auth_assignment.entity';
 
 @Module({
     controllers: [GroupController, UserController, CountryController],
     providers: [GroupService, UserService, CountryService],
-    imports: [TypeOrmModule.forFeature([Group, User, AuthItem, Country])],
+    imports: [
+        TypeOrmModule.forFeature([
+            Group,
+            User,
+            AuthItem,
+            Country,
+            AuthAssignment,
+        ]),
+    ],
     exports: [UserService],
 })
 export class TenantModule {}

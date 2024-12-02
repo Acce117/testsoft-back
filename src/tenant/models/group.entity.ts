@@ -7,7 +7,6 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
-    OneToMany,
     PrimaryGeneratedColumn,
     Tree,
     TreeChildren,
@@ -52,6 +51,17 @@ export class Group extends BaseModel {
     })
     psiTests: PsiTest[];
 
-    @OneToMany(() => User, (user) => user.group)
+    @ManyToMany(() => User, (user) => user.groups)
+    @JoinTable({
+        name: 'auth_assignment',
+        joinColumn: {
+            name: 'group_id',
+            referencedColumnName: 'id_group',
+        },
+        inverseJoinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'user_id',
+        },
+    })
     users: User[];
 }

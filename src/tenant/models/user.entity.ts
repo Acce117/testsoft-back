@@ -7,13 +7,14 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
-    ManyToOne,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AuthItem } from './auth_item.entity';
 import { Country } from './country.entity';
 import { Group } from './group.entity';
+import { AuthAssignment } from './auth_assignment.entity';
 
 @Entity({
     name: 'user',
@@ -66,6 +67,9 @@ export class User extends BaseModel {
     })
     auth_item: AuthItem[];
 
+    @OneToMany(() => AuthAssignment, (assignment) => assignment.users)
+    assignments: AuthAssignment[];
+
     @ManyToMany(() => User)
     @JoinTable({
         name: 'leadership',
@@ -82,10 +86,17 @@ export class User extends BaseModel {
     })
     incompatibility: User[];
 
-    @ManyToOne(() => Group, (group) => group.users)
-    @JoinColumn({
-        name: 'id_group',
-        referencedColumnName: 'id_group',
+    @ManyToMany(() => Group, (group) => group.users)
+    @JoinTable({
+        name: 'auth_assignment',
+        joinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'user_id',
+        },
+        inverseJoinColumn: {
+            name: 'group_id',
+            referencedColumnName: 'id_group',
+        },
     })
-    group: Group;
+    groups: Group[];
 }
