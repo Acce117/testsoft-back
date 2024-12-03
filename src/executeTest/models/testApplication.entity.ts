@@ -32,6 +32,11 @@ export class TestApplication extends BaseEntity {
     test: PsiTest;
 
     @Column({
+        type: 'int',
+    })
+    fk_id_test: number;
+
+    @Column({
         type: 'timestamp',
         name: 'date',
         nullable: false,

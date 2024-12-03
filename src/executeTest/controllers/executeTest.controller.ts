@@ -11,20 +11,17 @@ export class ExecuteTestController implements IController {
     @Inject(ExecuteTestService) service: ExecuteTestService;
     @InjectDataSource() dataSource?: DataSource;
 
-    @Post('execute_Test')
-    async executeTest(
-        @Body() params: ExecuteTestDto,
-        @JwtPayload() jwtPayload,
-    ) {
+    @Post()
+    async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
         const queryRunner = this.dataSource.createQueryRunner();
         let result = null;
 
         try {
-            queryRunner.startTransaction();
+            await queryRunner.startTransaction();
 
-            params.user_id = jwtPayload.user_id;
+            body.user_id = jwtPayload.user_id;
 
-            result = await this.service.executeTest(params);
+            result = await this.service.executeTest(body);
 
             queryRunner.commitTransaction();
         } catch (err) {

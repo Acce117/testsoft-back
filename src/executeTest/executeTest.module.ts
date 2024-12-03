@@ -7,6 +7,9 @@ import { TestApplication } from './models/testApplication.entity';
 import { TestApplicationService } from './services/testApplication.service';
 import { ApplicationAnswerService } from './services/applicationAnswer.service';
 import { ApplicationAnswerValueService } from './services/applicationAnswerValue.service';
+import { ApplicationResult } from './models/applicationResult.entity';
+import { ApplicationAnswer } from './models/applicationAnswer.entity';
+import { ApplicationAnswerValue } from './models/applicationAnswerValue.entity';
 
 @Module({
     controllers: [ExecuteTestController],
@@ -16,7 +19,15 @@ import { ApplicationAnswerValueService } from './services/applicationAnswerValue
         ApplicationAnswerService,
         ApplicationAnswerValueService,
     ],
-    imports: [PsiTestModule, TypeOrmModule.forFeature([TestApplication])],
+    imports: [
+        PsiTestModule,
+        TypeOrmModule.forFeature([
+            TestApplication,
+            ApplicationResult,
+            ApplicationAnswer,
+            ApplicationAnswerValue,
+        ]),
+    ],
     exports: [],
 })
 export class ExecuteTestModule {}
