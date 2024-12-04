@@ -17,6 +17,7 @@ import { Item } from './models/item.entity';
 import { TributeService } from './services/tribute.service';
 import { Tribute } from './models/tribute.entity';
 import { EquationService } from './services/equation.service';
+import { ParameterDisplayResult } from './models/parameterResult.entity';
 
 @Module({
     controllers: [PsiTestController],
@@ -35,6 +36,7 @@ import { EquationService } from './services/equation.service';
             Image,
             Item,
             Tribute,
+            ParameterDisplayResult,
         ]),
     ],
     exports: [PsiTestService, TributeService, EquationService],

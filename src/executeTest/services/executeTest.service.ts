@@ -192,9 +192,9 @@ export class ExecuteTestService {
                                 tribute.tribute_value;
                     }
 
-                    if (equation) {
-                        //TODO
-                    }
+                    // if (equation) {
+                    //     //TODO
+                    // }
                 }
             }
         }
