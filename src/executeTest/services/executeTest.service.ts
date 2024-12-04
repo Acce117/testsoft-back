@@ -214,4 +214,20 @@ export class ExecuteTestService {
 
         return correctByQuestion;
     }
+
+    async testResult(testApp: number | TestApplication) {
+        if (typeof testApp === 'number')
+            testApp = this.testAppService.getOne(
+                {
+                    relations: [
+                        {
+                            name: 'test',
+                            relations: ['type_psi_test', 'category'],
+                        },
+                        'application_result',
+                    ],
+                },
+                testApp,
+            );
+    }
 }

@@ -1,5 +1,6 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { TestApplication } from './testApplication.entity';
 
 @Entity()
 export class ApplicationResult extends BaseModel {
@@ -14,4 +15,11 @@ export class ApplicationResult extends BaseModel {
 
     @Column()
     value_result: number;
+
+    @ManyToOne(() => TestApplication, (testApp) => testApp.application_result)
+    @JoinColumn({
+        name: 'fk_test_application',
+        referencedColumnName: 'id_test_application',
+    })
+    test_application: TestApplication;
 }
