@@ -4,9 +4,11 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from './category.entity';
+import { Range } from './range.entity';
 
 @Entity()
 export class Item extends BaseModel {
@@ -32,4 +34,7 @@ export class Item extends BaseModel {
         referencedColumnName: 'id_category',
     })
     category: Category;
+
+    @OneToMany(() => Range, (range) => range.item)
+    ranges: Range[];
 }

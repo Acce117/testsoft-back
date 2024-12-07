@@ -18,6 +18,7 @@ import { TributeService } from './services/tribute.service';
 import { Tribute } from './models/tribute.entity';
 import { EquationService } from './services/equation.service';
 import { ParameterDisplayResult } from './models/parameterResult.entity';
+import { Range } from './models/range.entity';
 
 @Module({
     controllers: [PsiTestController],
@@ -37,6 +38,7 @@ import { ParameterDisplayResult } from './models/parameterResult.entity';
             Item,
             Tribute,
             ParameterDisplayResult,
+            Range,
         ]),
     ],
     exports: [PsiTestService, TributeService, EquationService],
