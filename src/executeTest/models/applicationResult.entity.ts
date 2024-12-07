@@ -1,6 +1,7 @@
 import { BaseModel } from 'src/common/models/baseModel';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { TestApplication } from './testApplication.entity';
+import { Item } from 'src/psiTest/models/item.entity';
 
 @Entity()
 export class ApplicationResult extends BaseModel {
@@ -22,4 +23,11 @@ export class ApplicationResult extends BaseModel {
         referencedColumnName: 'id_test_application',
     })
     test_application: TestApplication;
+
+    @ManyToOne(() => Item)
+    @JoinColumn({
+        name: 'fk_item',
+        referencedColumnName: 'id_item',
+    })
+    item: Item;
 }

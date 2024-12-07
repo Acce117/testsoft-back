@@ -30,7 +30,7 @@ export function CrudBaseController(
 
         @Get()
         @UseInterceptors(ClassSerializerInterceptor)
-        async getAll(@Body() params) {
+        async getAll(@Query() params) {
             try {
                 const result = await this.service.getAll(params);
                 return instanceToPlain(result);

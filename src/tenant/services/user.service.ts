@@ -3,6 +3,8 @@ import { User } from '../models/user.entity';
 
 export class UserService extends CrudBaseService(User) {
     public async userTests(user_id: number) {
+        const result = [];
+
         const user: User = await this.getOne(
             {
                 relations: [
@@ -15,10 +17,8 @@ export class UserService extends CrudBaseService(User) {
             user_id,
         );
 
-        let result = [];
-        user?.groups
-            ? user.groups.forEach((group) => result.push(...group.psiTests))
-            : (result = []);
+        if (user?.groups)
+            user.groups.forEach((group) => result.push(...group.psiTests));
 
         return result;
     }
