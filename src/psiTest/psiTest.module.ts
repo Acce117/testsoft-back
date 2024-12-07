@@ -13,10 +13,15 @@ import { Category } from './models/category.entity';
 import { CorrectAnswer } from './models/correctAnswer.entity';
 import { Equation } from './models/equation.entity';
 import { Image } from './models/image.entity';
+import { Item } from './models/item.entity';
+import { TributeService } from './services/tribute.service';
+import { Tribute } from './models/tribute.entity';
+import { EquationService } from './services/equation.service';
+import { ParameterDisplayResult } from './models/parameterResult.entity';
 
 @Module({
     controllers: [PsiTestController],
-    providers: [PsiTestService, SeriesService],
+    providers: [PsiTestService, SeriesService, TributeService, EquationService],
     imports: [
         TypeOrmModule.forFeature([
             PsiTest,
@@ -29,8 +34,11 @@ import { Image } from './models/image.entity';
             CorrectAnswer,
             Equation,
             Image,
+            Item,
+            Tribute,
+            ParameterDisplayResult,
         ]),
     ],
-    exports: [PsiTestService],
+    exports: [PsiTestService, TributeService, EquationService],
 })
 export class PsiTestModule {}

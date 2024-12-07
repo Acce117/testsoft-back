@@ -15,8 +15,11 @@ export class UserService extends CrudBaseService(User) {
             user_id,
         );
 
-        return user?.groups
-            ? user.groups.forEach((group) => group.psiTests)
-            : [];
+        let result = [];
+        user?.groups
+            ? user.groups.forEach((group) => result.push(...group.psiTests))
+            : (result = []);
+
+        return result;
     }
 }

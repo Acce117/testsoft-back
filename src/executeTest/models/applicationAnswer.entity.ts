@@ -18,7 +18,7 @@ export class ApplicationAnswer extends BaseEntity {
     @OneToOne(() => TestApplication)
     @JoinColumn({
         name: 'fk_id_test_application',
-        referencedColumnName: 'id_test',
+        referencedColumnName: 'id_test_application',
     })
     testApplication: TestApplication;
 

@@ -15,6 +15,7 @@ import { Equation } from './equation.entity';
 import { Category } from './category.entity';
 import { User } from 'src/tenant/models/user.entity';
 import { Group } from 'src/tenant/models/group.entity';
+import { ParameterDisplayResult } from './parameterResult.entity';
 
 @Entity({
     name: 'test',
@@ -91,4 +92,7 @@ export class PsiTest extends BaseModel {
         inverseJoinColumn: { name: 'fk_id_group' },
     })
     groups: Group[];
+
+    @OneToOne(() => ParameterDisplayResult, (params) => params.test)
+    display_parameters: ParameterDisplayResult;
 }

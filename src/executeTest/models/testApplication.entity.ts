@@ -5,9 +5,11 @@ import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ApplicationResult } from './applicationResult.entity';
 
 @Entity()
 export class TestApplication extends BaseEntity {
@@ -32,9 +34,20 @@ export class TestApplication extends BaseEntity {
     test: PsiTest;
 
     @Column({
+        type: 'int',
+    })
+    fk_id_test: number;
+
+    @Column({
         type: 'timestamp',
         name: 'date',
         nullable: false,
     })
     date: Date;
+
+    @OneToMany(
+        () => ApplicationResult,
+        (appResult) => appResult.test_application,
+    )
+    application_result: ApplicationResult[];
 }
