@@ -30,7 +30,7 @@ export class Item extends BaseModel {
 
     @ManyToOne(() => Category)
     @JoinColumn({
-        name: 'fk_id_category',
+        name: 'fk_category',
         referencedColumnName: 'id_category',
     })
     category: Category;

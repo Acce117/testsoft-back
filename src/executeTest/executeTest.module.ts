@@ -10,9 +10,10 @@ import { ApplicationAnswerValueService } from './services/applicationAnswerValue
 import { ApplicationResult } from './models/applicationResult.entity';
 import { ApplicationAnswer } from './models/applicationAnswer.entity';
 import { ApplicationAnswerValue } from './models/applicationAnswerValue.entity';
+import { TestApplicationController } from './controllers/testApp.controller';
 
 @Module({
-    controllers: [ExecuteTestController],
+    controllers: [ExecuteTestController, TestApplicationController],
     providers: [
         ExecuteTestService,
         TestApplicationService,

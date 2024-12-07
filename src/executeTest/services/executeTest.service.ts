@@ -17,6 +17,8 @@ import { DataSource } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
+import { ApplicationResult } from '../models/applicationResult.entity';
+import { Item } from 'src/psiTest/models/item.entity';
 
 @Injectable()
 export class ExecuteTestService {
@@ -54,7 +56,7 @@ export class ExecuteTestService {
 
         await this.validateTest(data, test);
         const { testApplication, finalAnswers } = await this.processAnswers(
-            data.answers,
+            data,
             test,
         );
         return await this.processResult(testApplication, finalAnswers);
@@ -90,13 +92,13 @@ export class ExecuteTestService {
     }
 
     private async processAnswers(
-        answers: Array<{ [key: number]: any; id_question: number }>,
+        { user_id, id_test, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
-        // const testApplication: TestApplication = this.testAppService.create({
-        //     fk_id_user: data.user_id,
-        //     fk_id_test: data.id_test,
-        // });
+        const testApplication: TestApplication = this.testAppService.create({
+            fk_id_user: user_id,
+            fk_id_test: id_test,
+        });
 
         const finalAnswers = {};
         const series: TestSerie[] = test.series;
@@ -135,10 +137,10 @@ export class ExecuteTestService {
                 handler = valueAnswer;
             }
 
-            // handler.manageApplicationAnswer(
-            //     testApplication,
-            //     data.answers[questionKey],
-            // );
+            handler.manageApplicationAnswer(
+                testApplication,
+                answers[questionKey],
+            );
         }
 
         return { testApplication: null, finalAnswers };
@@ -162,7 +164,7 @@ export class ExecuteTestService {
         finalAnswers: object,
     ) {
         const accumulated = {};
-        let corrects = null;
+        // let corrects = null;
         for (const type_question in finalAnswers) {
             if (type_question === 'Opción Simple') {
                 for (const id_question in finalAnswers[`${type_question}`]) {
@@ -215,19 +217,76 @@ export class ExecuteTestService {
         return correctByQuestion;
     }
 
-    async testResult(testApp: number | TestApplication) {
-        if (typeof testApp === 'number')
-            testApp = this.testAppService.getOne(
-                {
-                    relations: [
-                        {
-                            name: 'test',
-                            relations: ['type_psi_test', 'category'],
-                        },
-                        'application_result',
-                    ],
-                },
-                testApp,
-            );
+    async testResult(testApp: TestApplication) {
+        const parameters = testApp.test.display_parameters;
+
+        const final_results = { parameters };
+
+        if (parameters.all_element_value) {
+            if (parameters.tops_values) {
+            } else {
+            }
+        } else if (parameters.element_by_category)
+            if (parameters.tops_values) {
+                final_results['categories'] = {};
+
+                const items_top_max = this.top(
+                    testApp.application_result,
+                    (val1, val2) => val1 < val2,
+                );
+
+                for (let i = 0; i < items_top_max.length; i++) {
+                    if (
+                        !final_results['categories'][
+                            [`${items_top_max[i].item.category.name}`]
+                        ]
+                    )
+                        final_results['categories'][
+                            [`${items_top_max[i].item.category.name}`]
+                        ] = {
+                            ...items_top_max[i].item.category,
+                            items: [],
+                        };
+
+                    final_results['categories'][
+                        `${items_top_max[i].item.category.name}`
+                    ].items.push({
+                        ...items_top_max[i].item,
+                        value: items_top_max[i].value,
+                        category: undefined,
+                    });
+                }
+            }
+
+        return final_results;
+    }
+
+    top(results: Array<ApplicationResult>, condition) {
+        let items: Array<{ item: Item; value: number }> = [];
+
+        for (let i = 0; i < results.length; i++) {
+            if (items.length === 0)
+                items.push({
+                    item: results[i].item,
+                    value: results[i].value_result,
+                });
+            else if (
+                condition(
+                    items[items.length - 1].value,
+                    results[i].value_result,
+                )
+            )
+                items = [
+                    { item: results[i].item, value: results[i].value_result },
+                    ...items,
+                ];
+            else
+                items = [
+                    ...items,
+                    { item: results[i].item, value: results[i].value_result },
+                ];
+        }
+
+        return items;
     }
 }
