@@ -39,6 +39,11 @@ export class TestApplication extends BaseEntity {
     fk_id_test: number;
 
     @Column({
+        type: 'int',
+    })
+    fk_id_user: number;
+
+    @Column({
         type: 'timestamp',
         name: 'date',
         nullable: false,

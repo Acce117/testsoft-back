@@ -1,5 +1,6 @@
 import {
     BaseEntity,
+    Column,
     Entity,
     JoinColumn,
     OneToOne,
@@ -9,18 +10,28 @@ import { TestApplication } from './testApplication.entity';
 import { Answer } from 'src/psiTest/models/answer.entity';
 
 @Entity({
-    name: 'application_answer',
+    name: 'aplication_answer',
 })
 export class ApplicationAnswer extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id_application_answer: number;
+    id_aplication_answer: number;
 
     @OneToOne(() => TestApplication)
     @JoinColumn({
-        name: 'fk_id_test_application',
+        name: 'fk_id_test_aplication',
         referencedColumnName: 'id_test_application',
     })
     testApplication: TestApplication;
+
+    @Column({
+        type: 'int',
+    })
+    fk_id_test_aplication: number;
+
+    @Column({
+        type: 'int',
+    })
+    fk_id_answer: number;
 
     @OneToOne(() => Answer)
     @JoinColumn({

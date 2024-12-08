@@ -9,11 +9,11 @@ import { ApplicationAnswerService } from './applicationAnswer.service';
 import { ApplicationAnswerValueService } from './applicationAnswerValue.service';
 import { TestApplication } from '../models/testApplication.entity';
 import multipleOption from './appAnswerHandler/MultipleOptionHandler';
-import simpleOption from './appAnswerHandler/simpleOptionHandler';
+import { SimpleOptionHandler } from './appAnswerHandler/simpleOptionHandler';
 import valueAnswer from './appAnswerHandler/valueAnswerHandler';
 import { AppAnswerHandler } from './appAnswerHandler/appAnswerHandler';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
@@ -59,7 +59,8 @@ export class ExecuteTestService {
             data,
             test,
         );
-        return await this.processResult(testApplication, finalAnswers);
+        await this.processResult(testApplication as TestApplication, finalAnswers);
+        return (testApplication as InsertResult).identifiers[0].id_test_application;
     }
 
     private async validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -95,7 +96,7 @@ export class ExecuteTestService {
         { user_id, id_test, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
-        const testApplication: TestApplication = this.testAppService.create({
+        const testApplication: InsertResult | TestApplication = await this.testAppService.create({
             fk_id_user: user_id,
             fk_id_test: id_test,
         });
@@ -115,19 +116,19 @@ export class ExecuteTestService {
                 finalAnswers[`${question.type.name}`] = {};
 
             if (multipleOption.questionTypeAccepted.find((type) => question.type.name === type)) {
-                handler = multipleOption;
+                // handler = multipleOption;
             } 
-            else if (simpleOption.questionTypeAccepted.find((type) => question.type.name === type)) {
-                handler = simpleOption;
+            else if (SimpleOptionHandler.questionTypeAccepted.find((type) => question.type.name === type)) {
+                handler = new SimpleOptionHandler(this.applicationAnswerService);
                 finalAnswers[`${question.type.name}`][
                     `${answers[`${questionKey}`].id_question}`
                 ] = answers[`${questionKey}`].answer;
             } 
             else if (valueAnswer.questionTypeAccepted.find((type) => question.type.name === type )) {
-                handler = valueAnswer;
+                // handler = valueAnswer;
             }
 
-            handler.manageApplicationAnswer(testApplication, answers[questionKey]);
+            await handler.manageApplicationAnswer(testApplication as InsertResult, answers[questionKey]);
         }
 
         return { testApplication, finalAnswers };
@@ -202,6 +203,29 @@ export class ExecuteTestService {
         `);
 
         return correctByQuestion;
+    }
+
+    async getResult(id_test_app) {
+        const testApp = await this.testAppService.getOne(
+            {
+                relations: [
+                    'test.display_parameters',
+                    {
+                        name: 'application_result',
+                        relations: [
+                            {
+                                name: 'item',
+                                relations: ['ranges', 'category'],
+                            },
+                        ],
+                    },
+                    // 'application_result.item.ranges',
+                ],
+            },
+            id_test_app,
+        );
+
+        return await this.testResult(testApp);
     }
 
     async testResult(testApp: TestApplication) {

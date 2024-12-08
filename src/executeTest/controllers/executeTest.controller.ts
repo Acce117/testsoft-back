@@ -27,6 +27,8 @@ export class ExecuteTestController implements IController {
             result = await this.service.executeTest(body);
 
             queryRunner.commitTransaction();
+
+            result = await this.service.getResult(result);
         } catch (err) {
             queryRunner.rollbackTransaction();
             result = err;
@@ -40,26 +42,7 @@ export class ExecuteTestController implements IController {
         let result = null;
 
         try {
-            const testApp = await this.testAppService.getOne(
-                {
-                    relations: [
-                        'test.display_parameters',
-                        {
-                            name: 'application_result',
-                            relations: [
-                                {
-                                    name: 'item',
-                                    relations: ['ranges', 'category'],
-                                },
-                            ],
-                        },
-                        // 'application_result.item.ranges',
-                    ],
-                },
-                id_test_app,
-            );
-
-            result = await this.service.testResult(testApp);
+            this.service.getResult(id_test_app);
         } catch (e) {
             console.log(e);
         }
