@@ -114,36 +114,23 @@ export class ExecuteTestService {
             if (!finalAnswers[`${question.type.name}`])
                 finalAnswers[`${question.type.name}`] = {};
 
-            if (
-                multipleOption.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
-            ) {
+            if (multipleOption.questionTypeAccepted.find((type) => question.type.name === type)) {
                 handler = multipleOption;
-            } else if (
-                simpleOption.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
-            ) {
+            } 
+            else if (simpleOption.questionTypeAccepted.find((type) => question.type.name === type)) {
                 handler = simpleOption;
                 finalAnswers[`${question.type.name}`][
                     `${answers[`${questionKey}`].id_question}`
                 ] = answers[`${questionKey}`].answer;
-            } else if (
-                valueAnswer.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
-            ) {
+            } 
+            else if (valueAnswer.questionTypeAccepted.find((type) => question.type.name === type )) {
                 handler = valueAnswer;
             }
 
-            handler.manageApplicationAnswer(
-                testApplication,
-                answers[questionKey],
-            );
+            handler.manageApplicationAnswer(testApplication, answers[questionKey]);
         }
 
-        return { testApplication: null, finalAnswers };
+        return { testApplication, finalAnswers };
     }
 
     private findQuestion(series, questionKey) {
@@ -230,31 +217,29 @@ export class ExecuteTestService {
             if (parameters.tops_values) {
                 final_results['categories'] = {};
 
+                const app_result = testApp.application_result;
                 const items_top_max = this.top(
-                    testApp.application_result,
+                    app_result,
                     (val1, val2) => val1 < val2,
                 );
 
                 for (let i = 0; i < items_top_max.length; i++) {
-                    if (
-                        !final_results['categories'][
-                            [`${items_top_max[i].item.category.name}`]
-                        ]
-                    )
-                        final_results['categories'][
-                            [`${items_top_max[i].item.category.name}`]
-                        ] = {
+                    const category_name = items_top_max[i].item.category.name;
+
+                    if (!final_results['categories'][[`${category_name}`]])
+                        final_results['categories'][[`${category_name}`]] = {
                             ...items_top_max[i].item.category,
                             items: [],
                         };
 
-                    final_results['categories'][
-                        `${items_top_max[i].item.category.name}`
-                    ].items.push({
-                        ...items_top_max[i].item,
-                        value: items_top_max[i].value,
-                        category: undefined,
-                    });
+                    const items_length = final_results['categories'][[`${category_name}`]].items.length;
+                    
+                    if (items_length < parameters.count_max)
+                        final_results['categories'][`${category_name}`].items.push({
+                            ...items_top_max[i].item,
+                            value: items_top_max[i].value,
+                            category: undefined,
+                        });
                 }
             }
 
@@ -270,12 +255,7 @@ export class ExecuteTestService {
                     item: results[i].item,
                     value: results[i].value_result,
                 });
-            else if (
-                condition(
-                    items[items.length - 1].value,
-                    results[i].value_result,
-                )
-            )
+            else if (condition(items[items.length - 1].value, results[i].value_result))
                 items = [
                     { item: results[i].item, value: results[i].value_result },
                     ...items,
