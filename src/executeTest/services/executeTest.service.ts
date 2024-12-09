@@ -9,14 +9,16 @@ import { ApplicationAnswerService } from './applicationAnswer.service';
 import { ApplicationAnswerValueService } from './applicationAnswerValue.service';
 import { TestApplication } from '../models/testApplication.entity';
 import multipleOption from './appAnswerHandler/MultipleOptionHandler';
-import simpleOption from './appAnswerHandler/simpleOptionHandler';
+import { SimpleOptionHandler } from './appAnswerHandler/simpleOptionHandler';
 import valueAnswer from './appAnswerHandler/valueAnswerHandler';
-import { AppAnswerHandler } from './appAnswerHandler/appAnswerHandler';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
+import { ApplicationResult } from '../models/applicationResult.entity';
+import { Item } from 'src/psiTest/models/item.entity';
+import { ApplicationResultService } from './appResult.service';
 
 @Injectable()
 export class ExecuteTestService {
@@ -36,6 +38,9 @@ export class ExecuteTestService {
     @Inject(EquationService)
     equationService: EquationService;
 
+    @Inject(ApplicationResultService)
+    appResultService: ApplicationResultService;
+
     @InjectDataSource()
     dataSource: DataSource;
 
@@ -54,10 +59,12 @@ export class ExecuteTestService {
 
         await this.validateTest(data, test);
         const { testApplication, finalAnswers } = await this.processAnswers(
-            data.answers,
+            data,
             test,
         );
-        return await this.processResult(testApplication, finalAnswers);
+        await this.processResult(testApplication, finalAnswers);
+        return (testApplication as InsertResult).identifiers[0]
+            .id_test_application;
     }
 
     private async validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -90,24 +97,28 @@ export class ExecuteTestService {
     }
 
     private async processAnswers(
-        answers: Array<{ [key: number]: any; id_question: number }>,
+        { user_id, id_test, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
-        // const testApplication: TestApplication = this.testAppService.create({
-        //     fk_id_user: data.user_id,
-        //     fk_id_test: data.id_test,
-        // });
+        const testApplication: InsertResult | TestApplication =
+            await this.testAppService.create({
+                fk_id_user: user_id,
+                fk_id_test: id_test,
+            });
 
         const finalAnswers = {};
         const series: TestSerie[] = test.series;
         let question: Question = null;
 
+        const appAnswers = {
+            value: [],
+            not_value: [],
+        };
         for (const questionKey in answers) {
             question = this.findQuestion(
                 series,
                 answers[questionKey].id_question,
             );
-            let handler: AppAnswerHandler = null;
 
             if (!finalAnswers[`${question.type.name}`])
                 finalAnswers[`${question.type.name}`] = {};
@@ -117,31 +128,36 @@ export class ExecuteTestService {
                     (type) => question.type.name === type,
                 )
             ) {
-                handler = multipleOption;
+                //TODO
             } else if (
-                simpleOption.questionTypeAccepted.find(
+                SimpleOptionHandler.questionTypeAccepted.find(
                     (type) => question.type.name === type,
                 )
             ) {
-                handler = simpleOption;
                 finalAnswers[`${question.type.name}`][
                     `${answers[`${questionKey}`].id_question}`
                 ] = answers[`${questionKey}`].answer;
+
+                appAnswers.not_value.push({
+                    fk_id_test_aplication: (testApplication as InsertResult)
+                        .raw[0].id_test_application,
+                    fk_id_answer: answers[`${questionKey}`].answer,
+                });
             } else if (
                 valueAnswer.questionTypeAccepted.find(
                     (type) => question.type.name === type,
                 )
             ) {
-                handler = valueAnswer;
+                //TODO
             }
-
-            // handler.manageApplicationAnswer(
-            //     testApplication,
-            //     data.answers[questionKey],
-            // );
         }
 
-        return { testApplication: null, finalAnswers };
+        if (appAnswers.not_value.length != 0)
+            this.applicationAnswerService.create(appAnswers.not_value);
+        if (appAnswers.value.length != 0)
+            this.applicationAnswerValueService.create(appAnswers.value);
+
+        return { testApplication, finalAnswers };
     }
 
     private findQuestion(series, questionKey) {
@@ -158,11 +174,11 @@ export class ExecuteTestService {
     }
 
     async processResult(
-        testApplication: TestApplication,
+        testApplication: TestApplication | InsertResult,
         finalAnswers: object,
     ) {
         const accumulated = {};
-        let corrects = null;
+        // let corrects = null;
         for (const type_question in finalAnswers) {
             if (type_question === 'Opción Simple') {
                 for (const id_question in finalAnswers[`${type_question}`]) {
@@ -200,7 +216,16 @@ export class ExecuteTestService {
         }
 
         //TODO save application result
-        return accumulated;
+        const app_result = [];
+        for (const id_item in accumulated) {
+            app_result.push({
+                fk_item: id_item,
+                fk_test_application: (testApplication as InsertResult)
+                    .identifiers[0].id_test_application,
+                value_result: accumulated[id_item],
+            });
+        }
+        await this.appResultService.create(app_result);
     }
 
     async findCorrectAnswers(id_question) {
@@ -215,19 +240,102 @@ export class ExecuteTestService {
         return correctByQuestion;
     }
 
-    async testResult(testApp: number | TestApplication) {
-        if (typeof testApp === 'number')
-            testApp = this.testAppService.getOne(
-                {
-                    relations: [
-                        {
-                            name: 'test',
-                            relations: ['type_psi_test', 'category'],
-                        },
-                        'application_result',
-                    ],
-                },
-                testApp,
-            );
+    async getResult(id_test_app) {
+        const testApp = await this.testAppService.getOne(
+            {
+                relations: [
+                    'test.display_parameters',
+                    {
+                        name: 'application_result',
+                        relations: [
+                            {
+                                name: 'item',
+                                relations: ['ranges', 'category'],
+                            },
+                        ],
+                    },
+                    // 'application_result.item.ranges',
+                ],
+            },
+            id_test_app,
+        );
+
+        return await this.testResult(testApp);
+    }
+
+    //TODO solve problems with ties
+    async testResult(testApp: TestApplication) {
+        const parameters = testApp.test.display_parameters;
+
+        const final_results = { parameters };
+
+        if (parameters.all_element_value) {
+            if (parameters.tops_values) {
+            } else {
+            }
+        } else if (parameters.element_by_category)
+            if (parameters.tops_values) {
+                final_results['categories'] = {};
+
+                const app_result = testApp.application_result;
+                const items_top_max = this.top(
+                    app_result,
+                    (val1, val2) => val1 < val2,
+                );
+
+                for (let i = 0; i < items_top_max.length; i++) {
+                    const category_name = items_top_max[i].item.category.name;
+
+                    if (!final_results['categories'][[`${category_name}`]])
+                        final_results['categories'][[`${category_name}`]] = {
+                            ...items_top_max[i].item.category,
+                            items: [],
+                        };
+
+                    const items_length =
+                        final_results['categories'][[`${category_name}`]].items
+                            .length;
+
+                    if (items_length < parameters.count_max)
+                        final_results['categories'][
+                            `${category_name}`
+                        ].items.push({
+                            ...items_top_max[i].item,
+                            value: items_top_max[i].value,
+                            category: undefined,
+                        });
+                }
+            }
+
+        return final_results;
+    }
+
+    top(results: Array<ApplicationResult>, condition) {
+        let items: Array<{ item: Item; value: number }> = [];
+
+        for (let i = 0; i < results.length; i++) {
+            if (items.length === 0)
+                items.push({
+                    item: results[i].item,
+                    value: results[i].value_result,
+                });
+            else if (
+                condition(
+                    items[items.length - 1].value,
+                    results[i].value_result,
+                )
+            )
+                items = [
+                    { item: results[i].item, value: results[i].value_result },
+                    ...items,
+                ];
+            else
+                items = [
+                    ...items,
+                    { item: results[i].item, value: results[i].value_result },
+                ];
+        }
+
+        return items;
     }
 }

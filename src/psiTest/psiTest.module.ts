@@ -19,9 +19,10 @@ import { Tribute } from './models/tribute.entity';
 import { EquationService } from './services/equation.service';
 import { ParameterDisplayResult } from './models/parameterResult.entity';
 import { Range } from './models/range.entity';
+import { TributeController } from './controllers/tribute.controller';
 
 @Module({
-    controllers: [PsiTestController],
+    controllers: [PsiTestController, TributeController],
     providers: [PsiTestService, SeriesService, TributeService, EquationService],
     imports: [
         TypeOrmModule.forFeature([

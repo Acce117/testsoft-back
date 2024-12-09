@@ -1,5 +1,6 @@
 import { TestApplication } from 'src/executeTest/models/testApplication.entity';
 import { AppAnswerHandler } from './appAnswerHandler';
+import { InsertResult } from 'typeorm';
 
 class MultipleOptionHandler extends AppAnswerHandler {
     public readonly questionTypeAccepted: string[] = [
@@ -8,7 +9,7 @@ class MultipleOptionHandler extends AppAnswerHandler {
     ];
 
     public manageApplicationAnswer(
-        testApplication: TestApplication,
+        testApplication: InsertResult,
         answer: any,
     ) {
         throw new Error('Method not implemented.');
