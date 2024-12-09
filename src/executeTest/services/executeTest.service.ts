@@ -11,7 +11,6 @@ import { TestApplication } from '../models/testApplication.entity';
 import multipleOption from './appAnswerHandler/MultipleOptionHandler';
 import { SimpleOptionHandler } from './appAnswerHandler/simpleOptionHandler';
 import valueAnswer from './appAnswerHandler/valueAnswerHandler';
-import { AppAnswerHandler } from './appAnswerHandler/appAnswerHandler';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, InsertResult } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
@@ -19,6 +18,7 @@ import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
 import { ApplicationResult } from '../models/applicationResult.entity';
 import { Item } from 'src/psiTest/models/item.entity';
+import { ApplicationResultService } from './appResult.service';
 
 @Injectable()
 export class ExecuteTestService {
@@ -37,6 +37,9 @@ export class ExecuteTestService {
 
     @Inject(EquationService)
     equationService: EquationService;
+
+    @Inject(ApplicationResultService)
+    appResultService: ApplicationResultService;
 
     @InjectDataSource()
     dataSource: DataSource;
@@ -59,8 +62,9 @@ export class ExecuteTestService {
             data,
             test,
         );
-        await this.processResult(testApplication as TestApplication, finalAnswers);
-        return (testApplication as InsertResult).identifiers[0].id_test_application;
+        await this.processResult(testApplication, finalAnswers);
+        return (testApplication as InsertResult).identifiers[0]
+            .id_test_application;
     }
 
     private async validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -96,40 +100,62 @@ export class ExecuteTestService {
         { user_id, id_test, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
-        const testApplication: InsertResult | TestApplication = await this.testAppService.create({
-            fk_id_user: user_id,
-            fk_id_test: id_test,
-        });
+        const testApplication: InsertResult | TestApplication =
+            await this.testAppService.create({
+                fk_id_user: user_id,
+                fk_id_test: id_test,
+            });
 
         const finalAnswers = {};
         const series: TestSerie[] = test.series;
         let question: Question = null;
 
+        const appAnswers = {
+            value: [],
+            not_value: [],
+        };
         for (const questionKey in answers) {
             question = this.findQuestion(
                 series,
                 answers[questionKey].id_question,
             );
-            let handler: AppAnswerHandler = null;
 
             if (!finalAnswers[`${question.type.name}`])
                 finalAnswers[`${question.type.name}`] = {};
 
-            if (multipleOption.questionTypeAccepted.find((type) => question.type.name === type)) {
-                // handler = multipleOption;
-            } 
-            else if (SimpleOptionHandler.questionTypeAccepted.find((type) => question.type.name === type)) {
-                handler = new SimpleOptionHandler(this.applicationAnswerService);
+            if (
+                multipleOption.questionTypeAccepted.find(
+                    (type) => question.type.name === type,
+                )
+            ) {
+                //TODO
+            } else if (
+                SimpleOptionHandler.questionTypeAccepted.find(
+                    (type) => question.type.name === type,
+                )
+            ) {
                 finalAnswers[`${question.type.name}`][
                     `${answers[`${questionKey}`].id_question}`
                 ] = answers[`${questionKey}`].answer;
-            } 
-            else if (valueAnswer.questionTypeAccepted.find((type) => question.type.name === type )) {
-                // handler = valueAnswer;
-            }
 
-            await handler.manageApplicationAnswer(testApplication as InsertResult, answers[questionKey]);
+                appAnswers.not_value.push({
+                    fk_id_test_aplication: (testApplication as InsertResult)
+                        .raw[0].id_test_application,
+                    fk_id_answer: answers[`${questionKey}`].answer,
+                });
+            } else if (
+                valueAnswer.questionTypeAccepted.find(
+                    (type) => question.type.name === type,
+                )
+            ) {
+                //TODO
+            }
         }
+
+        if (appAnswers.not_value.length != 0)
+            this.applicationAnswerService.create(appAnswers.not_value);
+        if (appAnswers.value.length != 0)
+            this.applicationAnswerValueService.create(appAnswers.value);
 
         return { testApplication, finalAnswers };
     }
@@ -148,7 +174,7 @@ export class ExecuteTestService {
     }
 
     async processResult(
-        testApplication: TestApplication,
+        testApplication: TestApplication | InsertResult,
         finalAnswers: object,
     ) {
         const accumulated = {};
@@ -190,7 +216,16 @@ export class ExecuteTestService {
         }
 
         //TODO save application result
-        return accumulated;
+        const app_result = [];
+        for (const id_item in accumulated) {
+            app_result.push({
+                fk_item: id_item,
+                fk_test_application: (testApplication as InsertResult)
+                    .identifiers[0].id_test_application,
+                value_result: accumulated[id_item],
+            });
+        }
+        await this.appResultService.create(app_result);
     }
 
     async findCorrectAnswers(id_question) {
@@ -228,6 +263,7 @@ export class ExecuteTestService {
         return await this.testResult(testApp);
     }
 
+    //TODO solve problems with ties
     async testResult(testApp: TestApplication) {
         const parameters = testApp.test.display_parameters;
 
@@ -256,10 +292,14 @@ export class ExecuteTestService {
                             items: [],
                         };
 
-                    const items_length = final_results['categories'][[`${category_name}`]].items.length;
-                    
+                    const items_length =
+                        final_results['categories'][[`${category_name}`]].items
+                            .length;
+
                     if (items_length < parameters.count_max)
-                        final_results['categories'][`${category_name}`].items.push({
+                        final_results['categories'][
+                            `${category_name}`
+                        ].items.push({
                             ...items_top_max[i].item,
                             value: items_top_max[i].value,
                             category: undefined,
@@ -279,7 +319,12 @@ export class ExecuteTestService {
                     item: results[i].item,
                     value: results[i].value_result,
                 });
-            else if (condition(items[items.length - 1].value, results[i].value_result))
+            else if (
+                condition(
+                    items[items.length - 1].value,
+                    results[i].value_result,
+                )
+            )
                 items = [
                     { item: results[i].item, value: results[i].value_result },
                     ...items,

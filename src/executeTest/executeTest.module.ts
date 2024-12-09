@@ -11,6 +11,7 @@ import { ApplicationResult } from './models/applicationResult.entity';
 import { ApplicationAnswer } from './models/applicationAnswer.entity';
 import { ApplicationAnswerValue } from './models/applicationAnswerValue.entity';
 import { TestApplicationController } from './controllers/testApp.controller';
+import { ApplicationResultService } from './services/appResult.service';
 
 @Module({
     controllers: [ExecuteTestController, TestApplicationController],
@@ -19,6 +20,7 @@ import { TestApplicationController } from './controllers/testApp.controller';
         TestApplicationService,
         ApplicationAnswerService,
         ApplicationAnswerValueService,
+        ApplicationResultService,
     ],
     imports: [
         PsiTestModule,
