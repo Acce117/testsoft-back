@@ -8,9 +8,6 @@ import { Question } from 'src/psiTest/models/question.entity';
 import { ApplicationAnswerService } from './applicationAnswer.service';
 import { ApplicationAnswerValueService } from './applicationAnswerValue.service';
 import { TestApplication } from '../models/testApplication.entity';
-import multipleOption from './appAnswerHandler/MultipleOptionHandler';
-import { SimpleOptionHandler } from './appAnswerHandler/simpleOptionHandler';
-import valueAnswer from './appAnswerHandler/valueAnswerHandler';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, InsertResult } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
@@ -19,6 +16,11 @@ import { EquationService } from 'src/psiTest/services/equation.service';
 import { ApplicationResult } from '../models/applicationResult.entity';
 import { Item } from 'src/psiTest/models/item.entity';
 import { ApplicationResultService } from './appResult.service';
+import {
+    multipleOptionTypes,
+    simpleOptionTypes,
+    valueAnswerTypes,
+} from './appAnswerHandler/valueAnswerHandler';
 
 @Injectable()
 export class ExecuteTestService {
@@ -114,41 +116,44 @@ export class ExecuteTestService {
             value: [],
             not_value: [],
         };
-        for (const questionKey in answers) {
-            question = this.findQuestion(
-                series,
-                answers[questionKey].id_question,
-            );
+        for (const answer of answers) {
+            question = this.findQuestion(series, answer.id_question);
 
             if (!finalAnswers[`${question.type.name}`])
                 finalAnswers[`${question.type.name}`] = {};
 
             if (
-                multipleOption.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
+                multipleOptionTypes.find((type) => question.type.name === type)
             ) {
                 //TODO
             } else if (
-                SimpleOptionHandler.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
+                simpleOptionTypes.find((type) => question.type.name === type)
             ) {
-                finalAnswers[`${question.type.name}`][
-                    `${answers[`${questionKey}`].id_question}`
-                ] = answers[`${questionKey}`].answer;
+                finalAnswers[`${question.type.name}`][`${answer.id_question}`] =
+                    answer.answer;
 
                 appAnswers.not_value.push({
                     fk_id_test_aplication: (testApplication as InsertResult)
                         .raw[0].id_test_application,
-                    fk_id_answer: answers[`${questionKey}`].answer,
+                    fk_id_answer: answer.answer,
                 });
             } else if (
-                valueAnswer.questionTypeAccepted.find(
-                    (type) => question.type.name === type,
-                )
+                valueAnswerTypes.find((type) => question.type.name === type)
             ) {
-                //TODO
+                const values = answer.answer;
+
+                for (const ans of values) {
+                    finalAnswers[`${question.type.name}`][
+                        `${answer.id_question}`
+                    ][`${ans.id_answer}`] = ans.value;
+
+                    appAnswers.value.push({
+                        fk_id_test_aplication: (testApplication as InsertResult)
+                            .raw[0].id_test_application,
+                        fk_id_answer: ans.id_answer,
+                        value: ans.value,
+                    });
+                }
             }
         }
 
@@ -212,6 +217,29 @@ export class ExecuteTestService {
                     //     //TODO
                     // }
                 }
+            } else if (
+                type_question === 'Opción Múltiple con asignación de valores'
+            ) {
+                for (const id_question in finalAnswers[`${type_question}`]) {
+                    const answers =
+                        finalAnswers[`${type_question}`][`${id_question}`];
+
+                    for (const id_answer in answers) {
+                        const tribute: Tribute =
+                            await this.tributeService.getOne({
+                                where: {
+                                    fk_id_answer: id_answer,
+                                },
+                            });
+
+                        if (!accumulated[tribute.fk_id_item])
+                            accumulated[tribute.fk_id_item] =
+                                answers[`${id_answer}`];
+                        else
+                            accumulated[tribute.fk_id_item] +=
+                                answers[`${id_answer}`];
+                    }
+                }
             }
         }
 
@@ -254,7 +282,6 @@ export class ExecuteTestService {
                             },
                         ],
                     },
-                    // 'application_result.item.ranges',
                 ],
             },
             id_test_app,
@@ -271,6 +298,25 @@ export class ExecuteTestService {
 
         if (parameters.all_element_value) {
             if (parameters.tops_values) {
+                const app_result = testApp.application_result;
+                const items_ordered = this.top(
+                    app_result,
+                    (val1, val2) => val1 < val2,
+                );
+
+                final_results['preferred'] = [];
+                //TODO deal with ties
+                for (let i = 0; i < parameters.count_max; i++) {
+                    final_results['preferred'].push(items_ordered[i]);
+                }
+                final_results['avoided'] = [];
+                for (
+                    let i = items_ordered.length - 1;
+                    i >= items_ordered.length - parameters.count_min;
+                    i--
+                ) {
+                    final_results['avoided'].push(items_ordered[i]);
+                }
             } else {
             }
         } else if (parameters.element_by_category)
@@ -278,17 +324,17 @@ export class ExecuteTestService {
                 final_results['categories'] = {};
 
                 const app_result = testApp.application_result;
-                const items_top_max = this.top(
+                const items_ordered = this.top(
                     app_result,
                     (val1, val2) => val1 < val2,
                 );
 
-                for (let i = 0; i < items_top_max.length; i++) {
-                    const category_name = items_top_max[i].item.category.name;
+                for (let i = 0; i < items_ordered.length; i++) {
+                    const category_name = items_ordered[i].item.category.name;
 
                     if (!final_results['categories'][[`${category_name}`]])
                         final_results['categories'][[`${category_name}`]] = {
-                            ...items_top_max[i].item.category,
+                            ...items_ordered[i].item.category,
                             items: [],
                         };
 
@@ -300,8 +346,8 @@ export class ExecuteTestService {
                         final_results['categories'][
                             `${category_name}`
                         ].items.push({
-                            ...items_top_max[i].item,
-                            value: items_top_max[i].value,
+                            ...items_ordered[i].item,
+                            value: items_ordered[i].value,
                             category: undefined,
                         });
                 }

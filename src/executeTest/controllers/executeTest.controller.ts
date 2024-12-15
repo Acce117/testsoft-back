@@ -42,7 +42,7 @@ export class ExecuteTestController implements IController {
         let result = null;
 
         try {
-            this.service.getResult(id_test_app);
+            result = this.service.getResult(id_test_app);
         } catch (e) {
             console.log(e);
         }

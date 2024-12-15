@@ -1,37 +1,14 @@
-import { TestApplication } from 'src/executeTest/models/testApplication.entity';
-import { AppAnswerHandler } from './appAnswerHandler';
-import { Inject } from '@nestjs/common';
-import { ApplicationAnswerValueService } from '../applicationAnswerValue.service';
-import { InsertResult } from 'typeorm';
+const valueAnswerTypes: string[] = [
+    'Opción Múltiple con asignación de valores',
+    'Respuesta escrita',
+    'Todo o nada respuesta escrita',
+];
 
-class ValueAnswerHandler extends AppAnswerHandler {
-    @Inject(ApplicationAnswerValueService)
-    appAnswerValueService: ApplicationAnswerValueService;
+const simpleOptionTypes: string[] = ['Opción Simple'];
 
-    public readonly questionTypeAccepted: string[] = [
-        'Opción Múltiple con asignación de valores',
-        'Respuesta escrita',
-        'Todo o nada respuesta escrita',
-    ];
+const multipleOptionTypes: string[] = [
+    'Opción Múltiple',
+    'Todo o nada selección múltiple',
+];
 
-    public manageApplicationAnswer(
-        testApplication: InsertResult,
-        answer: any,
-    ) {
-        const appAnswers: Array<any> = [];
-
-        answer.foreach((answer) => {
-            appAnswers.push({
-                fk_id_test_application: testApplication.identifiers[0].id_test_application,
-                fk_id_answer: answer.answer,
-                value: answer,
-            });
-        });
-
-        return this.appAnswerValueService.create(appAnswers);
-    }
-}
-
-const valueAnswer = new ValueAnswerHandler();
-
-export default valueAnswer;
+export { valueAnswerTypes, simpleOptionTypes, multipleOptionTypes };
