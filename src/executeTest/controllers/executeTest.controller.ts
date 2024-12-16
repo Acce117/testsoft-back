@@ -31,7 +31,7 @@ export class ExecuteTestController implements IController {
             result = await this.service.getResult(result);
         } catch (err) {
             queryRunner.rollbackTransaction();
-            result = err;
+            result = err.message;
         }
 
         return result;

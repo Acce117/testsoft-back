@@ -1,5 +1,4 @@
 import {
-    BaseEntity,
     Column,
     Entity,
     JoinColumn,
@@ -8,13 +7,19 @@ import {
 } from 'typeorm';
 import { TestApplication } from './testApplication.entity';
 import { Answer } from 'src/psiTest/models/answer.entity';
+import { BaseModel } from 'src/common/models/baseModel';
 
 @Entity({
     name: 'aplication_answer',
 })
-export class ApplicationAnswer extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id_aplication_answer: number;
+export class ApplicationAnswer extends BaseModel {
+    static alias: string = 'application_answer';
+    static primaryKey: string = 'id_aplication_answer';
+
+    @PrimaryGeneratedColumn({
+        name: 'id_aplication_answer',
+    })
+    id_application_answer: number;
 
     @OneToOne(() => TestApplication)
     @JoinColumn({

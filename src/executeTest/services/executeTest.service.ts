@@ -142,16 +142,25 @@ export class ExecuteTestService {
             ) {
                 const values = answer.answer;
 
-                for (const ans of values) {
+                for (const ans in values) {
+                    if (
+                        !finalAnswers[`${question.type.name}`][
+                            `${answer.id_question}`
+                        ]
+                    )
+                        finalAnswers[`${question.type.name}`][
+                            `${answer.id_question}`
+                        ] = {};
+
                     finalAnswers[`${question.type.name}`][
                         `${answer.id_question}`
-                    ][`${ans.id_answer}`] = ans.value;
+                    ][`${ans}`] = values[`${ans}`];
 
                     appAnswers.value.push({
                         fk_id_test_aplication: (testApplication as InsertResult)
                             .raw[0].id_test_application,
-                        fk_id_answer: ans.id_answer,
-                        value: ans.value,
+                        fk_id_answer: ans,
+                        value: values[`${ans}`],
                     });
                 }
             }
