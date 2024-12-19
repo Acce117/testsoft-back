@@ -64,4 +64,18 @@ export class Group extends BaseModel {
         },
     })
     users: User[];
+
+    @ManyToMany(() => User, (user) => user.my_groups)
+    @JoinTable({
+        name: 'group_owner',
+        inverseJoinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'user_id',
+        },
+        joinColumn: {
+            name: 'group_id',
+            referencedColumnName: 'id_group',
+        },
+    })
+    owner: User[];
 }

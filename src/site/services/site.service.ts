@@ -24,6 +24,7 @@ export class SiteService {
         const user: User = await this.userService.getOne({
             where: {
                 username: credentials.username,
+                enabled: 1,
                 deleted: 0,
             },
         });

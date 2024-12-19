@@ -52,6 +52,9 @@ export class User extends BaseModel {
     @Column({ default: 0, type: 'tinyint' })
     deleted: number;
 
+    @Column({ default: 0, type: 'tinyint' })
+    enabled: number;
+
     @OneToOne(() => Country)
     @JoinColumn({
         name: 'country_id',
@@ -99,4 +102,18 @@ export class User extends BaseModel {
         },
     })
     groups: Group[];
+
+    @ManyToMany(() => Group, (group) => group)
+    @JoinTable({
+        name: 'group_owner',
+        joinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'user_id',
+        },
+        inverseJoinColumn: {
+            name: 'group_id',
+            referencedColumnName: 'id_group',
+        },
+    })
+    my_groups: Group[];
 }
