@@ -11,10 +11,16 @@ import { Country } from './models/country.entity';
 import { CountryService } from './services/country.service';
 import { CountryController } from './controllers/country.controller';
 import { AuthAssignment } from './models/auth_assignment.entity';
+import { AuthAssignmentService } from './services/AuthAssignment.service';
 
 @Module({
     controllers: [GroupController, UserController, CountryController],
-    providers: [GroupService, UserService, CountryService],
+    providers: [
+        GroupService,
+        UserService,
+        CountryService,
+        AuthAssignmentService,
+    ],
     imports: [
         TypeOrmModule.forFeature([
             Group,
@@ -24,6 +30,6 @@ import { AuthAssignment } from './models/auth_assignment.entity';
             AuthAssignment,
         ]),
     ],
-    exports: [UserService],
+    exports: [UserService, AuthAssignmentService],
 })
 export class TenantModule {}

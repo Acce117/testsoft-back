@@ -1,5 +1,11 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Group } from './group.entity';
 import { User } from './user.entity';
 
@@ -10,6 +16,12 @@ export class AuthAssignment extends BaseModel {
 
     @PrimaryGeneratedColumn()
     assignment_id: number;
+
+    @Column()
+    user_id: number;
+
+    @Column()
+    item_id: number;
 
     @ManyToOne(() => Group)
     @JoinColumn({

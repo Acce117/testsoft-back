@@ -4,9 +4,13 @@ import { UserCredentials } from '../dto/userCredentials.dto';
 import { CreateUserDto } from '../dto/register_user.dto';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { instanceToPlain } from 'class-transformer';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Controller()
 export class SiteController {
+    @InjectDataSource() private readonly dataSource: DataSource;
+
     constructor(private readonly siteService: SiteService) {}
 
     @Post('/login')
@@ -15,8 +19,20 @@ export class SiteController {
     }
 
     @Post('/sign_in')
-    signIn(@Body() user: CreateUserDto) {
-        return this.siteService.signIn(user);
+    async signIn(@Body() user) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        let result = null;
+        try {
+            await queryRunner.startTransaction();
+            result = await this.siteService.signIn(user);
+
+            await queryRunner.commitTransaction();
+        } catch (e) {
+            queryRunner.rollbackTransaction();
+            result = e.message;
+        }
+
+        return result;
     }
 
     @Get('/me')

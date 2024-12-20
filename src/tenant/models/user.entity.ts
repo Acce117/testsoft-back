@@ -55,6 +55,9 @@ export class User extends BaseModel {
     @Column({ default: 0, type: 'tinyint' })
     enabled: number;
 
+    @Column()
+    country_id: number;
+
     @OneToOne(() => Country)
     @JoinColumn({
         name: 'country_id',

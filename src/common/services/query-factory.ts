@@ -3,7 +3,11 @@ import { BaseEntity, SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QueryFactory {
-    public structuralQuery(params, model, query?) {
+    public structuralQuery(
+        params,
+        model,
+        query?: SelectQueryBuilder<BaseEntity>,
+    ) {
         if (!query) query = model.createQueryBuilder(model.alias);
 
         if (params.select) query = query.select(params.select);
