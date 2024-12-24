@@ -11,7 +11,9 @@ export class ValidateDtoPipe implements PipeTransform {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(value: any, metadata: ArgumentMetadata) {
         if (this.dtoType) {
-            const validation = validateSync(new this.dtoType(value));
+            const dto = new this.dtoType(value);
+            const validation = validateSync(dto);
+
             if (validation.length > 0)
                 throw new BadRequestException(validation);
         }

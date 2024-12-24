@@ -1,9 +1,10 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { UserService } from '../../tenant/services/user.service';
-import { CreateUserDto } from 'src/site/dto/register_user.dto';
+
 import { Body, Get, Param, Post } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
+import { CreateUserDto } from '../dto/create_user.dto';
 
 export class UserController extends CrudBaseController(
     'user',
