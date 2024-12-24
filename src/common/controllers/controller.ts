@@ -31,9 +31,12 @@ export function CrudBaseController(
 
         @Get()
         @UseInterceptors(ClassSerializerInterceptor)
-        async getAll(@Body() params) {
+        async getAll(@Query() params, @Body() body) {
             try {
-                const result = await this.service.getAll(params);
+                const result = await this.service.getAll({
+                    ...params,
+                    ...body,
+                });
                 return instanceToPlain(result);
             } catch (err) {
                 console.log(err.message);
@@ -41,9 +44,12 @@ export function CrudBaseController(
         }
 
         @Get(':id')
-        async getOne(@Param('id') id: number, @Query() params) {
+        async getOne(@Param('id') id: number, @Query() params, @Body() body) {
             try {
-                const result = await this.service.getOne(params, id);
+                const result = await this.service.getOne(
+                    { ...params, ...body },
+                    id,
+                );
                 return instanceToPlain(result);
             } catch (err) {
                 console.log(err.message);

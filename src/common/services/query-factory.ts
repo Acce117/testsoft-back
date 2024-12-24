@@ -57,24 +57,27 @@ export class QueryFactory {
                     alias = rel;
                 });
             } else if (typeof relation === 'object') {
+                let resultString,
+                    resultParams = null;
+
+                if (relation.where) {
+                    const where = this.buildWhere(
+                        relation.where,
+                        relation.name,
+                    );
+                    resultString = where.resultString;
+                    resultParams = where.resultParams;
+                }
+
                 query.leftJoinAndSelect(
                     `${alias}.${relation.name || relation[`[name]`]}`,
                     relation.name || relation['[name]'],
+                    resultString,
+                    resultParams,
                 );
+
                 if (relation.relations)
                     query = this.setRelations(query, relation, relation.name);
-                //     const { resultString, resultParams } = this.buildWhere(
-                //         relation.where,
-                //         relation.name,
-                //     );
-
-                //     query.leftJoinAndSelect(
-                //         `${model.alias}.${relation.name}`,
-                //         relation.name,
-                //         resultString,
-                //         resultParams,
-                //     );
-                // }
             }
         });
 
