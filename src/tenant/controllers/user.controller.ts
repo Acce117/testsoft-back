@@ -3,6 +3,7 @@ import { UserService } from '../../tenant/services/user.service';
 import { CreateUserDto } from 'src/site/dto/register_user.dto';
 import { Body, Get, Param, Post } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
+import { handleTransaction } from 'src/common/utils/handleTransaction';
 
 export class UserController extends CrudBaseController(
     'user',
@@ -16,21 +17,13 @@ export class UserController extends CrudBaseController(
 
     @Post('/my_group')
     async createMyGroup(@Body() data, @JwtPayload() payload) {
-        const queryRunner = this.dataSource.createQueryRunner();
-        let result;
-        try {
-            await queryRunner.startTransaction();
-            result = await (this.service as UserService).createMyGroup(
-                data,
-                payload.id_user,
-            );
-
-            await queryRunner.commitTransaction();
-        } catch (e) {
-            queryRunner.rollbackTransaction();
-            result = e.message;
-        }
-
-        return result;
+        return await handleTransaction(
+            this.dataSource,
+            async () =>
+                await (this.service as UserService).createMyGroup(
+                    data,
+                    payload.id_user,
+                ),
+        );
     }
 }

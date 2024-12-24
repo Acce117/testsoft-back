@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { CreateUserDto } from '../dto/register_user.dto';
@@ -6,33 +6,29 @@ import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { instanceToPlain } from 'class-transformer';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { handleTransaction } from 'src/common/utils/handleTransaction';
 
 @Controller()
 export class SiteController {
     @InjectDataSource() private readonly dataSource: DataSource;
 
-    constructor(private readonly siteService: SiteService) {}
+    constructor(private readonly siteService: SiteService) {
+        console.log('hola');
+    }
 
     @Post('/login')
-    login(@Body() credentials: UserCredentials) {
-        return this.siteService.login(credentials);
+    async login(@Body() credentials: UserCredentials) {
+        return await handleTransaction(this.dataSource, async () =>
+            this.siteService.login(credentials),
+        );
     }
 
     @Post('/sign_in')
     async signIn(@Body() user) {
-        const queryRunner = this.dataSource.createQueryRunner();
-        let result = null;
-        try {
-            await queryRunner.startTransaction();
-            result = await this.siteService.signIn(user);
-
-            await queryRunner.commitTransaction();
-        } catch (e) {
-            queryRunner.rollbackTransaction();
-            result = e.message;
-        }
-
-        return result;
+        return await handleTransaction(
+            this.dataSource,
+            async () => await this.siteService.signIn(user),
+        );
     }
 
     @Get('/me')

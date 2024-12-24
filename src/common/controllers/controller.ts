@@ -17,6 +17,7 @@ import { IController } from './controller.interface';
 import { ICrudService } from '../services/service.interface';
 import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 import { instanceToPlain } from 'class-transformer';
+import { handleTransaction } from '../utils/handleTransaction';
 
 export function CrudBaseController(
     prefix: string,
@@ -51,22 +52,10 @@ export function CrudBaseController(
 
         @Post()
         async create(@Body(new ValidateDtoPipe(createDto)) body) {
-            const queryRunner = this.dataSource.createQueryRunner();
-            let result = null;
-
-            try {
-                await queryRunner.startTransaction();
-
-                result = await this.service.create(body);
-                result = instanceToPlain(result);
-
-                queryRunner.commitTransaction();
-            } catch (err) {
-                await queryRunner.rollbackTransaction();
-                result = err;
-            }
-
-            return result;
+            return await handleTransaction(this.dataSource, async () => {
+                const result = await this.service.create(body);
+                return instanceToPlain(result);
+            });
         }
 
         @Patch(':id')
@@ -74,22 +63,10 @@ export function CrudBaseController(
             @Param('id') id: number,
             @Body(new ValidateDtoPipe(null)) body,
         ) {
-            const queryRunner = this.dataSource.createQueryRunner();
-
-            let result = null;
-            try {
-                await queryRunner.startTransaction();
-
-                result = await this.service.update(id, body);
-                result = instanceToPlain(result);
-
-                queryRunner.commitTransaction();
-            } catch (err) {
-                await queryRunner.rollbackTransaction();
-                result = err;
-            }
-
-            return result;
+            return await handleTransaction(this.dataSource, async () => {
+                const result = await this.service.update(id, body);
+                return instanceToPlain(result);
+            });
         }
     }
 

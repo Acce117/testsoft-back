@@ -6,6 +6,7 @@ import { IController } from 'src/common/controllers/controller.interface';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { TestApplicationService } from '../services/testApplication.service';
+import { handleTransaction } from 'src/common/utils/handleTransaction';
 
 @Controller('execute_test')
 export class ExecuteTestController implements IController {
@@ -16,25 +17,32 @@ export class ExecuteTestController implements IController {
 
     @Post()
     async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
-        const queryRunner = this.dataSource.createQueryRunner();
-        let result = null;
+        // const queryRunner = this.dataSource.createQueryRunner();
+        // let result = null;
 
-        try {
-            await queryRunner.startTransaction();
+        // try {
+        //     await queryRunner.startTransaction();
 
+        //     body.user_id = jwtPayload.user_id;
+
+        //     result = await this.service.executeTest(body);
+
+        //     queryRunner.commitTransaction();
+
+        //     result = await this.service.getResult(result);
+        // } catch (err) {
+        //     queryRunner.rollbackTransaction();
+        //     result = err.message;
+        // }
+
+        // return result;
+
+        return await handleTransaction(this.dataSource, async () => {
             body.user_id = jwtPayload.user_id;
+            const result = await this.service.executeTest(body);
 
-            result = await this.service.executeTest(body);
-
-            queryRunner.commitTransaction();
-
-            result = await this.service.getResult(result);
-        } catch (err) {
-            queryRunner.rollbackTransaction();
-            result = err.message;
-        }
-
-        return result;
+            return await this.service.getResult(result);
+        });
     }
 
     @Get('/:id')
