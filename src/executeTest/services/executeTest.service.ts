@@ -299,7 +299,7 @@ export class ExecuteTestService {
         return await this.testResult(testApp);
     }
 
-    //TODO solve problems with ties
+    //TODO solve problems with ties in Belbin
     async testResult(testApp: TestApplication) {
         const parameters = testApp.test.display_parameters;
 
@@ -347,11 +347,32 @@ export class ExecuteTestService {
                             items: [],
                         };
 
+                    if (
+                        final_results['categories'][`${category_name}`].items
+                            .length !== 0
+                    ) {
+                        const last_item_index =
+                            final_results['categories'][`${category_name}`]
+                                .items.length - 1;
+                        if (
+                            final_results['categories'][`${category_name}`]
+                                .items[last_item_index].value ===
+                            items_ordered[i].value
+                        )
+                            if (
+                                final_results['categories'][`${category_name}`]
+                                    .items[last_item_index].priority <
+                                items_ordered[i].item.priority
+                            )
+                                final_results['categories'][
+                                    `${category_name}`
+                                ].items.pop();
+                    }
                     const items_length =
                         final_results['categories'][[`${category_name}`]].items
                             .length;
 
-                    if (items_length < parameters.count_max)
+                    if (items_length < parameters.count_max) {
                         final_results['categories'][
                             `${category_name}`
                         ].items.push({
@@ -359,6 +380,7 @@ export class ExecuteTestService {
                             value: items_ordered[i].value,
                             category: undefined,
                         });
+                    }
                 }
             }
 

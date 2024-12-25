@@ -18,14 +18,10 @@ export class Item extends BaseModel {
     @PrimaryGeneratedColumn()
     id_item: number;
 
-    @Column({
-        type: 'varchar',
-    })
+    @Column({ type: 'varchar' })
     name: string;
 
-    @Column({
-        type: 'varchar',
-    })
+    @Column({ type: 'varchar' })
     description: string;
 
     @ManyToOne(() => Category)
@@ -37,4 +33,7 @@ export class Item extends BaseModel {
 
     @OneToMany(() => Range, (range) => range.item)
     ranges: Range[];
+
+    @Column({ type: 'int' })
+    priority: number;
 }
