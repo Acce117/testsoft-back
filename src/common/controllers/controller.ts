@@ -23,6 +23,7 @@ export function CrudBaseController(
     prefix: string,
     service: object,
     createDto: any = null,
+    updateDto: any = null,
 ): Type<IController> {
     @Controller(prefix)
     class CrudController implements IController {
@@ -67,7 +68,7 @@ export function CrudBaseController(
         @Patch(':id')
         async update(
             @Param('id') id: number,
-            @Body(new ValidateDtoPipe(null)) body,
+            @Body(new ValidateDtoPipe(updateDto)) body,
         ) {
             return await handleTransaction(this.dataSource, async () => {
                 const result = await this.service.update(id, body);

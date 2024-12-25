@@ -5,11 +5,13 @@ import { Body, Get, Param, Post } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { CreateUserDto } from '../dto/create_user.dto';
+import { UpdateUserDto } from '../dto/update_user.dto';
 
 export class UserController extends CrudBaseController(
     'user',
     UserService,
     CreateUserDto,
+    UpdateUserDto,
 ) {
     @Get('/:user_id/tests')
     public async getUserTests(@Param('user_id') user_id: number) {
