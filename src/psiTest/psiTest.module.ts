@@ -21,10 +21,18 @@ import { ParameterDisplayResult } from './models/parameterResult.entity';
 import { Range } from './models/range.entity';
 import { TributeController } from './controllers/tribute.controller';
 import { QuestionTopValue } from './models/questionValue.entity';
+import { TypePsiTestController } from './controllers/typePsiTest.controller';
+import { TypePsiTestService } from './services/typePsiTest.service';
 
 @Module({
-    controllers: [PsiTestController, TributeController],
-    providers: [PsiTestService, SeriesService, TributeService, EquationService],
+    controllers: [PsiTestController, TributeController, TypePsiTestController],
+    providers: [
+        PsiTestService,
+        SeriesService,
+        TributeService,
+        EquationService,
+        TypePsiTestService,
+    ],
     imports: [
         TypeOrmModule.forFeature([
             PsiTest,
