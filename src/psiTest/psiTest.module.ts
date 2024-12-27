@@ -23,15 +23,39 @@ import { TributeController } from './controllers/tribute.controller';
 import { QuestionTopValue } from './models/questionValue.entity';
 import { TypePsiTestController } from './controllers/typePsiTest.controller';
 import { TypePsiTestService } from './services/typePsiTest.service';
+import { TestSerieController } from './controllers/testSerie.controller';
+import { TestSerieService } from './services/testSerie.service';
+import { QuestionController } from './controllers/question.controller';
+import { QuestionService } from './services/question.service';
+import { CategoryController } from './controllers/category.controller';
+import { CategoryService } from './services/category.service';
+import { ItemService } from './services/item.service';
+import { ItemController } from './controllers/item.controller';
+import { QuestionValueService } from './services/questionValue.service';
+import { QuestionValueController } from './controllers/questionValue.controller';
 
 @Module({
-    controllers: [PsiTestController, TributeController, TypePsiTestController],
+    controllers: [
+        PsiTestController,
+        TributeController,
+        TypePsiTestController,
+        TestSerieController,
+        QuestionController,
+        CategoryController,
+        ItemController,
+        QuestionValueController,
+    ],
     providers: [
         PsiTestService,
         SeriesService,
         TributeService,
         EquationService,
         TypePsiTestService,
+        TestSerieService,
+        QuestionService,
+        CategoryService,
+        ItemService,
+        QuestionValueService,
     ],
     imports: [
         TypeOrmModule.forFeature([
