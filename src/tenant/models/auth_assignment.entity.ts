@@ -23,6 +23,9 @@ export class AuthAssignment extends BaseModel {
     @Column()
     item_id: number;
 
+    @Column()
+    group_id: number;
+
     @ManyToOne(() => Group)
     @JoinColumn({
         name: 'group_id',

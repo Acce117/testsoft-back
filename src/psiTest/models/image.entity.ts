@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Answer } from './answer.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({
     name: 'images',
@@ -24,6 +25,14 @@ export class Image extends BaseModel {
         nullable: false,
     })
     url: string;
+
+    @Column()
+    @Exclude()
+    id_question: number;
+
+    @Column()
+    @Exclude()
+    id_answer: number;
 
     @OneToOne(() => Question, (question) => question.image)
     @JoinColumn({

@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PsiTest } from './psiTest.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class ParameterDisplayResult extends BaseModel {
@@ -15,6 +16,10 @@ export class ParameterDisplayResult extends BaseModel {
 
     @PrimaryGeneratedColumn()
     id_parameter_display: number;
+
+    @Column()
+    @Exclude()
+    fk_id_test: number;
 
     @Column()
     global_result: boolean;

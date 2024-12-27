@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Range } from './range.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Item extends BaseModel {
@@ -23,6 +24,10 @@ export class Item extends BaseModel {
 
     @Column({ type: 'varchar' })
     description: string;
+
+    @Column()
+    @Exclude()
+    fk_category: number;
 
     @ManyToOne(() => Category)
     @JoinColumn({

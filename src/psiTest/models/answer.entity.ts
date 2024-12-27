@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Image } from './image.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Answer extends BaseModel {
@@ -23,6 +24,10 @@ export class Answer extends BaseModel {
         nullable: false,
     })
     text: string;
+
+    @Column()
+    @Exclude()
+    fk_id_question: number;
 
     @ManyToOne(() => Question, (question) => question.answers)
     @JoinColumn({

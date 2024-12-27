@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Item } from './item.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Range extends BaseModel {
@@ -35,6 +36,10 @@ export class Range extends BaseModel {
         type: 'varchar',
     })
     description: string;
+
+    @Column()
+    @Exclude()
+    fk_id_item: number;
 
     @ManyToOne(() => Item, (item) => item.ranges)
     @JoinColumn({

@@ -13,6 +13,7 @@ import { Answer } from './answer.entity';
 import { TypeQuestion } from './typeQuestion.entity';
 import { Image } from './image.entity';
 import { QuestionTopValue } from './questionValue.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Question extends BaseModel {
@@ -27,6 +28,18 @@ export class Question extends BaseModel {
         nullable: false,
     })
     statement: string;
+
+    @Column()
+    @Exclude()
+    fk_id_type_question: number;
+
+    @Column()
+    @Exclude()
+    fk_id_serie: number;
+
+    @Column()
+    @Exclude()
+    image: number;
 
     @ManyToOne(() => TestSerie, (serie) => serie.questions)
     @JoinColumn({
@@ -45,7 +58,7 @@ export class Question extends BaseModel {
     type: TypeQuestion;
 
     @OneToOne(() => Image, (image) => image.question)
-    image: Image;
+    picture: Image;
 
     @OneToOne(() => QuestionTopValue, (top_value) => top_value.question)
     top_value: QuestionTopValue;

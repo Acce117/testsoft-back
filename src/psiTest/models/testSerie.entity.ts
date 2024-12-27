@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { PsiTest } from './psiTest.entity';
 import { Question } from './question.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({
     name: 'serie',
@@ -37,6 +38,10 @@ export class TestSerie extends BaseModel {
         nullable: false,
     })
     time_serie_duration: number;
+
+    @Column()
+    @Exclude()
+    fk_id_test: number;
 
     @ManyToOne(() => PsiTest, (test) => test.series)
     @JoinColumn({

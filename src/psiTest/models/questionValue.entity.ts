@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class QuestionTopValue extends BaseModel {
@@ -18,6 +19,10 @@ export class QuestionTopValue extends BaseModel {
 
     @Column()
     top_value: number;
+
+    @Column()
+    @Exclude()
+    fk_id_question: number;
 
     @OneToOne(() => Question, (question) => question.top_value)
     @JoinColumn({

@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { IsEmail } from 'class-validator';
 import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
@@ -42,7 +41,6 @@ export class User extends BaseModel {
     @Column({ type: 'varchar', nullable: false })
     password: string;
 
-    @IsEmail()
     @Column({ type: 'varchar', nullable: false })
     email: string;
 
@@ -55,6 +53,7 @@ export class User extends BaseModel {
     @Column({ default: 0, type: 'tinyint' })
     enabled: number;
 
+    @Exclude()
     @Column()
     country_id: number;
 

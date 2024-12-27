@@ -1,6 +1,13 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Answer } from './answer.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({
     name: 'correct_answer',
@@ -11,6 +18,10 @@ export class CorrectAnswer extends BaseModel {
 
     @PrimaryGeneratedColumn()
     id_correct_answer: number;
+
+    @Column()
+    @Exclude()
+    fk_id_answer: number;
 
     @OneToOne(() => Answer, {})
     @JoinColumn({

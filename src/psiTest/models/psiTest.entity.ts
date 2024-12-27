@@ -16,6 +16,7 @@ import { Category } from './category.entity';
 import { User } from 'src/tenant/models/user.entity';
 import { Group } from 'src/tenant/models/group.entity';
 import { ParameterDisplayResult } from './parameterResult.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({
     name: 'test',
@@ -50,6 +51,10 @@ export class PsiTest extends BaseModel {
 
     @Column({ type: 'varchar', nullable: false, length: 3 })
     language: string;
+
+    @Exclude()
+    @Column({ type: 'int', nullable: false })
+    fk_id_type_test: number;
 
     @OneToOne(() => TypePsiTest)
     @JoinColumn({
