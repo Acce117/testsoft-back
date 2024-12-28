@@ -11,13 +11,31 @@ export class ValidateDtoPipe implements PipeTransform {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(value: any, metadata: ArgumentMetadata) {
         if (this.dtoType) {
-            const dto = new this.dtoType(value);
-            const validation = validateSync(dto);
+            let validationResult = null;
+            if (value instanceof Array) {
+                validationResult = this.validateArray(value);
+            } else {
+                validationResult = validateSync(new this.dtoType(value));
+            }
 
-            if (validation.length > 0)
-                throw new BadRequestException(validation);
+            if (validationResult.length > 0)
+                throw new BadRequestException(validationResult);
         }
 
         return value;
+    }
+
+    validateArray(value) {
+        const validationResult = [];
+        let validation = null;
+
+        for (let i = 0; i < value.length; i++) {
+            validation = validateSync(new this.dtoType(value[i]));
+
+            if (validation.length > 0)
+                validationResult.push({ index: i, validation });
+        }
+
+        return validationResult;
     }
 }
