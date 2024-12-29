@@ -33,6 +33,10 @@ import { ItemService } from './services/item.service';
 import { ItemController } from './controllers/item.controller';
 import { QuestionValueService } from './services/questionValue.service';
 import { QuestionValueController } from './controllers/questionValue.controller';
+import { TypeQuestionService } from './services/typeQuestion.service';
+import { TypeQuestionController } from './controllers/typeQuestion.controller';
+import { ParameterDisplayResultController } from './controllers/parameterDisplay.controller';
+import { ParameterDisplayResultService } from './services/parameterDisplay.service';
 
 @Module({
     controllers: [
@@ -44,6 +48,8 @@ import { QuestionValueController } from './controllers/questionValue.controller'
         CategoryController,
         ItemController,
         QuestionValueController,
+        TypeQuestionController,
+        ParameterDisplayResultController,
     ],
     providers: [
         PsiTestService,
@@ -56,6 +62,8 @@ import { QuestionValueController } from './controllers/questionValue.controller'
         CategoryService,
         ItemService,
         QuestionValueService,
+        TypeQuestionService,
+        ParameterDisplayResultService,
     ],
     imports: [
         TypeOrmModule.forFeature([
