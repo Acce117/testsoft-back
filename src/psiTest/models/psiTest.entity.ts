@@ -5,6 +5,7 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
+    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -17,6 +18,7 @@ import { User } from 'src/tenant/models/user.entity';
 import { Group } from 'src/tenant/models/group.entity';
 import { ParameterDisplayResult } from './parameterResult.entity';
 import { Exclude } from 'class-transformer';
+import { Classification } from './classification.entity';
 
 @Entity({
     name: 'test',
@@ -100,4 +102,7 @@ export class PsiTest extends BaseModel {
 
     @OneToOne(() => ParameterDisplayResult, (params) => params.test)
     display_parameters: ParameterDisplayResult;
+
+    @ManyToOne(() => Classification, (classification) => classification.test)
+    classifications: Classification[];
 }

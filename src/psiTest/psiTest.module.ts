@@ -37,6 +37,8 @@ import { TypeQuestionService } from './services/typeQuestion.service';
 import { TypeQuestionController } from './controllers/typeQuestion.controller';
 import { ParameterDisplayResultController } from './controllers/parameterDisplay.controller';
 import { ParameterDisplayResultService } from './services/parameterDisplay.service';
+import { TestRange } from './models/testRange.entity';
+import { Classification } from './models/classification.entity';
 
 @Module({
     controllers: [
@@ -82,6 +84,8 @@ import { ParameterDisplayResultService } from './services/parameterDisplay.servi
             ParameterDisplayResult,
             Range,
             QuestionTopValue,
+            TestRange,
+            Classification,
         ]),
     ],
     exports: [PsiTestService, TributeService, EquationService],
