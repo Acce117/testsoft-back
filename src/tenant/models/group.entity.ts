@@ -28,7 +28,6 @@ export class Group extends BaseModel {
     })
     name_group: string;
 
-    @Exclude()
     @Column({
         nullable: true,
     })
