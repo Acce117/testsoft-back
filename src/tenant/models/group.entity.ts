@@ -12,7 +12,6 @@ import {
     TreeParent,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'group' })
 @Tree('materialized-path')
