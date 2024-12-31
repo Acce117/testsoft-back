@@ -37,16 +37,17 @@ export function TreeBaseService(model: any): Type<ICrudService> {
 
         //TODO generalized, this is too specific
         async update(id: number, data: any) {
-            if (data.father_group) {
+            if (data.father_group !== undefined) {
                 const group = await this.getOne({}, id);
-
                 const old_father = group.father_group;
 
-                const new_father = await this.getOne({}, data.father_group);
+                const new_father = data.dather_group
+                    ? await this.getOne({}, data.father_group)
+                    : null;
                 group.parent = new_father;
                 group.mpath = this.resolvePath(
                     group.mpath,
-                    new_father.mpath,
+                    new_father?.mpath,
                     old_father,
                 );
                 group.save();
@@ -62,7 +63,7 @@ export function TreeBaseService(model: any): Type<ICrudService> {
             father_path: string,
             old_father_id: any,
         ) {
-            let new_path = father_path;
+            let new_path = father_path || '';
             if (old_father_id) {
                 const paths_array = child_path.split(`${old_father_id}.`);
 
