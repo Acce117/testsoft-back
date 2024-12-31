@@ -1,4 +1,3 @@
-// import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/models/baseModel';
 import { PsiTest } from 'src/psiTest/models/psiTest.entity';
 import {
