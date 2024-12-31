@@ -5,7 +5,6 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
-    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -103,6 +102,6 @@ export class PsiTest extends BaseModel {
     @OneToOne(() => ParameterDisplayResult, (params) => params.test)
     display_parameters: ParameterDisplayResult;
 
-    @ManyToOne(() => Classification, (classification) => classification.test)
+    @OneToMany(() => Classification, (classification) => classification.test)
     classifications: Classification[];
 }

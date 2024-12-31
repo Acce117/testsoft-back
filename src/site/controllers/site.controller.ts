@@ -12,9 +12,7 @@ import { handleTransaction } from 'src/common/utils/handleTransaction';
 export class SiteController {
     @InjectDataSource() private readonly dataSource: DataSource;
 
-    constructor(private readonly siteService: SiteService) {
-        console.log('hola');
-    }
+    constructor(private readonly siteService: SiteService) {}
 
     @Post('/login')
     async login(@Body() credentials: UserCredentials) {
