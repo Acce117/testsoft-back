@@ -1,6 +1,13 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { PsiTest } from './psiTest.entity';
+import { Item } from './item.entity';
 
 @Entity()
 export class Category extends BaseModel {
@@ -24,4 +31,7 @@ export class Category extends BaseModel {
 
     @ManyToMany(() => PsiTest, (test) => test.category)
     tests: PsiTest[];
+
+    @OneToMany(() => Item, (item) => item.category)
+    items: Item[];
 }
