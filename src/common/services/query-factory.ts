@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
 export class QueryFactory {
@@ -113,5 +115,33 @@ export class QueryFactory {
             resultString,
             resultParams,
         };
+    }
+
+    public async createQuery(data, model) {
+        const columns: ColumnMetadata[] =
+            model.getRepository().metadata.columns;
+
+        const relations: RelationMetadata[] =
+            model.getRepository().metadata.relations;
+
+        const element = new model();
+
+        for (const column of columns) {
+            if (column.propertyName in data)
+                element[column.propertyName] = data[column.propertyName];
+        }
+
+        for (const relation of relations) {
+            if (relation.propertyName in data) {
+                const relatedElement = await this.createQuery(
+                    data[`${relation.propertyName}`],
+                    relation.type,
+                );
+                element[relation.propertyName] = relatedElement;
+            }
+        }
+
+        await element.save();
+        return element;
     }
 }
