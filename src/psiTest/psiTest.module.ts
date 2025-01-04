@@ -39,6 +39,7 @@ import { ParameterDisplayResultController } from './controllers/parameterDisplay
 import { ParameterDisplayResultService } from './services/parameterDisplay.service';
 import { TestRange } from './models/testRange.entity';
 import { Classification } from './models/classification.entity';
+import { EquationController } from './controllers/equation.controller';
 
 @Module({
     controllers: [
@@ -52,6 +53,7 @@ import { Classification } from './models/classification.entity';
         QuestionValueController,
         TypeQuestionController,
         ParameterDisplayResultController,
+        EquationController,
     ],
     providers: [
         PsiTestService,
