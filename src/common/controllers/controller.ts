@@ -1,6 +1,6 @@
 import {
     Body,
-    ClassSerializerInterceptor,
+    // ClassSerializerInterceptor,
     Controller,
     Get,
     Inject,
@@ -9,11 +9,11 @@ import {
     Post,
     Query,
     Type,
-    UseInterceptors,
+    // UseInterceptors,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { IController } from './controller.interface';
+import { ICrudController } from './controller.interface';
 import { ICrudService } from '../services/service.interface';
 import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 import { instanceToPlain } from 'class-transformer';
@@ -24,14 +24,14 @@ export function CrudBaseController(
     service: object,
     createDto: any = null,
     updateDto: any = null,
-): Type<IController> {
+): Type<ICrudController> {
     @Controller(prefix)
-    class CrudController implements IController {
+    class CrudController implements ICrudController {
         @Inject(service) service: ICrudService;
         @InjectDataSource() dataSource: DataSource;
 
         @Get()
-        @UseInterceptors(ClassSerializerInterceptor)
+        // @UseInterceptors(ClassSerializerInterceptor)
         async getAll(@Query() params, @Body() body) {
             let result = null;
             try {
