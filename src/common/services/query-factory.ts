@@ -118,30 +118,29 @@ export class QueryFactory {
     }
 
     public async createQuery(data, model) {
-        const columns: ColumnMetadata[] =
-            model.getRepository().metadata.columns;
-
+        const repository = model.getRepository();
         const relations: RelationMetadata[] =
             model.getRepository().metadata.relations;
 
-        const element = new model();
-
-        for (const column of columns) {
-            if (column.propertyName in data)
-                element[column.propertyName] = data[column.propertyName];
-        }
+        const element = repository.create(data);
 
         for (const relation of relations) {
             if (relation.propertyName in data) {
-                const relatedElement = await this.createQuery(
-                    data[`${relation.propertyName}`],
-                    relation.type,
-                );
-                element[relation.propertyName] = relatedElement;
+                const relationType = relation.relationType;
+                if (
+                    relationType === 'one-to-one' ||
+                    relationType === 'many-to-one'
+                )
+                    element[relation.propertyName] = await this.createQuery(
+                        data[`${relation.propertyName}`],
+                        relation.type,
+                    );
+                else {
+                }
             }
         }
 
-        await element.save();
+        await repository.save(element);
         return element;
     }
 }

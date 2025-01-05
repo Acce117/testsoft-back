@@ -9,7 +9,7 @@ import { ApplicationAnswerService } from './applicationAnswer.service';
 import { ApplicationAnswerValueService } from './applicationAnswerValue.service';
 import { TestApplication } from '../models/testApplication.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, InsertResult } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
@@ -65,8 +65,7 @@ export class ExecuteTestService {
             test,
         );
         await this.processResult(testApplication, finalAnswers);
-        return (testApplication as InsertResult).identifiers[0]
-            .id_test_application;
+        return testApplication.id_test_application;
     }
 
     private async validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -102,7 +101,7 @@ export class ExecuteTestService {
         { user_id, id_test, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
-        const testApplication: InsertResult | TestApplication =
+        const testApplication: TestApplication =
             await this.testAppService.create({
                 fk_id_user: user_id,
                 fk_id_test: id_test,
@@ -133,8 +132,7 @@ export class ExecuteTestService {
                     answer.answer;
 
                 appAnswers.not_value.push({
-                    fk_id_test_aplication: (testApplication as InsertResult)
-                        .raw[0].id_test_application,
+                    fk_id_test_aplication: testApplication.id_test_application,
                     fk_id_answer: answer.answer,
                 });
             } else if (
@@ -157,8 +155,8 @@ export class ExecuteTestService {
                     ][`${ans}`] = values[`${ans}`];
 
                     appAnswers.value.push({
-                        fk_id_test_aplication: (testApplication as InsertResult)
-                            .raw[0].id_test_application,
+                        fk_id_test_aplication:
+                            testApplication.id_test_application,
                         fk_id_answer: ans,
                         value: values[`${ans}`],
                     });
@@ -188,7 +186,7 @@ export class ExecuteTestService {
     }
 
     async processResult(
-        testApplication: TestApplication | InsertResult,
+        testApplication: TestApplication,
         finalAnswers: object,
     ) {
         const accumulated = {};
@@ -257,8 +255,7 @@ export class ExecuteTestService {
         for (const id_item in accumulated) {
             app_result.push({
                 fk_item: id_item,
-                fk_test_application: (testApplication as InsertResult)
-                    .identifiers[0].id_test_application,
+                fk_test_application: testApplication.id_test_application,
                 value_result: accumulated[id_item],
             });
         }
