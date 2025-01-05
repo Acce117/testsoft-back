@@ -13,13 +13,13 @@ export async function handleTransaction(
 
         await queryRunner.commitTransaction();
     } catch (e) {
-        queryRunner.rollbackTransaction();
+        await queryRunner.rollbackTransaction();
 
         if (errorCb) errorCb();
 
         result = e.message;
     } finally {
-        queryRunner.release();
+        await queryRunner.release();
     }
 
     return result;
