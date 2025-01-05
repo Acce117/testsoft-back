@@ -6,7 +6,6 @@ import { CreateUserDto } from '../dto/register_user.dto';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { User } from '../../tenant/models/user.entity';
 import { AuthAssignmentService } from 'src/tenant/services/AuthAssignment.service';
-import { InsertResult } from 'typeorm';
 
 @Injectable()
 export class SiteService {
@@ -16,14 +15,14 @@ export class SiteService {
     private readonly authAssignmentService: AuthAssignmentService;
 
     public async signIn(user: CreateUserDto) {
-        const newUser: InsertResult = await this.userService.create(user);
+        const newUser: User = await this.userService.create(user);
         this.authAssignmentService.create({
-            user_id: newUser.raw[0].user_id,
+            user_id: newUser.user_id,
             item_id: 4,
         });
 
         return {
-            token: this.generateToken({ user_id: newUser.raw[0].user_id }),
+            token: this.generateToken({ user_id: newUser.user_id }),
         };
     }
 
