@@ -45,6 +45,8 @@ import { AnswerService } from './services/answer.service';
 import { AnswerSubscriber } from './models/answer.subscriber';
 import { ClassificationService } from './services/classification.service';
 import { ClassificationController } from './controllers/classification.controller';
+import { TestRangeController } from './controllers/testRange.controller';
+import { TestRangeService } from './services/testRange.service';
 
 @Module({
     controllers: [
@@ -61,6 +63,7 @@ import { ClassificationController } from './controllers/classification.controlle
         EquationController,
         AnswerController,
         ClassificationController,
+        TestRangeController,
     ],
     providers: [
         PsiTestService,
@@ -78,6 +81,7 @@ import { ClassificationController } from './controllers/classification.controlle
         AnswerService,
         AnswerSubscriber,
         ClassificationService,
+        TestRangeService,
     ],
     imports: [
         TypeOrmModule.forFeature([
