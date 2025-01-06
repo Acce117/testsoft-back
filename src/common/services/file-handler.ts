@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { createWriteStream, existsSync, rmSync } from 'fs';
 
 export interface FileHandler {
-    saveFile(destination, file);
+    saveFile(destination: string, file: Express.Multer.File): string;
 }
 
 @Injectable()
 export class FSFileHandler implements FileHandler {
-    saveFile(destination: any, file: any) {
+    saveFile(destination: any, file: any): string {
         const file_path = `${destination}${Date.now()}.${file.mimetype.split('/')[1]}`;
         try {
             const f = createWriteStream(file_path);
@@ -16,6 +16,8 @@ export class FSFileHandler implements FileHandler {
         } catch (err) {
             this.deleteFile(file_path);
         }
+
+        return file_path;
     }
 
     private deleteFile(file_path: string) {
@@ -29,7 +31,8 @@ export class FSFileHandler implements FileHandler {
 
 @Injectable()
 export class ExternalFileHandler implements FileHandler {
-    saveFile(destination: any, file: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    saveFile(destination: string, file: Express.Multer.File): string {
         throw new Error('Method not implemented.');
     }
 }

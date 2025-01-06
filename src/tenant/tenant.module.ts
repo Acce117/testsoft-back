@@ -12,6 +12,7 @@ import { CountryService } from './services/country.service';
 import { CountryController } from './controllers/country.controller';
 import { AuthAssignment } from './models/auth_assignment.entity';
 import { AuthAssignmentService } from './services/AuthAssignment.service';
+import { UserSubscriber } from './models/user.subscriber';
 
 @Module({
     controllers: [GroupController, UserController, CountryController],
@@ -20,6 +21,7 @@ import { AuthAssignmentService } from './services/AuthAssignment.service';
         UserService,
         CountryService,
         AuthAssignmentService,
+        UserSubscriber,
     ],
     imports: [
         TypeOrmModule.forFeature([

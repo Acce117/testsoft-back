@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { UserSubscriber } from 'src/tenant/models/user.subscriber';
 
 const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
     return {
@@ -13,7 +12,7 @@ const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
         logging: true,
         autoLoadEntities: true,
         synchronize: false,
-        subscribers: [UserSubscriber],
+        subscribers: [],
     };
 };
 

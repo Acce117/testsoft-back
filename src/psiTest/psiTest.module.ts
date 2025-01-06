@@ -40,6 +40,9 @@ import { ParameterDisplayResultService } from './services/parameterDisplay.servi
 import { TestRange } from './models/testRange.entity';
 import { Classification } from './models/classification.entity';
 import { EquationController } from './controllers/equation.controller';
+import { AnswerController } from './controllers/answer.controller';
+import { AnswerService } from './services/answer.service';
+import { AnswerSubscriber } from './models/answer.subscriber';
 
 @Module({
     controllers: [
@@ -54,6 +57,7 @@ import { EquationController } from './controllers/equation.controller';
         TypeQuestionController,
         ParameterDisplayResultController,
         EquationController,
+        AnswerController,
     ],
     providers: [
         PsiTestService,
@@ -68,6 +72,8 @@ import { EquationController } from './controllers/equation.controller';
         QuestionValueService,
         TypeQuestionService,
         ParameterDisplayResultService,
+        AnswerService,
+        AnswerSubscriber,
     ],
     imports: [
         TypeOrmModule.forFeature([

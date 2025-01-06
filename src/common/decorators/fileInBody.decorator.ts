@@ -20,7 +20,7 @@ export class FileInBodyInterceptor implements NestInterceptor {
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const req = context.switchToHttp().getRequest();
-        req.body[`${this.bodyField}`] = req[`${this.fieldName}`];
+        if (req.file) req.body[`${this.bodyField}`] = req.file;
 
         return next.handle();
     }

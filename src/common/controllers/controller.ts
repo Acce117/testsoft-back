@@ -1,6 +1,5 @@
 import {
     Body,
-    // ClassSerializerInterceptor,
     Controller,
     Get,
     Inject,
@@ -9,7 +8,6 @@ import {
     Post,
     Query,
     Type,
-    // UseInterceptors,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -31,7 +29,6 @@ export function CrudBaseController(
         @InjectDataSource() dataSource: DataSource;
 
         @Get()
-        // @UseInterceptors(ClassSerializerInterceptor)
         async getAll(@Query() params, @Body() body) {
             let result = null;
             try {

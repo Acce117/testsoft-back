@@ -43,5 +43,5 @@ export class CreateUserDto {
     sex: 'M' | 'F';
 
     @IsNumber()
-    country_id: string;
+    country_id?: string;
 }

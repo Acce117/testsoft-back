@@ -6,6 +6,7 @@ import {
     ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
+    VirtualColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Image } from './image.entity';
@@ -37,4 +38,7 @@ export class Answer extends BaseModel {
 
     @OneToOne(() => Image, (image) => image.question)
     image: Image;
+
+    @VirtualColumn({ query: (alias) => alias })
+    file: Express.Multer.File;
 }

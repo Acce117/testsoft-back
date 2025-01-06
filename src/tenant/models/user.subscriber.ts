@@ -1,4 +1,5 @@
 import {
+    DataSource,
     EntitySubscriberInterface,
     EventSubscriber,
     InsertEvent,
@@ -10,6 +11,9 @@ import * as bcrypt from 'bcrypt';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface {
+    constructor(dataSource: DataSource) {
+        dataSource.subscribers.push(this);
+    }
     listenTo() {
         return User;
     }

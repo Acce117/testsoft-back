@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
-import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
