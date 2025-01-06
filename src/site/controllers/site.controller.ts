@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { CreateUserDto } from '../dto/register_user.dto';
@@ -22,7 +22,7 @@ export class SiteController {
     }
 
     @Post('/sign_in')
-    async signIn(@Body() user) {
+    async signIn(@Body() user: CreateUserDto) {
         return await handleTransaction(
             this.dataSource,
             async () => await this.siteService.signIn(user),
