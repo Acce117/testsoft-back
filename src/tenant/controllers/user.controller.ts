@@ -7,12 +7,12 @@ import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { CreateUserDto } from '../dto/create_user.dto';
 import { UpdateUserDto } from '../dto/update_user.dto';
 
-export class UserController extends CrudBaseController(
-    'user',
-    UserService,
-    CreateUserDto,
-    UpdateUserDto,
-) {
+export class UserController extends CrudBaseController({
+    prefix: 'user',
+    service: UserService,
+    createDto: CreateUserDto,
+    updateDto: UpdateUserDto,
+}) {
     @Get('/:user_id/tests')
     public async getUserTests(@Param('user_id') user_id: number) {
         return (this.service as UserService).userTests(user_id);

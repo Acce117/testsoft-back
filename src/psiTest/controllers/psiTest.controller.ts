@@ -3,9 +3,9 @@ import { UpdatePsiTestDto } from '../dto/update_psiTest.dto';
 import { PsiTestService } from '../services/psiTest.service';
 import { CrudBaseController } from 'src/common/controllers/controller';
 
-export class PsiTestController extends CrudBaseController(
-    'psi_test',
-    PsiTestService,
-    CreatePsiTestDto,
-    UpdatePsiTestDto,
-) {}
+export class PsiTestController extends CrudBaseController({
+    prefix: 'psi_test',
+    service: PsiTestService,
+    createDto: CreatePsiTestDto,
+    updateDto: UpdatePsiTestDto,
+}) {}

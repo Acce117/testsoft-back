@@ -17,15 +17,19 @@ import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 import { instanceToPlain } from 'class-transformer';
 import { handleTransaction } from '../utils/handleTransaction';
 
+interface BaseControllerOptions {
+    prefix: string;
+    service: object;
+    createDto?: any;
+    updateDto?: any;
+}
+
 export function CrudBaseController(
-    prefix: string,
-    service: object,
-    createDto: any = null,
-    updateDto: any = null,
+    options: BaseControllerOptions,
 ): Type<ICrudController> {
-    @Controller(prefix)
+    @Controller(options.prefix)
     class CrudController implements ICrudController {
-        @Inject(service) service: ICrudService;
+        @Inject(options.service) service: ICrudService;
         @InjectDataSource() dataSource: DataSource;
 
         @Get()
@@ -58,7 +62,7 @@ export function CrudBaseController(
         }
 
         @Post()
-        async create(@Body(new ValidateDtoPipe(createDto)) body) {
+        async create(@Body(new ValidateDtoPipe(options.createDto)) body) {
             return await handleTransaction(this.dataSource, async () => {
                 const result = await this.service.create(body);
                 return instanceToPlain(result);
@@ -68,7 +72,7 @@ export function CrudBaseController(
         @Patch(':id')
         async update(
             @Param('id') id: number,
-            @Body(new ValidateDtoPipe(updateDto)) body,
+            @Body(new ValidateDtoPipe(options.updateDto)) body,
         ) {
             return await handleTransaction(this.dataSource, async () => {
                 const result = await this.service.update(id, body);
