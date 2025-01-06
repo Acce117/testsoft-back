@@ -43,6 +43,8 @@ import { EquationController } from './controllers/equation.controller';
 import { AnswerController } from './controllers/answer.controller';
 import { AnswerService } from './services/answer.service';
 import { AnswerSubscriber } from './models/answer.subscriber';
+import { ClassificationService } from './services/classification.service';
+import { ClassificationController } from './controllers/classification.controller';
 
 @Module({
     controllers: [
@@ -58,6 +60,7 @@ import { AnswerSubscriber } from './models/answer.subscriber';
         ParameterDisplayResultController,
         EquationController,
         AnswerController,
+        ClassificationController,
     ],
     providers: [
         PsiTestService,
@@ -74,6 +77,7 @@ import { AnswerSubscriber } from './models/answer.subscriber';
         ParameterDisplayResultService,
         AnswerService,
         AnswerSubscriber,
+        ClassificationService,
     ],
     imports: [
         TypeOrmModule.forFeature([
