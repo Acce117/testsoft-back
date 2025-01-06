@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { createWriteStream, existsSync, rmSync } from 'fs';
 
 export interface FileHandler {
-    saveFile(destination: string, file: Express.Multer.File): string;
+    readonly base_path: string;
+    saveFile(file: Express.Multer.File, destination?: string): string;
 }
 
 @Injectable()
 export class FSFileHandler implements FileHandler {
-    saveFile(destination: any, file: any): string {
-        const file_path = `${destination}${Date.now()}.${file.mimetype.split('/')[1]}`;
+    readonly base_path: string = './uploads/';
+
+    saveFile(file: Express.Multer.File, destination?: string): string {
+        const file_path = `${this.base_path}${destination}${Date.now()}.${file.mimetype.split('/')[1]}`;
         try {
             const f = createWriteStream(file_path);
             f.write(file.buffer);
@@ -31,8 +34,9 @@ export class FSFileHandler implements FileHandler {
 
 @Injectable()
 export class ExternalFileHandler implements FileHandler {
+    readonly base_path: string;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    saveFile(destination: string, file: Express.Multer.File): string {
+    saveFile(file: Express.Multer.File, destination?: string): string {
         throw new Error('Method not implemented.');
     }
 }

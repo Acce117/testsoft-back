@@ -7,6 +7,7 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
+    VirtualColumn,
 } from 'typeorm';
 import { TestSerie } from './testSerie.entity';
 import { Answer } from './answer.entity';
@@ -62,4 +63,7 @@ export class Question extends BaseModel {
 
     @OneToOne(() => QuestionTopValue, (top_value) => top_value.question)
     top_value: QuestionTopValue;
+
+    @VirtualColumn({ query: (alias) => alias })
+    file: Express.Multer.File;
 }
