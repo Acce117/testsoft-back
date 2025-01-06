@@ -1,4 +1,10 @@
-import { IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
+import {
+    IsEmail,
+    IsEnum,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 
 export class CreateUserDto {
     constructor({
@@ -43,5 +49,6 @@ export class CreateUserDto {
     sex: 'M' | 'F';
 
     @IsNumber()
+    @IsOptional()
     country_id?: string;
 }
