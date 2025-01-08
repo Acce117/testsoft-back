@@ -1,4 +1,5 @@
 import {
+    applyDecorators,
     Body,
     Controller,
     Get,
@@ -17,11 +18,18 @@ import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 import { instanceToPlain } from 'class-transformer';
 import { handleTransaction } from '../utils/handleTransaction';
 
+interface EndPointOptions {
+    decorators: Array<MethodDecorator>;
+}
 interface BaseControllerOptions {
     prefix: string;
     service: object;
     createDto?: any;
     updateDto?: any;
+    getAll?: EndPointOptions;
+    getOne?: EndPointOptions;
+    create?: EndPointOptions;
+    update?: EndPointOptions;
 }
 
 export function CrudBaseController(
@@ -33,6 +41,9 @@ export function CrudBaseController(
         @InjectDataSource() dataSource: DataSource;
 
         @Get()
+        @applyDecorators(
+            ...(options.getAll?.decorators ? options.getAll.decorators : []),
+        )
         async getAll(@Query() params, @Body() body) {
             let result = null;
             try {
@@ -49,6 +60,9 @@ export function CrudBaseController(
         }
 
         @Get(':id')
+        @applyDecorators(
+            ...(options.getOne?.decorators ? options.getOne.decorators : []),
+        )
         async getOne(@Param('id') id: number, @Query() params, @Body() body) {
             let result = null;
             try {
@@ -62,6 +76,9 @@ export function CrudBaseController(
         }
 
         @Post()
+        @applyDecorators(
+            ...(options.create?.decorators ? options.create.decorators : []),
+        )
         async create(@Body(new ValidateDtoPipe(options.createDto)) body) {
             return await handleTransaction(this.dataSource, async () => {
                 const result = await this.service.create(body);
@@ -70,6 +87,9 @@ export function CrudBaseController(
         }
 
         @Patch(':id')
+        @applyDecorators(
+            ...(options.update?.decorators ? options.update.decorators : []),
+        )
         async update(
             @Param('id') id: number,
             @Body(new ValidateDtoPipe(options.updateDto)) body,
