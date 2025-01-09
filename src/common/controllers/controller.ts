@@ -2,6 +2,7 @@ import {
     applyDecorators,
     Body,
     Controller,
+    Delete,
     Get,
     Inject,
     Param,
@@ -97,6 +98,13 @@ export function CrudBaseController(
             return await handleTransaction(this.dataSource, async () => {
                 const result = await this.service.update(id, body);
                 return instanceToPlain(result);
+            });
+        }
+
+        @Delete(':id')
+        public async delete(@Param('id') id: number) {
+            return await handleTransaction(this.dataSource, async () => {
+                return await this.service.delete(id);
             });
         }
     }

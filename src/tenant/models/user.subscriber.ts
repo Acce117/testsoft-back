@@ -3,6 +3,7 @@ import {
     EntitySubscriberInterface,
     EventSubscriber,
     InsertEvent,
+    SoftRemoveEvent,
     UpdateEvent,
 } from 'typeorm';
 import { User } from './user.entity';
@@ -36,5 +37,9 @@ export class UserSubscriber implements EntitySubscriberInterface {
     beforeUpdate(event: UpdateEvent<any>): Promise<any> | void {
         if (event.entity.password)
             event.entity = this.hashPassword(event.entity);
+    }
+
+    beforeSoftRemove(event: SoftRemoveEvent<any>): Promise<any> | void {
+        console.log('hola');
     }
 }

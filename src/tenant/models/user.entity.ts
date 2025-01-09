@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     JoinTable,
@@ -15,9 +16,7 @@ import { Country } from './country.entity';
 import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
 
-@Entity({
-    name: 'user',
-})
+@Entity({ name: 'user' })
 export class User extends BaseModel {
     static readonly alias: string = 'user';
     static readonly primaryKey: string = 'user_id';
@@ -52,6 +51,9 @@ export class User extends BaseModel {
 
     @Column({ default: 0, type: 'tinyint' })
     enabled: number;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 
     @Exclude()
     @Column()
@@ -118,4 +120,10 @@ export class User extends BaseModel {
         },
     })
     my_groups: Group[];
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // softRemove(options?: SaveOptions): Promise<this> {
+    //     this.deleted = 1;
+    //     return this.save();
+    // }
 }

@@ -3,7 +3,33 @@ import { QueryFactory } from './query-factory';
 import { ICrudService } from './service.interface';
 import { UpdateQueryBuilder } from 'typeorm';
 
-export function CrudBaseService(model: any): Type<ICrudService> {
+interface ServiceOptions {
+    delete: 'soft' | 'hard';
+}
+
+async function hardDelete(id) {
+    const alias = this.model.alias;
+    return await this.model
+        .createQueryBuilder(alias)
+        .delete()
+        .where(`${alias}.${this.model.primaryKey} = :id`, { id })
+        .execute();
+}
+
+async function softDelete(id) {
+    const alias = this.model.alias;
+    return await this.model
+        .createQueryBuilder(alias)
+        .softDelete()
+        .where(`${alias}.${this.model.primaryKey} = :id`, { id })
+        .execute();
+}
+
+export function CrudBaseService(
+    model: any,
+    options: ServiceOptions = { delete: 'soft' },
+): Type<ICrudService> {
+    const closureDelete = options.delete === 'hard' ? hardDelete : softDelete;
     @Injectable()
     class AbstractService implements ICrudService {
         model = model;
@@ -40,6 +66,10 @@ export function CrudBaseService(model: any): Type<ICrudService> {
                 .where(`${this.model.primaryKey} = :id`, { id });
 
             return query.execute();
+        }
+
+        async delete(id: any) {
+            return await closureDelete.bind(this).apply(null, [id]);
         }
     }
 

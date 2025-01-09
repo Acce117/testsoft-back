@@ -5,6 +5,12 @@ import { GroupService } from './group.service';
 
 export class UserService extends CrudBaseService(User) {
     @Inject(GroupService) private readonly groupService: GroupService;
+
+    // public async delete(id: number) {
+    //     const user: User = await this.getOne({}, id);
+    //     return await user.softRemove({ data: { deleted: 1 } });
+    // }
+
     public async userTests(user_id: number) {
         const result = [];
 

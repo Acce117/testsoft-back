@@ -4,4 +4,5 @@ export interface ICrudService {
     getOne(params, id?);
     create(data);
     update(id, data);
+    delete(id);
 }
