@@ -17,13 +17,24 @@ export class QueryFactory {
         return query;
     }
 
-    public collectionQuery(params, model, query?) {
+    public collectionQuery(
+        params,
+        model,
+        query?,
+    ): SelectQueryBuilder<BaseEntity> {
+        query = query ?? model.createQueryBuilder(model.alias);
         if (params.where) {
-            const { resultString, resultParams } = this.buildWhere(
-                params.where,
-                model.alias,
-            );
-            query = query.where(resultString, resultParams);
+            if (Array.isArray(params.where))
+                query.where(`${model.alias}.${model.primaryKey} IN (:...ids)`, {
+                    ids: params.where,
+                });
+            else if (typeof params.where === 'object') {
+                const { resultString, resultParams } = this.buildWhere(
+                    params.where,
+                    model.alias,
+                );
+                query = query.where(resultString, resultParams);
+            }
         }
 
         return query;
@@ -116,6 +127,8 @@ export class QueryFactory {
         };
     }
 
+    //TODO working on it
+    /**Some relations types still in progress */
     public async createQuery(data, model) {
         const repository = model.getRepository();
         const relations: RelationMetadata[] =
@@ -135,6 +148,16 @@ export class QueryFactory {
                         relation.type,
                     );
                 else {
+                    if (Array.isArray(data[relation.propertyName])) {
+                        const elements = await this.collectionQuery(
+                            {
+                                where: data[relation.propertyName],
+                            },
+                            relation.type,
+                        ).getMany();
+
+                        element[relation.propertyName] = elements;
+                    }
                 }
             }
         }

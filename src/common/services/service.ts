@@ -1,7 +1,7 @@
 import { Inject, Injectable, Type } from '@nestjs/common';
 import { QueryFactory } from './query-factory';
 import { ICrudService } from './service.interface';
-import { /*InsertQueryBuilder,*/ UpdateQueryBuilder } from 'typeorm';
+import { UpdateQueryBuilder } from 'typeorm';
 
 export function CrudBaseService(model: any): Type<ICrudService> {
     @Injectable()
@@ -28,17 +28,7 @@ export function CrudBaseService(model: any): Type<ICrudService> {
             return query.getOne();
         }
 
-        //TODO still working on it
-        /**
-         * It does not work with table inheritance and related data
-         */
         create(data) {
-            // const query: InsertQueryBuilder<typeof this.model> = this.model
-            //     .createQueryBuilder()
-            //     .insert()
-            //     .values(data);
-
-            // return query.execute();
             return this.queryFactory.createQuery(data, this.model);
         }
 
