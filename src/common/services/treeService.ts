@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { ICrudService } from './service.interface';
-import { TreeRepository } from 'typeorm';
+import { FindTreeOptions, TreeRepository } from 'typeorm';
 import { Injectable, Type } from '@nestjs/common';
 import { CrudBaseService } from './service';
 
@@ -21,8 +21,15 @@ export function TreeBaseService(model: any): Type<ICrudService> {
                 });
         }
 
-        async getAll() {
-            return this.treeRepository.findTrees();
+        async getAll(params) {
+            const options: FindTreeOptions = {};
+            params.depth !== undefined
+                ? (options.depth = params.depth)
+                : params.depth;
+            params.relations
+                ? (options.relations = params.relations)
+                : params.relations;
+            return this.treeRepository.findTrees(options);
         }
 
         async create(data: any) {
@@ -41,7 +48,7 @@ export function TreeBaseService(model: any): Type<ICrudService> {
                 const group = await this.getOne({}, id);
                 const old_father = group.father_group;
 
-                const new_father = data.dather_group
+                const new_father = data.father_group
                     ? await this.getOne({}, data.father_group)
                     : null;
                 group.parent = new_father;
@@ -58,7 +65,7 @@ export function TreeBaseService(model: any): Type<ICrudService> {
             return result;
         }
 
-        resolvePath(
+        private resolvePath(
             child_path: string,
             father_path: string,
             old_father_id: any,
