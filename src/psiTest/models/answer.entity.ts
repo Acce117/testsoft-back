@@ -11,6 +11,8 @@ import {
 import { Question } from './question.entity';
 import { Image } from './image.entity';
 import { Exclude } from 'class-transformer';
+import { Tribute } from './tribute.entity';
+import { CorrectAnswer } from './correctAnswer.entity';
 
 @Entity()
 export class Answer extends BaseModel {
@@ -41,4 +43,10 @@ export class Answer extends BaseModel {
 
     @VirtualColumn({ query: (alias) => alias })
     file: Express.Multer.File;
+
+    @OneToOne(() => Tribute, (tribute) => tribute.answer)
+    tribute: Tribute;
+
+    @OneToOne(() => CorrectAnswer, (correct_answer) => correct_answer.answer)
+    correct_answer: CorrectAnswer;
 }

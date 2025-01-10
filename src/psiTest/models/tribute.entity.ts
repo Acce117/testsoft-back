@@ -1,5 +1,6 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Answer } from './answer.entity';
 
 @Entity()
 export class Tribute extends BaseModel {
@@ -18,4 +19,11 @@ export class Tribute extends BaseModel {
 
     @Column()
     tribute_value: number;
+
+    @OneToOne(() => Answer, (answer) => answer.tribute)
+    @JoinColumn({
+        name: 'fk_id_answer',
+        referencedColumnName: 'id_answer',
+    })
+    answer: Answer;
 }
