@@ -34,7 +34,7 @@ export class Image extends BaseModel {
     @Exclude()
     id_answer: number;
 
-    @OneToOne(() => Question, (question) => question.image)
+    @OneToOne(() => Question, (question) => question.picture)
     @JoinColumn({
         name: 'id_question',
         referencedColumnName: 'id_question',
