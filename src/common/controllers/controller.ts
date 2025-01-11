@@ -18,6 +18,7 @@ import { ICrudService } from '../services/service.interface';
 import { ValidateDtoPipe } from '../pipes/validateDto.pipe';
 import { instanceToPlain } from 'class-transformer';
 import { handleTransaction } from '../utils/handleTransaction';
+import { QueryBuilderPipe } from '../pipes/queryBuilder.pipe';
 
 interface EndPointOptions {
     decorators: Array<MethodDecorator>;
@@ -45,7 +46,7 @@ export function CrudBaseController(
         @applyDecorators(
             ...(options.getAll?.decorators ? options.getAll.decorators : []),
         )
-        async getAll(@Query() params, @Body() body) {
+        async getAll(@Query(new QueryBuilderPipe()) params, @Body() body) {
             let result = null;
             try {
                 result = await this.service.getAll({
@@ -64,7 +65,11 @@ export function CrudBaseController(
         @applyDecorators(
             ...(options.getOne?.decorators ? options.getOne.decorators : []),
         )
-        async getOne(@Param('id') id: number, @Query() params, @Body() body) {
+        async getOne(
+            @Param('id') id: number,
+            @Query(new QueryBuilderPipe()) params,
+            @Body() body,
+        ) {
             let result = null;
             try {
                 result = await this.service.getOne({ ...params, ...body }, id);
