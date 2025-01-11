@@ -38,10 +38,6 @@ export class Question extends BaseModel {
     @Exclude()
     fk_id_serie: number;
 
-    @Column()
-    @Exclude()
-    image: number;
-
     @ManyToOne(() => TestSerie, (serie) => serie.questions)
     @JoinColumn({
         name: 'fk_id_serie',
