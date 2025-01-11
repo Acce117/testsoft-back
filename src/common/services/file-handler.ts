@@ -11,7 +11,11 @@ export class FSFileHandler implements FileHandler {
     readonly base_path: string = './uploads/';
 
     saveFile(file: Express.Multer.File, destination?: string): string {
-        const file_path = `${this.base_path}${destination}${Date.now()}.${file.mimetype.split('/')[1]}`;
+        let file_path = `${this.base_path}`;
+        destination
+            ? (file_path += `${destination}/${Date.now()}.${file.mimetype.split('/')[1]}`)
+            : (file_path += `${Date.now()}.${file.mimetype.split('/')[1]}`);
+
         try {
             const f = createWriteStream(file_path);
             f.write(file.buffer);
