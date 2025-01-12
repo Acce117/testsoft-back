@@ -7,9 +7,4 @@ export class CreateGroupDto {
     @IsInt()
     @IsOptional()
     father_group: number;
-
-    constructor({ name_group, father_group }) {
-        this.name_group = name_group;
-        this.father_group = father_group;
-    }
 }

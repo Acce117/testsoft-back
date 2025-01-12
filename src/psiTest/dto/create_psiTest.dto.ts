@@ -27,26 +27,4 @@ export class CreatePsiTestDto {
 
     @IsString()
     language: string;
-
-    constructor({
-        name,
-        description,
-        recurring_time,
-        time_duration,
-        navigable,
-        completed,
-        fk_id_type_test,
-        done,
-        language,
-    }) {
-        this.name = name;
-        this.description = description;
-        this.recurring_time = recurring_time;
-        this.time_duration = time_duration;
-        this.navigable = navigable;
-        this.completed = completed;
-        this.fk_id_type_test = fk_id_type_test;
-        this.done = done;
-        this.language = language;
-    }
 }

@@ -3,8 +3,8 @@ import {
     BadRequestException,
     PipeTransform,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-
 export class ValidateDtoPipe implements PipeTransform {
     constructor(private readonly dtoType: any = null) {}
 
@@ -18,7 +18,7 @@ export class ValidateDtoPipe implements PipeTransform {
                 data = result.data;
                 validationResult = result.validationResult;
             } else {
-                data = new this.dtoType(value);
+                data = plainToInstance(this.dtoType, value);
                 validationResult = validateSync(data);
             }
 
@@ -37,7 +37,7 @@ export class ValidateDtoPipe implements PipeTransform {
         let entity = null;
 
         for (let i = 0; i < value.length; i++) {
-            entity = new this.dtoType(value[i]);
+            entity = plainToInstance(this.dtoType, value[i]);
             validation = validateSync(entity);
             data.push(entity);
 
