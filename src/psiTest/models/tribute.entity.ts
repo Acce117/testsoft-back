@@ -5,7 +5,7 @@ import { Answer } from './answer.entity';
 @Entity()
 export class Tribute extends BaseModel {
     static alias: string = 'tribute';
-    static primaryKey: string = 'id_tribute';
+    static primaryKey: string = 'fk_id_tribute';
 
     @PrimaryColumn({
         type: 'int',
