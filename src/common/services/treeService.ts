@@ -6,7 +6,7 @@ import { CrudBaseService } from './service';
 
 export function TreeBaseService(model: any): Type<ICrudService> {
     @Injectable()
-    class TreeService<T> extends CrudBaseService(model) {
+    class TreeService<T> extends CrudBaseService({ model }) {
         constructor(
             @InjectRepository(model)
             private readonly treeRepository: TreeRepository<T>,

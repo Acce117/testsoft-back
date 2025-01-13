@@ -3,13 +3,8 @@ import { User } from '../models/user.entity';
 import { Inject } from '@nestjs/common';
 import { GroupService } from './group.service';
 
-export class UserService extends CrudBaseService(User) {
+export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
-
-    // public async delete(id: number) {
-    //     const user: User = await this.getOne({}, id);
-    //     return await user.softRemove({ data: { deleted: 1 } });
-    // }
 
     public async userTests(user_id: number) {
         const result = [];

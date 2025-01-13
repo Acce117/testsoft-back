@@ -4,7 +4,8 @@ import { ICrudService } from './service.interface';
 import { UpdateQueryBuilder } from 'typeorm';
 
 interface ServiceOptions {
-    delete: 'soft' | 'hard';
+    model: any;
+    delete?: 'soft' | 'hard';
 }
 
 async function hardDelete(id) {
@@ -25,14 +26,11 @@ async function softDelete(id) {
         .execute();
 }
 
-export function CrudBaseService(
-    model: any,
-    options: ServiceOptions = { delete: 'soft' },
-): Type<ICrudService> {
+export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
     const closureDelete = options.delete === 'hard' ? hardDelete : softDelete;
     @Injectable()
     class AbstractService implements ICrudService {
-        model = model;
+        model = options.model;
         @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
         getAll(params) {
