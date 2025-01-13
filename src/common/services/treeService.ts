@@ -2,13 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ICrudService } from './service.interface';
 import { FindTreeOptions, TreeRepository } from 'typeorm';
 import { Injectable, Type } from '@nestjs/common';
-import { CrudBaseService } from './service';
+import { CrudBaseService, ServiceOptions } from './service';
 
-export function TreeBaseService(model: any): Type<ICrudService> {
+export function TreeBaseService(options: ServiceOptions): Type<ICrudService> {
     @Injectable()
-    class TreeService<T> extends CrudBaseService({ model }) {
+    class TreeService<T> extends CrudBaseService(options) {
         constructor(
-            @InjectRepository(model)
+            @InjectRepository(options.model)
             private readonly treeRepository: TreeRepository<T>,
         ) {
             super();

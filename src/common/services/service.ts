@@ -3,7 +3,7 @@ import { QueryFactory } from './query-factory';
 import { ICrudService } from './service.interface';
 import { UpdateQueryBuilder } from 'typeorm';
 
-interface ServiceOptions {
+export interface ServiceOptions {
     model: any;
     delete?: 'soft' | 'hard';
 }
