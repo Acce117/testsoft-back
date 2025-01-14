@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseEntity, SelectQueryBuilder } from 'typeorm';
+import { BaseEntity, EntityManager, SelectQueryBuilder } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
@@ -129,11 +129,10 @@ export class QueryFactory {
 
     //TODO working on it
     /**Some relations types still in progress */
-    public async createQuery(data, model) {
+    public async createQuery(data, model, manager?: EntityManager) {
         const repository = model.getRepository();
         const relations: RelationMetadata[] =
             model.getRepository().metadata.relations;
-
         const element = repository.create(data);
 
         for (const relation of relations) {
@@ -146,6 +145,7 @@ export class QueryFactory {
                     element[relation.propertyName] = await this.createQuery(
                         data[`${relation.propertyName}`],
                         relation.type,
+                        manager,
                     );
                 else {
                     if (Array.isArray(data[relation.propertyName])) {
@@ -162,7 +162,8 @@ export class QueryFactory {
             }
         }
 
-        await repository.save(element);
-        return element;
+        return manager
+            ? await manager.withRepository(repository).save(element)
+            : repository.save(element);
     }
 }

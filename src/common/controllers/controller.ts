@@ -32,6 +32,7 @@ interface BaseControllerOptions {
     getOne?: EndPointOptions;
     create?: EndPointOptions;
     update?: EndPointOptions;
+    delete?: EndPointOptions;
 }
 
 export function CrudBaseController(
@@ -86,8 +87,8 @@ export function CrudBaseController(
             ...(options.create?.decorators ? options.create.decorators : []),
         )
         async create(@Body(new ValidateDtoPipe(options.createDto)) body) {
-            return await handleTransaction(this.dataSource, async () => {
-                const result = await this.service.create(body);
+            return await handleTransaction(this.dataSource, async (manager) => {
+                const result = await this.service.create(body, manager);
                 return instanceToPlain(result);
             });
         }
@@ -100,16 +101,20 @@ export function CrudBaseController(
             @Param('id') id: number,
             @Body(new ValidateDtoPipe(options.updateDto)) body,
         ) {
-            return await handleTransaction(this.dataSource, async () => {
-                const result = await this.service.update(id, body);
+            return await handleTransaction(this.dataSource, async (manager) => {
+                const result = await this.service.update(id, body, manager);
                 return instanceToPlain(result);
             });
         }
 
         @Delete(':id')
+        @applyDecorators(
+            ...(options.delete?.decorators ? options.delete.decorators : []),
+        )
         public async delete(@Param('id') id: number) {
-            return await handleTransaction(this.dataSource, async () => {
-                return await this.service.delete(id);
+            return await handleTransaction(this.dataSource, async (manager) => {
+                const result = await this.service.delete(id, manager);
+                return instanceToPlain(result);
             });
         }
     }
