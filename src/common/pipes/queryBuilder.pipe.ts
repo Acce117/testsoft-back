@@ -11,6 +11,9 @@ export class QueryBuilderPipe implements PipeTransform {
                 value.relations,
             );
         if (value.where) transformedValue.where = value.where;
+
+        if (value.depth)
+            return { ...transformedValue, depth: parseInt(value.depth) };
         return transformedValue;
     }
 
