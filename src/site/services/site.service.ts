@@ -28,6 +28,7 @@ export class SiteService {
 
     public async login(credentials: UserCredentials) {
         const user: User = await this.userService.getOne({
+            relations: ['groups'],
             where: {
                 username: credentials.username,
                 enabled: 1,
@@ -41,7 +42,12 @@ export class SiteService {
         )
             throw new UnauthorizedException('Wrong credentials');
 
-        return { token: this.generateToken({ user_id: user.user_id }) };
+        return {
+            token: this.generateToken({
+                user_id: user.user_id,
+                group: user.groups.length > 0 ? user.groups[0].id_group : null,
+            }),
+        };
     }
 
     public me(id_user) {

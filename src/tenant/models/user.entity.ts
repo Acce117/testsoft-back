@@ -120,10 +120,4 @@ export class User extends BaseModel {
         },
     })
     my_groups: Group[];
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // softRemove(options?: SaveOptions): Promise<this> {
-    //     this.deleted = 1;
-    //     return this.save();
-    // }
 }
