@@ -16,9 +16,7 @@ export class SiteController {
 
     @Post('/login')
     async login(@Body() credentials: UserCredentials) {
-        return await handleTransaction(this.dataSource, async () =>
-            this.siteService.login(credentials),
-        );
+        return this.siteService.login(credentials);
     }
 
     @Post('/sign_in')

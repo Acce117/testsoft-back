@@ -17,7 +17,7 @@ export async function handleTransaction(
 
         if (errorCb) errorCb();
 
-        result = e.message;
+        result = e;
     } finally {
         await queryRunner.release();
     }
