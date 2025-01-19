@@ -6,3 +6,7 @@ export interface ICrudService {
     update(id, data, manager?);
     delete(id, manager?);
 }
+
+export interface ICrudTreeService extends ICrudService {
+    getAncestors(params, id?);
+}

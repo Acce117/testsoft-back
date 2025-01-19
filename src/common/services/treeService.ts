@@ -1,15 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { ICrudService } from './service.interface';
+
 import { FindTreeOptions, TreeRepository } from 'typeorm';
 import { Injectable, Type } from '@nestjs/common';
 import { CrudBaseService, ServiceOptions } from './service';
+import { ICrudTreeService } from './service.interface';
 
-export function TreeBaseService(options: ServiceOptions): Type<ICrudService> {
+export function TreeBaseService(
+    options: ServiceOptions,
+): Type<ICrudTreeService> {
     @Injectable()
     class TreeService<T> extends CrudBaseService(options) {
         constructor(
             @InjectRepository(options.model)
-            private readonly treeRepository: TreeRepository<T>,
+            readonly treeRepository: TreeRepository<T>,
         ) {
             super();
             this.treeRepository.metadata.columns =
@@ -30,6 +33,11 @@ export function TreeBaseService(options: ServiceOptions): Type<ICrudService> {
                 ? (options.relations = params.relations)
                 : params.relations;
             return this.treeRepository.findTrees(options);
+        }
+
+        async getAncestors(params: object, id?: any) {
+            const element = await this.getOne(params, id);
+            return await this.treeRepository.findAncestors(element);
         }
 
         async create(data: any) {
