@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Param,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 import { ExecuteTestService } from '../services/executeTest.service';
 import { ExecuteTestDto } from '../dto/executeTest.dto';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
@@ -7,6 +15,7 @@ import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { TestApplicationService } from '../services/testApplication.service';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
+import { RoleGuard, Roles } from 'src/common/guards/RoleGuard.guard';
 
 @Controller('execute_test')
 export class ExecuteTestController implements IController {
@@ -16,6 +25,8 @@ export class ExecuteTestController implements IController {
     @InjectDataSource() dataSource?: DataSource;
 
     @Post()
+    @UseGuards(RoleGuard)
+    @Roles(['Executor'])
     async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
         return await handleTransaction(this.dataSource, async () => {
             body.user_id = jwtPayload.user_id;
@@ -26,6 +37,8 @@ export class ExecuteTestController implements IController {
     }
 
     @Get('/:id')
+    @UseGuards(RoleGuard)
+    @Roles(['Executor'])
     async getTestResult(@Param('id') id_test_app: number) {
         let result = null;
 

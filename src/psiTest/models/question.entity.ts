@@ -38,7 +38,9 @@ export class Question extends BaseModel {
     @Exclude()
     fk_id_serie: number;
 
-    @ManyToOne(() => TestSerie, (serie) => serie.questions)
+    @ManyToOne(() => TestSerie, (serie) => serie.questions, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({
         name: 'fk_id_serie',
     })

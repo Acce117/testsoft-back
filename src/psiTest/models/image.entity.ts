@@ -34,14 +34,16 @@ export class Image extends BaseModel {
     @Exclude()
     id_answer: number;
 
-    @OneToOne(() => Question, (question) => question.picture)
+    @OneToOne(() => Question, (question) => question.picture, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({
         name: 'id_question',
         referencedColumnName: 'id_question',
     })
     question: Question;
 
-    @OneToOne(() => Answer, (answer) => answer.image)
+    @OneToOne(() => Answer, (answer) => answer.image, { onDelete: 'CASCADE' })
     @JoinColumn({
         name: 'id_answer',
         referencedColumnName: 'id_answer',

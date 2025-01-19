@@ -20,7 +20,7 @@ export class Tribute extends BaseModel {
     @Column()
     tribute_value: number;
 
-    @OneToOne(() => Answer, (answer) => answer.tribute)
+    @OneToOne(() => Answer, (answer) => answer.tribute, { onDelete: 'CASCADE' })
     @JoinColumn({
         name: 'fk_id_answer',
         referencedColumnName: 'id_answer',

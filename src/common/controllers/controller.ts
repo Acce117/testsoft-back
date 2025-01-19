@@ -21,9 +21,9 @@ import { handleTransaction } from '../utils/handleTransaction';
 import { QueryBuilderPipe } from '../pipes/queryBuilder.pipe';
 
 interface EndPointOptions {
-    decorators: Array<MethodDecorator>;
+    decorators?: Array<MethodDecorator>;
 }
-interface BaseControllerOptions {
+interface BaseControllerOptions extends EndPointOptions {
     prefix: string;
     service: object;
     createDto?: any;
@@ -38,6 +38,7 @@ interface BaseControllerOptions {
 export function CrudBaseController(
     options: BaseControllerOptions,
 ): Type<ICrudController> {
+    @applyDecorators(...options.decorators)
     @Controller(options.prefix)
     class CrudController implements ICrudController {
         @Inject(options.service) service: ICrudService;

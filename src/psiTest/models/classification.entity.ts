@@ -26,7 +26,9 @@ export class Classification extends BaseModel {
     @Exclude()
     fk_id_test: number;
 
-    @ManyToOne(() => PsiTest, (test) => test.classifications)
+    @ManyToOne(() => PsiTest, (test) => test.classifications, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({
         name: 'fk_id_test',
         referencedColumnName: 'id_test',

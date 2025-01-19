@@ -29,7 +29,7 @@ export class Item extends BaseModel {
     @Exclude()
     fk_category: number;
 
-    @ManyToOne(() => Category)
+    @ManyToOne(() => Category, { onDelete: 'CASCADE' })
     @JoinColumn({
         name: 'fk_category',
         referencedColumnName: 'id_category',

@@ -33,7 +33,11 @@ export class TestRange extends BaseModel {
     @Exclude()
     fk_id_classification: number;
 
-    @ManyToOne(() => Classification, (classification) => classification.ranges)
+    @ManyToOne(
+        () => Classification,
+        (classification) => classification.ranges,
+        { onDelete: 'CASCADE' },
+    )
     @JoinColumn({
         name: 'fk_id_classification',
         referencedColumnName: 'id_classification',

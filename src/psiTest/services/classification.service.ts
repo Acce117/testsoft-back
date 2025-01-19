@@ -3,4 +3,5 @@ import { Classification } from '../models/classification.entity';
 
 export class ClassificationService extends CrudBaseService({
     model: Classification,
+    delete: 'hard',
 }) {}

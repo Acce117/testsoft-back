@@ -24,7 +24,9 @@ export class QuestionTopValue extends BaseModel {
     @Exclude()
     fk_id_question: number;
 
-    @OneToOne(() => Question, (question) => question.top_value)
+    @OneToOne(() => Question, (question) => question.top_value, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({
         name: 'fk_id_question',
         referencedColumnName: 'id_question',

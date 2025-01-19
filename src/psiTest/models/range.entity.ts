@@ -41,7 +41,7 @@ export class Range extends BaseModel {
     @Exclude()
     fk_id_item: number;
 
-    @ManyToOne(() => Item, (item) => item.ranges)
+    @ManyToOne(() => Item, (item) => item.ranges, { onDelete: 'CASCADE' })
     @JoinColumn({
         name: 'fk_id_item',
         referencedColumnName: 'id_item',

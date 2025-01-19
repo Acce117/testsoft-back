@@ -29,7 +29,7 @@ export class Category extends BaseModel {
     })
     description: string;
 
-    @ManyToMany(() => PsiTest, (test) => test.category)
+    @ManyToMany(() => PsiTest, (test) => test.category, { onDelete: 'CASCADE' })
     tests: PsiTest[];
 
     @OneToMany(() => Item, (item) => item.category)

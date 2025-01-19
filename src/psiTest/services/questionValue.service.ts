@@ -3,4 +3,5 @@ import { QuestionTopValue } from '../models/questionValue.entity';
 
 export class QuestionValueService extends CrudBaseService({
     model: QuestionTopValue,
+    delete: 'hard',
 }) {}

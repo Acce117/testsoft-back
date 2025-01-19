@@ -39,7 +39,9 @@ export class ParameterDisplayResult extends BaseModel {
     @Column()
     count_max: number;
 
-    @OneToOne(() => PsiTest, (test) => test.display_parameters)
+    @OneToOne(() => PsiTest, (test) => test.display_parameters, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({
         name: 'fk_id_test',
         referencedColumnName: 'id_test',
