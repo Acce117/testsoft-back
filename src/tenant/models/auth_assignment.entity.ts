@@ -4,10 +4,12 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Group } from './group.entity';
 import { User } from './user.entity';
+import { AuthItem } from './auth_item.entity';
 
 @Entity()
 export class AuthAssignment extends BaseModel {
@@ -32,6 +34,13 @@ export class AuthAssignment extends BaseModel {
         referencedColumnName: 'id_group',
     })
     groups: Group[];
+
+    @OneToOne(() => AuthItem)
+    @JoinColumn({
+        name: 'item_id',
+        referencedColumnName: 'item_id',
+    })
+    role: AuthItem;
 
     @ManyToOne(() => User, (user) => user.assignments)
     @JoinColumn({
