@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserService } from 'src/tenant/services/user.service';
-import { jwtPayload } from '../decorators/jwtPayload.decorator';
+import { jwtPayload } from '../../common/decorators/jwtPayload.decorator';
 import { User } from 'src/tenant/models/user.entity';
 
 export const Roles = Reflector.createDecorator<string[]>();
@@ -17,7 +17,7 @@ export class RoleGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const roles = this.reflector.get(Roles, context.getHandler());
+        const roles = this.getRoles(context);
         let result = true;
         const payload = jwtPayload(context);
 
@@ -36,5 +36,12 @@ export class RoleGuard implements CanActivate {
         }
 
         return result;
+    }
+
+    getRoles(context: ExecutionContext) {
+        return [
+            ...(this.reflector.get(Roles, context.getClass()) ?? []),
+            ...(this.reflector.get(Roles, context.getHandler()) ?? []),
+        ];
     }
 }

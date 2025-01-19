@@ -12,6 +12,7 @@ import { ApplicationAnswer } from './models/applicationAnswer.entity';
 import { ApplicationAnswerValue } from './models/applicationAnswerValue.entity';
 import { TestApplicationController } from './controllers/testApp.controller';
 import { ApplicationResultService } from './services/appResult.service';
+import { TenantModule } from 'src/tenant/tenant.module';
 
 @Module({
     controllers: [ExecuteTestController, TestApplicationController],
@@ -30,6 +31,7 @@ import { ApplicationResultService } from './services/appResult.service';
             ApplicationAnswer,
             ApplicationAnswerValue,
         ]),
+        TenantModule,
     ],
     exports: [],
 })

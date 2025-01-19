@@ -38,7 +38,7 @@ interface BaseControllerOptions extends EndPointOptions {
 export function CrudBaseController(
     options: BaseControllerOptions,
 ): Type<ICrudController> {
-    @applyDecorators(...options.decorators)
+    @applyDecorators(...(options.decorators ?? []))
     @Controller(options.prefix)
     class CrudController implements ICrudController {
         @Inject(options.service) service: ICrudService;

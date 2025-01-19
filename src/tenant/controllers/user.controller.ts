@@ -6,7 +6,7 @@ import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { CreateUserDto } from '../dto/create_user.dto';
 import { UpdateUserDto } from '../dto/update_user.dto';
-import { RoleGuard, Roles } from 'src/common/guards/RoleGuard.guard';
+import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 
 export class UserController extends CrudBaseController({
     prefix: 'user',

@@ -15,7 +15,7 @@ import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { TestApplicationService } from '../services/testApplication.service';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
-import { RoleGuard, Roles } from 'src/common/guards/RoleGuard.guard';
+import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 
 @Controller('execute_test')
 export class ExecuteTestController implements IController {

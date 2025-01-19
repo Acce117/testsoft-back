@@ -51,6 +51,7 @@ import { CorrectAnswerService } from './services/correctAnswer.service';
 import { CorrectAnswerController } from './controllers/correctAnswer.controller';
 import { RangeController } from './controllers/range.controller';
 import { RangeService } from './services/range.service';
+import { TenantModule } from 'src/tenant/tenant.module';
 
 @Module({
     controllers: [
@@ -111,6 +112,7 @@ import { RangeService } from './services/range.service';
             TestRange,
             Classification,
         ]),
+        TenantModule,
     ],
     exports: [PsiTestService, TributeService, EquationService],
 })
