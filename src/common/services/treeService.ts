@@ -24,7 +24,7 @@ export function TreeBaseService(
                 });
         }
 
-        async getAll(params) {
+        private parseParams(params) {
             const options: FindTreeOptions = {};
             params.depth !== undefined
                 ? (options.depth = params.depth)
@@ -32,7 +32,20 @@ export function TreeBaseService(
             params.relations
                 ? (options.relations = params.relations)
                 : params.relations;
-            return this.treeRepository.findTrees(options);
+
+            return options;
+        }
+
+        async getAll(params) {
+            return this.treeRepository.findTrees(this.parseParams(params));
+        }
+
+        async getOne(params: any, id?: any) {
+            const element = await super.getOne({}, id);
+            return this.treeRepository.findDescendantsTree(
+                element,
+                this.parseParams(params),
+            );
         }
 
         async getAncestors(params: object, id?: any) {
@@ -53,11 +66,11 @@ export function TreeBaseService(
         //TODO generalized, this is too specific
         async update(id: number, data: any) {
             if (data.father_group !== undefined) {
-                const group = await this.getOne({}, id);
+                const group = await super.getOne({}, id);
                 const old_father = group.father_group;
 
                 const new_father = data.father_group
-                    ? await this.getOne({}, data.father_group)
+                    ? await super.getOne({}, data.father_group)
                     : null;
                 group.parent = new_father;
                 group.mpath = this.resolvePath(
