@@ -18,6 +18,7 @@ import { Group } from 'src/tenant/models/group.entity';
 import { ParameterDisplayResult } from './parameterResult.entity';
 import { Exclude } from 'class-transformer';
 import { Classification } from './classification.entity';
+import { TestApplication } from 'src/executeTest/models/testApplication.entity';
 
 @Entity({
     name: 'test',
@@ -104,4 +105,7 @@ export class PsiTest extends BaseModel {
 
     @OneToMany(() => Classification, (classification) => classification.test)
     classifications: Classification[];
+
+    @OneToMany(() => TestApplication, (test_app) => test_app.test)
+    test_apps: TestApplication[];
 }

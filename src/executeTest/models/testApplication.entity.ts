@@ -5,6 +5,7 @@ import {
     Column,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -26,7 +27,7 @@ export class TestApplication extends BaseEntity {
     })
     user: User;
 
-    @OneToOne(() => PsiTest)
+    @ManyToOne(() => PsiTest, (test) => test.test_apps)
     @JoinColumn({
         name: 'fk_id_test',
         referencedColumnName: 'id_test',
