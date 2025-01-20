@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
 import { ExecuteTestModule } from './executeTest/executeTest.module';
+import { FileStreamerModule } from './fileStreamer/fileStreamer.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { ExecuteTestModule } from './executeTest/executeTest.module';
             useFactory: databaseConfig,
             inject: [ConfigService],
         }),
+        FileStreamerModule,
     ],
     controllers: [AppController],
     providers: [AppService],
