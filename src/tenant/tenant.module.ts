@@ -32,6 +32,6 @@ import { UserSubscriber } from './models/user.subscriber';
             AuthAssignment,
         ]),
     ],
-    exports: [UserService, AuthAssignmentService],
+    exports: [UserService, AuthAssignmentService, GroupService],
 })
 export class TenantModule {}

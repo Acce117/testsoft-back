@@ -46,11 +46,11 @@ export class User extends BaseModel {
     @Column({ type: 'varchar', nullable: false, length: 1 })
     sex: string;
 
-    @Column({ default: 0, type: 'tinyint' })
-    deleted: number;
+    @Column({ default: 0, type: 'boolean' })
+    deleted: boolean;
 
-    @Column({ default: 0, type: 'tinyint' })
-    enabled: number;
+    @Column({ default: 0, type: 'boolean' })
+    enabled: boolean;
 
     @DeleteDateColumn()
     deleted_at: Date;

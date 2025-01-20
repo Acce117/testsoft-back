@@ -43,7 +43,7 @@ export class UserService extends CrudBaseService({ model: User }) {
         const newGroup = await this.groupService.create(group);
 
         const user: User = await this.getOne({}, id_user);
-        user.enabled = 1;
+        user.enabled = true;
         user.my_groups.push(newGroup);
 
         await user.save();
