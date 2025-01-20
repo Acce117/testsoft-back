@@ -14,7 +14,19 @@ export class UserService extends CrudBaseService({ model: User }) {
                 relations: [
                     {
                         name: 'groups',
-                        relations: [{ name: 'psiTests' }],
+                        relations: [
+                            {
+                                name: 'psiTests',
+                                relations: [
+                                    {
+                                        name: 'test_apps',
+                                        where: {
+                                            fk_id_user: user_id,
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
                     },
                 ],
             },
