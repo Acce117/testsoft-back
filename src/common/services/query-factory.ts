@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthAssignment } from 'src/tenant/models/auth_assignment.entity';
-import { BaseEntity, EntityManager, SelectQueryBuilder } from 'typeorm';
+import { BaseEntity, SelectQueryBuilder } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
@@ -132,7 +131,7 @@ export class QueryFactory {
         const repository = model.getRepository();
         const element = await this.innerCreateQuery(data, model, repository);
         return manager
-            ? await manager.withRepository(repository).save(element)
+            ? manager.withRepository(repository).save(element)
             : repository.save(element);
     }
 
@@ -142,10 +141,6 @@ export class QueryFactory {
         if (!repository) repository = model.getRepository();
         const relations: RelationMetadata[] = repository.metadata.relations;
         const element = repository.create(data);
-        const assignments = AuthAssignment.getRepository().create(
-            data.assignments,
-        );
-        element.assignments = assignments;
 
         for (const relation of relations) {
             if (relation.propertyName in data) {

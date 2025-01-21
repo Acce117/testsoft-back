@@ -1,5 +1,11 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { PsiTest } from './psiTest.entity';
 
 @Entity({
@@ -19,5 +25,9 @@ export class GroupForTest extends BaseModel {
     fk_id_test: number;
 
     @ManyToOne(() => PsiTest)
-    test: PsiTest[];
+    @JoinColumn({
+        name: 'fk_id_test',
+        referencedColumnName: 'id_test',
+    })
+    test: PsiTest;
 }
