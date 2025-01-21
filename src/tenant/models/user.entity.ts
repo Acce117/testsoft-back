@@ -74,7 +74,9 @@ export class User extends BaseModel {
     })
     auth_item: AuthItem[];
 
-    @OneToMany(() => AuthAssignment, (assignment) => assignment.users)
+    @OneToMany(() => AuthAssignment, (assignment) => assignment.users, {
+        cascade: true,
+    })
     assignments: AuthAssignment[];
 
     @ManyToMany(() => User)

@@ -47,5 +47,5 @@ export class AuthAssignment extends BaseModel {
         name: 'user_id',
         referencedColumnName: 'user_id',
     })
-    users: User[];
+    users: User;
 }

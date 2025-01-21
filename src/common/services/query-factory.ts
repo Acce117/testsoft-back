@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AuthAssignment } from 'src/tenant/models/auth_assignment.entity';
 import { BaseEntity, EntityManager, SelectQueryBuilder } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
@@ -127,13 +128,24 @@ export class QueryFactory {
         };
     }
 
+    public async createQuery(data, model, manager) {
+        const repository = model.getRepository();
+        const element = await this.innerCreateQuery(data, model, repository);
+        return manager
+            ? await manager.withRepository(repository).save(element)
+            : repository.save(element);
+    }
+
     //TODO working on it
     /**Some relations types still in progress */
-    public async createQuery(data, model, manager?: EntityManager) {
-        const repository = model.getRepository();
-        const relations: RelationMetadata[] =
-            model.getRepository().metadata.relations;
+    public async innerCreateQuery(data, model, repository) {
+        if (!repository) repository = model.getRepository();
+        const relations: RelationMetadata[] = repository.metadata.relations;
         const element = repository.create(data);
+        const assignments = AuthAssignment.getRepository().create(
+            data.assignments,
+        );
+        element.assignments = assignments;
 
         for (const relation of relations) {
             if (relation.propertyName in data) {
@@ -142,13 +154,25 @@ export class QueryFactory {
                     relationType === 'one-to-one' ||
                     relationType === 'many-to-one'
                 )
-                    element[relation.propertyName] = await this.createQuery(
-                        data[`${relation.propertyName}`],
-                        relation.type,
-                        manager,
-                    );
+                    element[relation.propertyName] =
+                        await this.innerCreateQuery(
+                            data[`${relation.propertyName}`],
+                            relation.type,
+                            null,
+                        );
                 else {
                     if (Array.isArray(data[relation.propertyName])) {
+                        const to_create = [];
+                        data[relation.propertyName].forEach((e) => {
+                            if (typeof e === 'object') to_create.push(e);
+                        });
+
+                        const related = await this.innerCreateQuery(
+                            to_create,
+                            relation.type,
+                            null,
+                        );
+
                         const elements = await this.collectionQuery(
                             {
                                 where: data[relation.propertyName],
@@ -156,14 +180,16 @@ export class QueryFactory {
                             relation.type,
                         ).getMany();
 
-                        element[relation.propertyName] = elements;
+                        // element[relation.propertyName] = elements;
+                        element[relation.propertyName] = [
+                            ...related,
+                            ...elements,
+                        ];
                     }
                 }
             }
         }
 
-        return manager
-            ? await manager.withRepository(repository).save(element)
-            : repository.save(element);
+        return element;
     }
 }
