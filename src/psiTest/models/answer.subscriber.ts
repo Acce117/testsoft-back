@@ -3,6 +3,7 @@ import {
     EntitySubscriberInterface,
     EventSubscriber,
     InsertEvent,
+    UpdateEvent,
 } from 'typeorm';
 import { Answer } from './answer.entity';
 import { FileHandler, FSFileHandler } from 'src/common/services/file-handler';
@@ -23,6 +24,20 @@ export class AnswerSubscriber implements EntitySubscriberInterface {
 
     afterInsert(event: InsertEvent<Answer>): Promise<any> | void {
         const entity: Answer = event.entity;
+
+        if (entity.file) {
+            const path = this.fileHandler.saveFile(entity.file);
+            const image = new Image();
+            image.url = path;
+            image.answer = entity;
+
+            image.save();
+        }
+    }
+
+    afterUpdate(event: UpdateEvent<Answer>): Promise<any> | void {
+        const entity: Answer = event.entity as Answer;
+
         if (entity.file) {
             const path = this.fileHandler.saveFile(entity.file);
             const image = new Image();
