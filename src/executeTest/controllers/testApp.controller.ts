@@ -7,6 +7,6 @@ export class TestApplicationController extends CrudBaseController({
     prefix: 'test_app',
     service: TestApplicationService,
     getAll: {
-        decorators: [UseGuards(RoleGuard), Roles(['Analyst'])],
+        decorators: [UseGuards(RoleGuard), Roles(['Analyst', 'Executor'])],
     },
 }) {}
