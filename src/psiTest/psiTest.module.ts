@@ -52,6 +52,9 @@ import { CorrectAnswerController } from './controllers/correctAnswer.controller'
 import { RangeController } from './controllers/range.controller';
 import { RangeService } from './services/range.service';
 import { TenantModule } from 'src/tenant/tenant.module';
+import { GroupForTestController } from './controllers/groupForTest.controller';
+import { GroupForTestService } from './services/groupForTest.service';
+import { GroupForTest } from './models/groupForTest.entity';
 
 @Module({
     controllers: [
@@ -71,6 +74,7 @@ import { TenantModule } from 'src/tenant/tenant.module';
         TestRangeController,
         CorrectAnswerController,
         RangeController,
+        GroupForTestController,
     ],
     providers: [
         PsiTestService,
@@ -91,6 +95,7 @@ import { TenantModule } from 'src/tenant/tenant.module';
         TestRangeService,
         CorrectAnswerService,
         RangeService,
+        GroupForTestService,
     ],
     imports: [
         TypeOrmModule.forFeature([
@@ -111,6 +116,7 @@ import { TenantModule } from 'src/tenant/tenant.module';
             QuestionTopValue,
             TestRange,
             Classification,
+            GroupForTest,
         ]),
         TenantModule,
     ],
