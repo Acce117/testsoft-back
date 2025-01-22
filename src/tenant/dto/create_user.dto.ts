@@ -1,4 +1,5 @@
 import {
+    IsArray,
     IsEmail,
     IsEnum,
     IsNumber,
@@ -31,4 +32,7 @@ export class CreateUserDto {
     @IsNumber()
     @IsOptional()
     country_id?: string;
+
+    @IsArray()
+    assignments: [];
 }

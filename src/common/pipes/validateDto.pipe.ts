@@ -19,7 +19,10 @@ export class ValidateDtoPipe implements PipeTransform {
                 validationResult = result.validationResult;
             } else {
                 data = plainToInstance(this.dtoType, value);
-                validationResult = validateSync(data);
+                validationResult = validateSync(data, {
+                    whitelist: true,
+                    forbidNonWhitelisted: true,
+                });
             }
 
             if (validationResult.length > 0)
