@@ -1,4 +1,4 @@
-import { Body, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Post, UseGuards } from '@nestjs/common';
 import { CreatePsiTestDto } from '../dto/create_psiTest.dto';
 import { UpdatePsiTestDto } from '../dto/update_psiTest.dto';
 import { PsiTestService } from '../services/psiTest.service';
@@ -11,7 +11,7 @@ export class PsiTestController extends CrudBaseController({
     service: PsiTestService,
     createDto: CreatePsiTestDto,
     updateDto: UpdatePsiTestDto,
-    // decorators: [UseGuards(RoleGuard), Roles(['Analyst'])],
+    decorators: [UseGuards(RoleGuard), Roles(['Analyst'])],
     getAll: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
     getOne: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
 }) {
