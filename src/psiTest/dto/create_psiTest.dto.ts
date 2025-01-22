@@ -1,4 +1,10 @@
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import {
+    IsArray,
+    IsBoolean,
+    IsInt,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 
 export class CreatePsiTestDto {
     @IsString()
@@ -27,4 +33,8 @@ export class CreatePsiTestDto {
 
     @IsString()
     language: string;
+
+    @IsArray()
+    @IsOptional()
+    authors: [];
 }

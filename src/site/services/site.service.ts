@@ -12,6 +12,7 @@ import { UserCredentials } from '../dto/userCredentials.dto';
 import { User } from '../../tenant/models/user.entity';
 import { AuthAssignmentService } from 'src/tenant/services/AuthAssignment.service';
 import { GroupService } from 'src/tenant/services/group.service';
+import { Group } from 'src/tenant/models/group.entity';
 
 @Injectable()
 export class SiteService {
@@ -21,8 +22,14 @@ export class SiteService {
     @Inject(AuthAssignmentService)
     private readonly authAssignmentService: AuthAssignmentService;
 
-    public async signIn(user: CreateUserDto) {
-        const newUser: User = await this.userService.create(user);
+    public async signIn(user: CreateUserDto, group, manager) {
+        const newUser: User = await this.userService.create(user, manager);
+        const newGroup: Group = await this.groupService.create(group, manager);
+
+        newGroup.owner = [newUser];
+
+        newGroup.save();
+
         this.authAssignmentService.create({
             user_id: newUser.user_id,
             item_id: 4,

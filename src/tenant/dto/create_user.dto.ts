@@ -34,5 +34,6 @@ export class CreateUserDto {
     country_id?: string;
 
     @IsArray()
+    @IsOptional()
     assignments: [];
 }

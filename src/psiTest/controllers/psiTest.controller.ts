@@ -11,7 +11,7 @@ export class PsiTestController extends CrudBaseController({
     service: PsiTestService,
     createDto: CreatePsiTestDto,
     updateDto: UpdatePsiTestDto,
-    decorators: [UseGuards(RoleGuard), Roles(['Analyst'])],
+    decorators: [UseGuards(RoleGuard), Roles(['Analyst', 'Super Admin'])],
     getAll: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
     getOne: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
 }) {
