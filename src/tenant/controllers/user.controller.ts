@@ -12,7 +12,7 @@ export class UserController extends CrudBaseController({
     prefix: 'user',
     service: UserService,
     createDto: CreateUserDto,
-    updateDto: UpdateUserDto,
+    // updateDto: UpdateUserDto,
 
     decorators: [
         UseGuards(RoleGuard),
