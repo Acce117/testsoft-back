@@ -13,9 +13,15 @@ import { CountryController } from './controllers/country.controller';
 import { AuthAssignment } from './models/auth_assignment.entity';
 import { AuthAssignmentService } from './services/AuthAssignment.service';
 import { UserSubscriber } from './models/user.subscriber';
+import { ClientController } from './controllers/client.controller';
 
 @Module({
-    controllers: [GroupController, UserController, CountryController],
+    controllers: [
+        GroupController,
+        UserController,
+        CountryController,
+        ClientController,
+    ],
     providers: [
         GroupService,
         UserService,
