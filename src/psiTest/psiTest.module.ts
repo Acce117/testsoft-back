@@ -55,6 +55,7 @@ import { TenantModule } from 'src/tenant/tenant.module';
 import { GroupForTestController } from './controllers/groupForTest.controller';
 import { GroupForTestService } from './services/groupForTest.service';
 import { GroupForTest } from './models/groupForTest.entity';
+import { TestAuthor } from './models/test_author.entity';
 
 @Module({
     controllers: [
@@ -117,6 +118,7 @@ import { GroupForTest } from './models/groupForTest.entity';
             TestRange,
             Classification,
             GroupForTest,
+            TestAuthor,
         ]),
         TenantModule,
     ],
