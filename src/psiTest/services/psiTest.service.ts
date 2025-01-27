@@ -22,9 +22,7 @@ export class PsiTestService extends CrudBaseService({
 
         this.assignTest(id_test, [group], manager, promises);
 
-        const result = await Promise.all(promises);
-
-        return result;
+        return Promise.all(promises);
     }
 
     private assignTest(id_test, groups: Array<Group>, manager, promises) {

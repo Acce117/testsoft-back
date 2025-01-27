@@ -87,8 +87,8 @@ export function CrudBaseController(
         @applyDecorators(
             ...(options.create?.decorators ? options.create.decorators : []),
         )
-        async create(@Body(new ValidateDtoPipe(options.createDto)) body) {
-            return await handleTransaction(this.dataSource, async (manager) => {
+        create(@Body(new ValidateDtoPipe(options.createDto)) body) {
+            return handleTransaction(this.dataSource, async (manager) => {
                 const result = await this.service.create(body, manager);
                 return instanceToPlain(result);
             });
@@ -102,7 +102,7 @@ export function CrudBaseController(
             @Param('id') id: number,
             @Body(new ValidateDtoPipe(options.updateDto)) body,
         ) {
-            return await handleTransaction(this.dataSource, async (manager) => {
+            return handleTransaction(this.dataSource, async (manager) => {
                 const result = await this.service.update(id, body, manager);
                 return instanceToPlain(result);
             });
@@ -113,7 +113,7 @@ export function CrudBaseController(
             ...(options.delete?.decorators ? options.delete.decorators : []),
         )
         public async delete(@Param('id') id: number) {
-            return await handleTransaction(this.dataSource, async (manager) => {
+            return handleTransaction(this.dataSource, async (manager) => {
                 const result = await this.service.delete(id, manager);
                 return instanceToPlain(result);
             });

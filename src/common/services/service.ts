@@ -14,11 +14,11 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
         model = options.model;
         @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
-        getAll(params) {
+        getAll(params): Promise<any> {
             return this.queryFactory.selectQuery(params, this.model).getMany();
         }
 
-        getOne(params, id?) {
+        getOne(params, id?): Promise<any> {
             let query = this.queryFactory.structuralQuery(params, this.model);
 
             if (id)
@@ -33,7 +33,7 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
             return query.getOne();
         }
 
-        create(data, manager?: EntityManager) {
+        create(data, manager?: EntityManager): Promise<any> {
             return this.queryFactory.createQuery(data, this.model, manager);
         }
 
@@ -48,7 +48,7 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
             return query.execute();
         }
 
-        async delete(id: any, manager?: EntityManager) {
+        async delete(id: any, manager?: EntityManager): Promise<any> {
             const alias = this.model.alias;
             let query = manager
                 .withRepository(this.model.getRepository())

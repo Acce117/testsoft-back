@@ -15,12 +15,8 @@ export class GroupController extends CrudBaseController({
     },
 }) {
     @Get('parents/:id')
-    async getAncestors(
-        @Param('id') id,
-        @Query() query: any,
-        @Body() body: any,
-    ) {
-        return await (this.service as GroupService).getAncestors(
+    getAncestors(@Param('id') id, @Query() query: any, @Body() body: any) {
+        return (this.service as GroupService).getAncestors(
             { ...query, ...body },
             id,
         );

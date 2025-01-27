@@ -20,8 +20,8 @@ export class SiteController {
     }
 
     @Post('/sign_in')
-    async signIn(@Body('user') user: CreateUserDto, @Body('group') group) {
-        return await handleTransaction(
+    signIn(@Body('user') user: CreateUserDto, @Body('group') group) {
+        return handleTransaction(
             this.dataSource,
             async (manager) =>
                 await this.siteService.signIn(user, group, manager),

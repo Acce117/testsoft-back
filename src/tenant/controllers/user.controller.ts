@@ -22,15 +22,15 @@ export class UserController extends CrudBaseController({
     @Get('/:user_id/tests')
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
-    public async getUserTests(@Param('user_id') user_id: number) {
+    public getUserTests(@Param('user_id') user_id: number) {
         return (this.service as UserService).userTests(user_id);
     }
 
     @Post('/my_group')
     @UseGuards(RoleGuard)
     @Roles(['Client'])
-    async createMyGroup(@Body() data, @JwtPayload() payload) {
-        return await handleTransaction(
+    createMyGroup(@Body() data, @JwtPayload() payload) {
+        return handleTransaction(
             this.dataSource,
             async () =>
                 await (this.service as UserService).createMyGroup(

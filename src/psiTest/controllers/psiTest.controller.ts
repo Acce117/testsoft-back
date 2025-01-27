@@ -23,9 +23,9 @@ export class PsiTestController extends CrudBaseController({
     getOne: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
 }) {
     @Post('assign_test_to_group')
-    public async assignTestToGroup(@Body() { id_group, id_test }) {
-        return await handleTransaction(this.dataSource, async (manager) => {
-            return await (this.service as PsiTestService).assignTestToGroup(
+    public assignTestToGroup(@Body() { id_group, id_test }) {
+        return handleTransaction(this.dataSource, (manager) => {
+            return (this.service as PsiTestService).assignTestToGroup(
                 id_group,
                 id_test,
                 manager,
