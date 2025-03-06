@@ -15,6 +15,9 @@ import { AuthAssignmentService } from './services/AuthAssignment.service';
 import { UserSubscriber } from './models/user.subscriber';
 import { ClientController } from './controllers/client.controller';
 import { AuthAssignmentController } from './controllers/authAssignment.controller';
+import { FunctionalRole } from './models/functional_role.entity';
+import { FunctionalRoleController } from './controllers/functional_role.controller';
+import { FunctionalRoleService } from './services/functional_role.service';
 
 @Module({
     controllers: [
@@ -23,6 +26,7 @@ import { AuthAssignmentController } from './controllers/authAssignment.controlle
         CountryController,
         ClientController,
         AuthAssignmentController,
+        FunctionalRoleController,
     ],
     providers: [
         GroupService,
@@ -30,6 +34,7 @@ import { AuthAssignmentController } from './controllers/authAssignment.controlle
         CountryService,
         AuthAssignmentService,
         UserSubscriber,
+        FunctionalRoleService,
     ],
     imports: [
         TypeOrmModule.forFeature([
@@ -38,6 +43,7 @@ import { AuthAssignmentController } from './controllers/authAssignment.controlle
             AuthItem,
             Country,
             AuthAssignment,
+            FunctionalRole,
         ]),
     ],
     exports: [UserService, AuthAssignmentService, GroupService],
