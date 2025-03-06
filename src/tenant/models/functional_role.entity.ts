@@ -1,7 +1,14 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Group } from './group.entity';
 
+@Entity({ name: 'functional_role' })
 export class FunctionalRole extends BaseModel {
     static alias: string = 'functional_role';
     static readonly primaryKey: string = 'id_rol';
@@ -15,7 +22,7 @@ export class FunctionalRole extends BaseModel {
     @Column()
     rol_descrip: string;
 
-    @ManyToOne(() => Group)
+    @ManyToOne(() => Group, (group) => group.functional_roles)
     @JoinColumn({
         name: 'id_group',
         referencedColumnName: 'id_group',
