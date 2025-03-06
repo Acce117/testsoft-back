@@ -13,6 +13,7 @@ import { User } from '../../tenant/models/user.entity';
 import { AuthAssignmentService } from 'src/tenant/services/AuthAssignment.service';
 import { GroupService } from 'src/tenant/services/group.service';
 import { Group } from 'src/tenant/models/group.entity';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class SiteService {
@@ -115,5 +116,17 @@ export class SiteService {
 
     private generateToken(payload: object) {
         return this.jwtService.sign(payload);
+    }
+
+    public async changePassword(
+        user_id,
+        { old_password, new_password },
+        manager: EntityManager,
+    ) {
+        const user: User = await this.userService.getOne({}, user_id);
+        if (bcrypt.compareSync(old_password, user.password)) {
+            user.password = new_password;
+            manager.withRepository(User.getRepository()).save(user);
+        } else throw new UnauthorizedException();
     }
 }
