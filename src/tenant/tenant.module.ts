@@ -18,6 +18,12 @@ import { AuthAssignmentController } from './controllers/authAssignment.controlle
 import { FunctionalRole } from './models/functional_role.entity';
 import { FunctionalRoleController } from './controllers/functional_role.controller';
 import { FunctionalRoleService } from './services/functional_role.service';
+import { Leadership } from './models/leadership.entity';
+import { Incompatibility } from './models/incompatibility.entity';
+import { IncompatibilityController } from './controllers/incompatibility.controller';
+import { LeadershipController } from './controllers/leadership.controller';
+import { IncompatibilityService } from './services/incompatibility.service';
+import { LeadershipService } from './services/leadership.service';
 
 @Module({
     controllers: [
@@ -27,6 +33,8 @@ import { FunctionalRoleService } from './services/functional_role.service';
         ClientController,
         AuthAssignmentController,
         FunctionalRoleController,
+        IncompatibilityController,
+        LeadershipController,
     ],
     providers: [
         GroupService,
@@ -35,6 +43,8 @@ import { FunctionalRoleService } from './services/functional_role.service';
         AuthAssignmentService,
         UserSubscriber,
         FunctionalRoleService,
+        IncompatibilityService,
+        LeadershipService,
     ],
     imports: [
         TypeOrmModule.forFeature([
@@ -44,6 +54,8 @@ import { FunctionalRoleService } from './services/functional_role.service';
             Country,
             AuthAssignment,
             FunctionalRole,
+            Leadership,
+            Incompatibility,
         ]),
     ],
     exports: [UserService, AuthAssignmentService, GroupService],
