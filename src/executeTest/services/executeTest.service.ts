@@ -13,7 +13,6 @@ import { DataSource } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
-import { ApplicationResult } from '../models/applicationResult.entity';
 import { Item } from 'src/psiTest/models/item.entity';
 import { ApplicationResultService } from './appResult.service';
 import {
@@ -305,9 +304,12 @@ export class ExecuteTestService {
         if (parameters.all_element_value) {
             if (parameters.tops_values) {
                 const app_result = testApp.application_result;
-                const items_ordered = this.top(
-                    app_result,
-                    (val1, val2) => val1 < val2,
+
+                const items_ordered = this.mergeSort(
+                    app_result.map((el) => ({
+                        item: el.item,
+                        value: el.value_result,
+                    })),
                 );
 
                 final_results['preferred'] = [];
@@ -330,9 +332,12 @@ export class ExecuteTestService {
                 final_results['categories'] = {};
 
                 const app_result = testApp.application_result;
-                const items_ordered = this.top(
-                    app_result,
-                    (val1, val2) => val1 < val2,
+
+                const items_ordered = this.mergeSort(
+                    app_result.map((el) => ({
+                        item: el.item,
+                        value: el.value_result,
+                    })),
                 );
 
                 for (let i = 0; i < items_ordered.length; i++) {
@@ -384,32 +389,41 @@ export class ExecuteTestService {
         return final_results;
     }
 
-    top(results: Array<ApplicationResult>, condition) {
-        let items: Array<{ item: Item; value: number }> = [];
+    private merge(
+        left: { item: Item; value: number }[],
+        right: { item: Item; value: number }[],
+    ): { item: Item; value: number }[] {
+        const resultArray: { item: Item; value: number }[] = [];
 
-        for (let i = 0; i < results.length; i++) {
-            if (items.length === 0)
-                items.push({
-                    item: results[i].item,
-                    value: results[i].value_result,
-                });
-            else if (
-                condition(
-                    items[items.length - 1].value,
-                    results[i].value_result,
-                )
-            )
-                items = [
-                    { item: results[i].item, value: results[i].value_result },
-                    ...items,
-                ];
-            else
-                items = [
-                    ...items,
-                    { item: results[i].item, value: results[i].value_result },
-                ];
+        let leftIndex = 0;
+        let rightIndex = 0;
+
+        while (leftIndex < left.length && rightIndex < right.length) {
+            if (left[leftIndex].value >= right[rightIndex].value) {
+                resultArray.push(left[leftIndex]);
+                leftIndex++;
+            } else {
+                resultArray.push(right[rightIndex]);
+                rightIndex++;
+            }
         }
 
-        return items;
+        return resultArray
+            .concat(left.slice(leftIndex))
+            .concat(right.slice(rightIndex));
+    }
+
+    private mergeSort(
+        unsortedArray: { item: Item; value: number }[],
+    ): { item: Item; value: number }[] {
+        if (unsortedArray.length <= 1) {
+            return unsortedArray;
+        }
+
+        const middle = Math.floor(unsortedArray.length / 2);
+        const left = unsortedArray.slice(0, middle);
+        const right = unsortedArray.slice(middle);
+
+        return this.merge(this.mergeSort(left), this.mergeSort(right));
     }
 }
