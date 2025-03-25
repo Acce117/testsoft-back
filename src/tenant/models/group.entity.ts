@@ -6,12 +6,14 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
+    OneToMany,
     PrimaryGeneratedColumn,
     Tree,
     TreeChildren,
     TreeParent,
 } from 'typeorm';
 import { User } from './user.entity';
+import { FunctionalRole } from './functional_role.entity';
 
 @Entity({ name: 'group' })
 @Tree('materialized-path')
@@ -77,4 +79,7 @@ export class Group extends BaseModel {
         },
     })
     owner: User[];
+
+    @OneToMany(() => FunctionalRole, (functional_role) => functional_role.group)
+    functional_roles: FunctionalRole[];
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { CreateUserDto } from '../dto/register_user.dto';
@@ -32,5 +32,18 @@ export class SiteController {
     async me(@JwtPayload() payload) {
         const user = await this.siteService.me(payload.user_id);
         return instanceToPlain(user);
+    }
+
+    @Patch('/change_password')
+    async changePassword(@Body() body, @JwtPayload() payload) {
+        return handleTransaction(
+            this.dataSource,
+            async (manager) =>
+                await this.siteService.changePassword(
+                    payload.user_id,
+                    body,
+                    manager,
+                ),
+        );
     }
 }
