@@ -51,11 +51,13 @@ export function CrudBaseController(
         async getAll(@Query(new QueryBuilderPipe()) params, @Body() body) {
             let result = null;
             try {
-                result = await this.service.getAll({
-                    ...params,
-                    ...body,
-                });
-                result = instanceToPlain(result);
+                const p = { ...params, ...body };
+                let data = await this.service.getAll(p);
+                data = instanceToPlain(data);
+                result = await this.service.getPaginationData(
+                    p.limit || undefined,
+                );
+                result.data = data;
             } catch (err) {
                 result = err.message;
             }
