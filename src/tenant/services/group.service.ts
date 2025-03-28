@@ -1,9 +1,9 @@
 import { Group } from '../models/group.entity';
 import { TreeBaseService } from 'src/common/services/treeService';
 import { User } from '../models/user.entity';
-import { SelectQueryBuilder } from 'typeorm';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
+    //add filter
     public async getUsers(params, id) {
         const group = await this.getOne({ depth: 0 }, id);
 
@@ -14,6 +14,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
                 group,
             )
             .leftJoinAndSelect(`${this.model.alias}.users`, User.alias)
+            .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups')
             .getMany();
 
         const users = [];
