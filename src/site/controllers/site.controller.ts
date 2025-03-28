@@ -28,12 +28,6 @@ export class SiteController {
         );
     }
 
-    @Get('/me')
-    async me(@JwtPayload() payload) {
-        const user = await this.siteService.me(payload.user_id);
-        return instanceToPlain(user);
-    }
-
     @Patch('/change_password')
     async changePassword(@Body() body, @JwtPayload() payload) {
         return handleTransaction(

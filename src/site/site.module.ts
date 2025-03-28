@@ -12,10 +12,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtMiddleware } from 'src/common/middlewares/jwtMiddleware';
 import jwtConfig from 'src/config/jwt.config';
 import { TenantModule } from 'src/tenant/tenant.module';
+import { MeService } from './services/me.service';
+import { MeController } from './controllers/me.controller';
 
 @Module({
-    controllers: [SiteController],
-    providers: [SiteService],
+    controllers: [SiteController, MeController],
+    providers: [SiteService, MeService],
     imports: [
         ConfigModule,
         TypeOrmModule.forFeature(),

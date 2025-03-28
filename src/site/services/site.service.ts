@@ -105,15 +105,6 @@ export class SiteService {
         };
     }
 
-    public me(id_user) {
-        return this.userService.getOne(
-            {
-                relations: ['assignments.role'],
-            },
-            id_user,
-        );
-    }
-
     private generateToken(payload: object) {
         return this.jwtService.sign(payload);
     }
