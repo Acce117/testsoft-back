@@ -21,4 +21,12 @@ export class GroupController extends CrudBaseController({
             id,
         );
     }
+
+    @Get('users/:id')
+    getUsers(@Param('id') id, @Query() query: any, @Body() body: any) {
+        return (this.service as GroupService).getUsers(
+            { ...query, ...body },
+            id,
+        );
+    }
 }

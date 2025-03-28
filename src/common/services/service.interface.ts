@@ -1,3 +1,5 @@
+import { TreeRepository } from "typeorm";
+
 export interface ICrudService {
     model: any;
     getAll(params);
@@ -9,5 +11,6 @@ export interface ICrudService {
 }
 
 export interface ICrudTreeService extends ICrudService {
+    treeRepository: TreeRepository<any>;
     getAncestors(params, id?);
 }
