@@ -82,4 +82,7 @@ export class Group extends BaseModel {
 
     @OneToMany(() => FunctionalRole, (functional_role) => functional_role.group)
     functional_roles: FunctionalRole[];
+
+    @OneToMany(() => PsiTest, (test) => test.groupOwner)
+    owned_tests: PsiTest[];
 }

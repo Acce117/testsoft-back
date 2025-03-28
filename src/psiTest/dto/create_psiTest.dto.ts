@@ -37,4 +37,7 @@ export class CreatePsiTestDto {
     @IsArray()
     @IsOptional()
     authors: [];
+
+    @IsInt()
+    id_owner: number;
 }

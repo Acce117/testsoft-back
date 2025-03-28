@@ -5,6 +5,7 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
+    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -58,6 +59,9 @@ export class PsiTest extends BaseModel {
     @Column({ type: 'int', nullable: false })
     fk_id_type_test: number;
 
+    @Column({ type: 'bigint', nullable: true })
+    id_owner: number;
+
     @OneToOne(() => TypePsiTest)
     @JoinColumn({
         name: 'fk_id_type_test',
@@ -108,4 +112,11 @@ export class PsiTest extends BaseModel {
 
     @OneToMany(() => TestApplication, (test_app) => test_app.test)
     test_apps: TestApplication[];
+
+    @ManyToOne(() => Group, (group) => group.owned_tests)
+    @JoinColumn({
+        name: 'id_owner',
+        referencedColumnName: 'id_group',
+    })
+    groupOwner: Group;
 }
