@@ -89,11 +89,11 @@ export class User extends BaseModel {
 
     @ManyToMany(() => User)
     @JoinTable({
-        name: 'incompatibility',
+        name: 'compatibility',
         joinColumn: { name: 'fk_user_origin' },
         inverseJoinColumn: { name: 'fk_user_destination' },
     })
-    incompatibility: User[];
+    compatibility: User[];
 
     @ManyToMany(() => Group, (group) => group.users)
     @JoinTable({

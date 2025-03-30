@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindTreeOptions, SelectQueryBuilder, TreeRepository } from 'typeorm';
+import { FindTreeOptions, TreeRepository } from 'typeorm';
 import { Injectable, Type } from '@nestjs/common';
 import { CrudBaseService, ServiceOptions } from './service';
 import { ICrudTreeService } from './service.interface';

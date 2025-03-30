@@ -22,9 +22,32 @@ export class GroupController extends CrudBaseController({
         );
     }
 
+    @Get('users_from_group/:id')
+    public async getUsersFromGroup(
+        @Param('id') id,
+        @Query() query,
+        @Body() body,
+    ) {
+        return (this.service as GroupService).getUsersFromGroup(
+            { ...query, ...body },
+            id,
+        );
+    }
+
+    @Get('users_with_compatibility/:id')
+    public async getUsersWithLeadershipAndIncompatibilities(
+        @Param('id') id,
+        @Query() query,
+        @Body() body,
+    ) {
+        return (
+            this.service as GroupService
+        ).getUsersWithLeadershipAndIncompatibilities({ ...query, ...body }, id);
+    }
+
     @Get('users/:id')
     getUsers(@Param('id') id, @Query() query: any, @Body() body: any) {
-        return (this.service as GroupService).getUsers(
+        return (this.service as GroupService).getUsersFromTree(
             { ...query, ...body },
             id,
         );
