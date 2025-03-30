@@ -19,10 +19,10 @@ import { FunctionalRole } from './models/functional_role.entity';
 import { FunctionalRoleController } from './controllers/functional_role.controller';
 import { FunctionalRoleService } from './services/functional_role.service';
 import { Leadership } from './models/leadership.entity';
-import { Incompatibility } from './models/incompatibility.entity';
-import { IncompatibilityController } from './controllers/incompatibility.controller';
+import { Compatibility } from './models/compatibility.entity';
+import { CompatibilityController } from './controllers/compatibility.controller';
 import { LeadershipController } from './controllers/leadership.controller';
-import { IncompatibilityService } from './services/incompatibility.service';
+import { CompatibilityService } from './services/compatibility.service';
 import { LeadershipService } from './services/leadership.service';
 
 @Module({
@@ -33,7 +33,7 @@ import { LeadershipService } from './services/leadership.service';
         ClientController,
         AuthAssignmentController,
         FunctionalRoleController,
-        IncompatibilityController,
+        CompatibilityController,
         LeadershipController,
     ],
     providers: [
@@ -43,7 +43,7 @@ import { LeadershipService } from './services/leadership.service';
         AuthAssignmentService,
         UserSubscriber,
         FunctionalRoleService,
-        IncompatibilityService,
+        CompatibilityService,
         LeadershipService,
     ],
     imports: [
@@ -55,7 +55,7 @@ import { LeadershipService } from './services/leadership.service';
             AuthAssignment,
             FunctionalRole,
             Leadership,
-            Incompatibility,
+            Compatibility,
         ]),
     ],
     exports: [UserService, AuthAssignmentService, GroupService],

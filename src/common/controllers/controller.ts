@@ -56,6 +56,7 @@ export function CrudBaseController(
                 data = instanceToPlain(data);
                 result = await this.service.getPaginationData(
                     p.limit || undefined,
+                    p.offset || undefined,
                 );
                 result.data = data;
             } catch (err) {

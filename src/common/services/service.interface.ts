@@ -1,4 +1,4 @@
-import { TreeRepository } from "typeorm";
+import { TreeRepository } from 'typeorm';
 
 export interface ICrudService {
     model: any;
@@ -7,7 +7,7 @@ export interface ICrudService {
     create(data, manager?);
     update(id, data, manager?);
     delete(id, manager?);
-    getPaginationData(limit?);
+    getPaginationData(limit?, offset?);
 }
 
 export interface ICrudTreeService extends ICrudService {
