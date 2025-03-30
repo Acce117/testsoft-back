@@ -26,6 +26,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         if (offset + limit > users.length - 1)
             limit = (users.length % limit) - 1;
 
-        return users.slice(offset, offset + limit);
+        return {
+            pages: Math.ceil(users.length / limit),
+            elements_amount: users.length,
+            data: users.slice(offset, offset + limit),
+        };
     }
 }
