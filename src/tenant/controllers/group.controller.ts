@@ -4,6 +4,7 @@ import { CreateGroupDto } from '../dto/create_group.dto';
 import { UpdateGroupDto } from '../dto/update_group.dto';
 import { Body, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { MyGroupInterceptor } from '../interceptors/myGroup.interceptor';
+import { instanceToPlain } from 'class-transformer';
 
 export class GroupController extends CrudBaseController({
     prefix: 'groups',
@@ -28,10 +29,12 @@ export class GroupController extends CrudBaseController({
         @Query() query,
         @Body() body,
     ) {
-        return (this.service as GroupService).getUsersFromGroup(
+        const data = await (this.service as GroupService).getUsersFromGroup(
             { ...query, ...body },
             id,
         );
+
+        return instanceToPlain(data);
     }
 
     @Get('users_with_compatibility/:id')
@@ -40,16 +43,24 @@ export class GroupController extends CrudBaseController({
         @Query() query,
         @Body() body,
     ) {
-        return (
+        const data = await (
             this.service as GroupService
         ).getUsersWithLeadershipAndIncompatibilities({ ...query, ...body }, id);
+
+        return instanceToPlain(data);
     }
 
     @Get('users/:id')
-    getUsers(@Param('id') id, @Query() query: any, @Body() body: any) {
-        return (this.service as GroupService).getUsersFromTree(
+    public async getUsers(
+        @Param('id') id,
+        @Query() query: any,
+        @Body() body: any,
+    ) {
+        const data = await (this.service as GroupService).getUsersFromTree(
             { ...query, ...body },
             id,
         );
+
+        return instanceToPlain(data);
     }
 }
