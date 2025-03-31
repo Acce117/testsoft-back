@@ -14,9 +14,9 @@ export class QueryFactory {
         if (params.select) query = query.select(params.select);
         if (params.relations) query = this.setRelations(query, params, model);
         if (params.limit) {
-            query = query.limit(params.limit);
+            query = query.take(params.limit);
             if (params.offset) {
-                query = query.offset(params.offset);
+                query = query.skip(params.offset);
             }
         }
 
