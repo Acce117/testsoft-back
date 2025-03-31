@@ -15,6 +15,7 @@ import { AuthItem } from './auth_item.entity';
 import { Country } from './country.entity';
 import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
+import { Compatibility } from './compatibility.entity';
 
 @Entity({ name: 'user' })
 export class User extends BaseModel {
@@ -87,13 +88,11 @@ export class User extends BaseModel {
     })
     leadership: User[];
 
-    @ManyToMany(() => User)
-    @JoinTable({
-        name: 'compatibility',
-        joinColumn: { name: 'fk_user_origin' },
-        inverseJoinColumn: { name: 'fk_user_destination' },
-    })
-    compatibility: User[];
+    @OneToMany(
+        () => Compatibility,
+        (compatibility) => compatibility.origin_users,
+    )
+    compatibility: Compatibility[];
 
     @ManyToMany(() => Group, (group) => group.users)
     @JoinTable({

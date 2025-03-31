@@ -1,6 +1,7 @@
 import { Group } from '../models/group.entity';
 import { TreeBaseService } from 'src/common/services/treeService';
 import { User } from '../models/user.entity';
+import { Compatibility } from '../models/compatibility.entity';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
     //add filter
@@ -40,7 +41,14 @@ export class GroupService extends TreeBaseService({ model: Group }) {
 
         const data = await query
             .leftJoinAndSelect(`${User.alias}.leadership`, 'leadership')
-            .leftJoinAndSelect(`${User.alias}.compatibility`, 'compatibility')
+            .leftJoinAndSelect(
+                `${User.alias}.compatibility`,
+                Compatibility.alias,
+            )
+            .leftJoinAndSelect(
+                `${Compatibility.alias}.destination_users`,
+                'destination_users',
+            )
             .getOne();
 
         const users = data.users;

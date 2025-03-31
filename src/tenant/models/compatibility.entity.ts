@@ -1,5 +1,12 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Compatibility extends BaseModel {
@@ -17,4 +24,18 @@ export class Compatibility extends BaseModel {
 
     @Column()
     compatible: boolean;
+
+    @ManyToOne(() => User)
+    @JoinColumn({
+        name: 'fk_user_origin',
+        referencedColumnName: 'user_id',
+    })
+    origin_users: User[];
+
+    @ManyToOne(() => User)
+    @JoinColumn({
+        name: 'fk_user_destination',
+        referencedColumnName: 'user_id',
+    })
+    destination_users: User[];
 }
