@@ -14,4 +14,7 @@ export class Compatibility extends BaseModel {
 
     @Column()
     fk_user_destination: number;
+
+    @Column()
+    compatible: boolean;
 }
