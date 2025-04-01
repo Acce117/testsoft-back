@@ -20,7 +20,7 @@ export class MyTestsInterceptor implements NestInterceptor {
 
                 const filtered = [];
 
-                value.forEach((element) => {
+                value.data.forEach((element) => {
                     if ([3, 4, 7, 12, 14, 15].includes(element.id_test))
                         filtered.push(element);
                     else {
