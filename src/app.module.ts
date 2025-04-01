@@ -10,6 +10,8 @@ import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
 import { ExecuteTestModule } from './executeTest/executeTest.module';
 import { FileStreamerModule } from './fileStreamer/fileStreamer.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { throttlerConfig } from './config/throttler.config';
 
 @Module({
     imports: [
@@ -25,6 +27,11 @@ import { FileStreamerModule } from './fileStreamer/fileStreamer.module';
             inject: [ConfigService],
         }),
         FileStreamerModule,
+        ThrottlerModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: throttlerConfig,
+            inject: [ConfigService],
+        }),
     ],
     controllers: [AppController],
     providers: [AppService],
