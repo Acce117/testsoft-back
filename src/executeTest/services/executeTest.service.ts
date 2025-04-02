@@ -80,12 +80,13 @@ export class ExecuteTestService {
                 while (is_complete && j < questions.length) {
                     const answer = answers.find(
                         (answer) =>
-                            (answer.id_question = questions[j].id_question),
+                            answer.id_question === questions[j].id_question,
                     );
 
-                    is_complete = answer !== null;
+                    is_complete = answer !== undefined;
                     j++;
                 }
+                j = 0;
                 i++;
             }
 
