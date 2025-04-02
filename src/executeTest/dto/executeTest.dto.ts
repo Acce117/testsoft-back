@@ -7,7 +7,7 @@ export class ExecuteTestDto {
 
     @IsArray()
     @ArrayNotEmpty()
-    answers: Array<{ answer: any; id_question: number }>;
+    answers: Array<{ answer: any; id_question: number; top_value?: number }>;
 
     user_id?: any;
 }

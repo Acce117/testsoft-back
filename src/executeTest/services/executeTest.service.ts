@@ -16,6 +16,7 @@ import { EquationService } from 'src/psiTest/services/equation.service';
 import { Item } from 'src/psiTest/models/item.entity';
 import { ApplicationResultService } from './appResult.service';
 import {
+    MULTIPLE_OPTIONS_VALUE_ASSIGN,
     multipleOptionTypes,
     simpleOptionTypes,
     valueAnswerTypes,
@@ -82,8 +83,18 @@ export class ExecuteTestService {
                         (answer) =>
                             answer.id_question === questions[j].id_question,
                     );
-
                     is_complete = answer !== undefined;
+
+                    if (
+                        is_complete &&
+                        questions[j].type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN
+                    ) {
+                        let value = 0;
+                        for (const id_key in answer.answer)
+                            value += answer.answer[id_key];
+                        is_complete = value === answer.top_value;
+                    }
+
                     j++;
                 }
                 j = 0;
