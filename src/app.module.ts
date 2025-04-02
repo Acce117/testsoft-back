@@ -12,6 +12,8 @@ import { ExecuteTestModule } from './executeTest/executeTest.module';
 import { FileStreamerModule } from './fileStreamer/fileStreamer.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { throttlerConfig } from './config/throttler.config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailerConfig } from './config/mailer.config';
 
 @Module({
     imports: [
@@ -30,6 +32,11 @@ import { throttlerConfig } from './config/throttler.config';
         ThrottlerModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: throttlerConfig,
+            inject: [ConfigService],
+        }),
+        MailerModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: mailerConfig,
             inject: [ConfigService],
         }),
     ],
