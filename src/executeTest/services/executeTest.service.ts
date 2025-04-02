@@ -18,6 +18,7 @@ import { ApplicationResultService } from './appResult.service';
 import {
     MULTIPLE_OPTIONS_VALUE_ASSIGN,
     multipleOptionTypes,
+    SIMPLE_OPTION,
     simpleOptionTypes,
     valueAnswerTypes,
 } from './appAnswerHandler/valueAnswerHandler';
@@ -66,6 +67,28 @@ export class ExecuteTestService {
         );
         await this.processResult(testApplication, finalAnswers);
         return testApplication.id_test_application;
+    }
+
+    async getResult(id_test_app) {
+        const testApp = await this.testAppService.getOne(
+            {
+                relations: [
+                    'test.display_parameters',
+                    {
+                        name: 'application_result',
+                        relations: [
+                            {
+                                name: 'item',
+                                relations: ['ranges', 'category'],
+                            },
+                        ],
+                    },
+                ],
+            },
+            id_test_app,
+        );
+
+        return await this.testResult(testApp);
     }
 
     private async validateTest(data: ExecuteTestDto, test: PsiTest) {
@@ -203,7 +226,7 @@ export class ExecuteTestService {
         const accumulated = {};
         // let corrects = null;
         for (const type_question in finalAnswers) {
-            if (type_question === 'Opción Simple') {
+            if (type_question === SIMPLE_OPTION) {
                 for (const id_question in finalAnswers[`${type_question}`]) {
                     // corrects = await this.findCorrectAnswers(id_question);
                     // const equation = await this.equationService.getOne({
@@ -235,9 +258,7 @@ export class ExecuteTestService {
                     //     //TODO
                     // }
                 }
-            } else if (
-                type_question === 'Opción Múltiple con asignación de valores'
-            ) {
+            } else if (type_question === MULTIPLE_OPTIONS_VALUE_ASSIGN) {
                 for (const id_question in finalAnswers[`${type_question}`]) {
                     const answers =
                         finalAnswers[`${type_question}`][`${id_question}`];
@@ -283,28 +304,6 @@ export class ExecuteTestService {
         `);
 
         return correctByQuestion;
-    }
-
-    async getResult(id_test_app) {
-        const testApp = await this.testAppService.getOne(
-            {
-                relations: [
-                    'test.display_parameters',
-                    {
-                        name: 'application_result',
-                        relations: [
-                            {
-                                name: 'item',
-                                relations: ['ranges', 'category'],
-                            },
-                        ],
-                    },
-                ],
-            },
-            id_test_app,
-        );
-
-        return await this.testResult(testApp);
     }
 
     //TODO solve problems with ties in Belbin
