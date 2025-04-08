@@ -5,7 +5,7 @@ import { Compatibility } from '../models/compatibility.entity';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
     //add filter
-    public async getUsers(params, id) {
+    private async getUsers(params, id) {
         const group = await this.getOne({ depth: 0 }, id);
 
         return this.treeRepository
@@ -18,12 +18,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
     }
 
-    public async getUsersFromGroup(params, id) {
-        const query = await this.getUsers(params, id);
-
-        const data = await query.getOne();
-        const users = data.users;
-
+    private paginateResult(params, users) {
         let limit = parseInt(params.limit) || users.length;
         const offset = parseInt(params.offset) || 0;
 
@@ -34,6 +29,15 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             elements_amount: users.length,
             data: users.slice(offset, offset + limit),
         };
+    }
+
+    public async getUsersFromGroup(params, id) {
+        const query = await this.getUsers(params, id);
+
+        const data = await query.getOne();
+        const users = data.users;
+
+        return this.paginateResult(params, users);
     }
 
     public async getUsersWithLeadershipAndIncompatibilities(params, id) {
@@ -51,18 +55,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             )
             .getOne();
 
-        const users = data.users;
-
-        let limit = parseInt(params.limit) || users.length;
-        const offset = parseInt(params.offset) || 0;
-
-        if (offset + limit > users.length) limit = users.length % limit;
-
-        return {
-            pages: Math.ceil(users.length / limit),
-            elements_amount: users.length,
-            data: users.slice(offset, offset + limit),
-        };
+        return this.paginateResult(params, data.users);
     }
 
     public async getUsersFromTree(params, id) {
@@ -71,15 +64,6 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         const users = [];
         data.forEach((group) => users.push(...group.users));
 
-        let limit = parseInt(params.limit) || users.length;
-        const offset = parseInt(params.offset) || 0;
-
-        if (offset + limit > users.length) limit = users.length % limit;
-
-        return {
-            pages: Math.ceil(users.length / limit),
-            elements_amount: users.length,
-            data: users.slice(offset, offset + limit),
-        };
+        return this.paginateResult(params, users);
     }
 }
