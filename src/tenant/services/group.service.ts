@@ -24,10 +24,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         const data = await query.getOne();
         const users = data.users;
 
-        let limit = params.limit || 10;
-        const offset = params.offset || 0;
+        let limit = parseInt(params.limit) || users.length;
+        const offset = parseInt(params.offset) || 0;
 
-        if (offset + limit > users.length - 1) limit = users.length % limit;
+        if (offset + limit > users.length) limit = users.length % limit;
 
         return {
             pages: Math.ceil(users.length / limit),
@@ -53,10 +53,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
 
         const users = data.users;
 
-        let limit = params.limit || 10;
-        const offset = params.offset || 0;
+        let limit = parseInt(params.limit) || users.length;
+        const offset = parseInt(params.offset) || 0;
 
-        if (offset + limit > users.length - 1) limit = users.length % limit;
+        if (offset + limit > users.length) limit = users.length % limit;
 
         return {
             pages: Math.ceil(users.length / limit),
@@ -71,10 +71,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         const users = [];
         data.forEach((group) => users.push(...group.users));
 
-        let limit = parseInt(params.limit) || 10;
+        let limit = parseInt(params.limit) || users.length;
         const offset = parseInt(params.offset) || 0;
 
-        if (offset + limit > users.length - 1) limit = users.length % limit;
+        if (offset + limit > users.length) limit = users.length % limit;
 
         return {
             pages: Math.ceil(users.length / limit),
