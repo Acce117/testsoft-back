@@ -1,7 +1,7 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { UserService } from '../../tenant/services/user.service';
 
-import { Body, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { CreateUserDto } from '../dto/create_user.dto';
@@ -22,8 +22,8 @@ export class UserController extends CrudBaseController({
     @Get('/:user_id/tests')
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
-    public getUserTests(@Param('user_id') user_id: number) {
-        return (this.service as UserService).userTests(user_id);
+    public getUserTests(@Param('user_id') user_id: number, @Query() params) {
+        return (this.service as UserService).userTests(user_id, params);
     }
 
     @Post('/my_group')

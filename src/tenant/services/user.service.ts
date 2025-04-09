@@ -2,11 +2,12 @@ import { CrudBaseService } from 'src/common/services/service';
 import { User } from '../models/user.entity';
 import { Inject } from '@nestjs/common';
 import { GroupService } from './group.service';
+import { paginateResult } from 'src/common/utils/paginateResult';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
 
-    public async userTests(user_id: number) {
+    public async userTests(user_id: number, params) {
         const result = [];
 
         const user: User = await this.getOne(
@@ -36,7 +37,7 @@ export class UserService extends CrudBaseService({ model: User }) {
         if (user?.groups)
             user.groups.forEach((group) => result.push(...group.psiTests));
 
-        return result;
+        return paginateResult(params, result);
     }
 
     public async createMyGroup(group, id_user: number) {

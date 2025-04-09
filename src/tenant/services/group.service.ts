@@ -2,6 +2,7 @@ import { Group } from '../models/group.entity';
 import { TreeBaseService } from 'src/common/services/treeService';
 import { User } from '../models/user.entity';
 import { Compatibility } from '../models/compatibility.entity';
+import { paginateResult } from 'src/common/utils/paginateResult';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
     //add filter
@@ -18,26 +19,13 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
     }
 
-    private paginateResult(params, users) {
-        let limit = parseInt(params.limit) || users.length;
-        const offset = parseInt(params.offset) || 0;
-
-        if (offset + limit > users.length) limit = users.length % limit;
-
-        return {
-            pages: Math.ceil(users.length / limit),
-            elements_amount: users.length,
-            data: users.slice(offset, offset + limit),
-        };
-    }
-
     public async getUsersFromGroup(params, id) {
         const query = await this.getUsers(params, id);
 
         const data = await query.getOne();
         const users = data.users;
 
-        return this.paginateResult(params, users);
+        return paginateResult(params, users);
     }
 
     public async getUsersWithLeadershipAndIncompatibilities(params, id) {
@@ -55,7 +43,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             )
             .getOne();
 
-        return this.paginateResult(params, data.users);
+        return paginateResult(params, data.users);
     }
 
     public async getUsersFromTree(params, id) {
@@ -64,6 +52,6 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         const users = [];
         data.forEach((group) => users.push(...group.users));
 
-        return this.paginateResult(params, users);
+        return paginateResult(params, users);
     }
 }
