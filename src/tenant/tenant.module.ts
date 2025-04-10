@@ -24,6 +24,7 @@ import { CompatibilityController } from './controllers/compatibility.controller'
 import { LeadershipController } from './controllers/leadership.controller';
 import { CompatibilityService } from './services/compatibility.service';
 import { LeadershipService } from './services/leadership.service';
+import { SendMailModule } from 'src/mailer/sendMail.module';
 
 @Module({
     controllers: [
@@ -47,6 +48,7 @@ import { LeadershipService } from './services/leadership.service';
         LeadershipService,
     ],
     imports: [
+        SendMailModule,
         TypeOrmModule.forFeature([
             Group,
             User,

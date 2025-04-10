@@ -14,6 +14,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { throttlerConfig } from './config/throttler.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './config/mailer.config';
+import { BullModule } from '@nestjs/bullmq';
+import { bullConfig } from './config/bullMQ.config';
+import { SendMailModule } from './mailer/sendMail.module';
 
 @Module({
     imports: [
@@ -22,6 +25,7 @@ import { mailerConfig } from './config/mailer.config';
         TenantModule,
         ExecuteTestModule,
         CommonModule,
+        SendMailModule,
         ConfigModule.forRoot(),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
@@ -37,6 +41,11 @@ import { mailerConfig } from './config/mailer.config';
         MailerModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: mailerConfig,
+            inject: [ConfigService],
+        }),
+        BullModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: bullConfig,
             inject: [ConfigService],
         }),
     ],

@@ -10,6 +10,7 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
+    VirtualColumn,
 } from 'typeorm';
 import { AuthItem } from './auth_item.entity';
 import { Country } from './country.entity';
@@ -24,6 +25,9 @@ export class User extends BaseModel {
 
     @PrimaryGeneratedColumn()
     user_id: number;
+
+    @VirtualColumn({ query: (alias) => alias })
+    created_scenario: 'created' | 'sign_in' = 'created';
 
     @Column({ type: 'varchar', length: 11, nullable: false, unique: true })
     CI: string;
