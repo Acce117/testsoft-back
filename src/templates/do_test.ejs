@@ -1,1 +1,74 @@
-<h1>Hola mundo</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .support {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Psychological Test Assignment: <%= testName %></h2>
+        <p>Dear <%= participantName %>,</p>
+        <p>You have been assigned to participate in a psychological test as part of your group assessment. This test is designed to help us better understand your group dynamics and individual contributions.</p>
+        
+        <p><strong>Test Details:</strong></p>
+        <ul>
+            <li>Test Name: <%= testName %></li>
+            <li>Duration: <%= duration %> minutes</li>
+            <li>Deadline: <%= deadline %></li>
+            <li>Group: <%= groupName %></li>
+        </ul>
+
+        <p><strong>Important Instructions:</strong></p>
+        <ol>
+            <li>Click the link below to begin the test: <a href="<%= testLink %>" class="button">Start Test</a></li>
+            <li>Ensure you have a stable internet connection</li>
+            <li>Complete the test in one sitting</li>
+            <li>Answer all questions honestly and to the best of your ability</li>
+        </ol>
+
+        <p><strong>Technical Requirements:</strong></p>
+        <ul>
+            <li>Use a desktop or laptop computer</li>
+            <li>Disable pop-up blockers</li>
+            <li>Use a supported browser (Chrome, Firefox, or Safari)</li>
+        </ul>
+
+        <div class="support">
+            <p>Need help? Contact our support team:</p>
+            <p>Email: <a href="mailto:<%= supportEmail %>"><%= supportEmail %></a></p>
+            <p>Phone: <%= supportPhone %></p>
+        </div>
+
+        <p>Best regards,<br>
+        The Assessment Team</p>
+    </div>
+</body>
+</html>

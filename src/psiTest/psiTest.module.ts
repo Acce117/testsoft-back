@@ -56,6 +56,8 @@ import { GroupForTestController } from './controllers/groupForTest.controller';
 import { GroupForTestService } from './services/groupForTest.service';
 import { GroupForTest } from './models/groupForTest.entity';
 import { TestAuthor } from './models/test_author.entity';
+import { SendMailModule } from 'src/mailer/sendMail.module';
+import { GroupForTestSubscriber } from './models/groupForTest.subscriber';
 
 @Module({
     controllers: [
@@ -97,8 +99,10 @@ import { TestAuthor } from './models/test_author.entity';
         CorrectAnswerService,
         RangeService,
         GroupForTestService,
+        GroupForTestSubscriber,
     ],
     imports: [
+        SendMailModule,
         TypeOrmModule.forFeature([
             PsiTest,
             TypePsiTest,

@@ -24,7 +24,10 @@ export class SiteService {
     private readonly authAssignmentService: AuthAssignmentService;
 
     public async signIn(user: CreateUserDto, group, manager) {
-        const newUser: User = await this.userService.create(user, manager);
+        const newUser: User = await this.userService.create(
+            { ...user, created_scenario: 'sign_in' },
+            manager,
+        );
         const newGroup: Group = await this.groupService.create(group, manager);
 
         newGroup.owner = [newUser];
