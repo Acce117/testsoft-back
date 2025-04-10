@@ -32,7 +32,8 @@ export class MyTestsInterceptor implements NestInterceptor {
                             filtered.push(element);
                     }
                 });
-                return filtered;
+                value.data = filtered;
+                return value;
             }),
         );
     }
