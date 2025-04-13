@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseEntity, SelectQueryBuilder } from 'typeorm';
+import { BaseEntity, Repository, SelectQueryBuilder } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
@@ -135,19 +135,27 @@ export class QueryFactory {
 
     public async createQuery(data, model, manager) {
         const repository = model.getRepository();
-        const element = await this.innerCreateQuery(data, model, repository);
+        const element = await this.createObjectAndRelations(
+            model,
+            data,
+            repository,
+        );
         return manager
             ? manager.withRepository(repository).save(element)
             : repository.save(element);
     }
 
-    //TODO working on it
-    /**Some relations types still in progress */
-    public async innerCreateQuery(data, model, repository) {
+    public async createObjectAndRelations(
+        model,
+        data,
+        repository: Repository<any> | null = null,
+    ) {
         if (!repository) repository = model.getRepository();
         const relations: RelationMetadata[] = repository.metadata.relations;
+
         const element = repository.create(data);
 
+        const promises = [];
         for (const relation of relations) {
             if (relation.propertyName in data) {
                 const relationType = relation.relationType;
@@ -155,42 +163,52 @@ export class QueryFactory {
                     relationType === 'one-to-one' ||
                     relationType === 'many-to-one'
                 )
-                    element[relation.propertyName] =
-                        await this.innerCreateQuery(
-                            data[`${relation.propertyName}`],
-                            relation.type,
-                            null,
-                        );
-                else {
-                    if (Array.isArray(data[relation.propertyName])) {
-                        const to_create = [];
-                        data[relation.propertyName].forEach((e) => {
-                            if (typeof e === 'object') to_create.push(e);
-                        });
-
-                        const related = await this.innerCreateQuery(
-                            to_create,
-                            relation.type,
-                            null,
-                        );
-
-                        const elements = await this.collectionQuery(
-                            {
-                                where: data[relation.propertyName],
-                            },
-                            relation.type,
-                        ).getMany();
-
-                        // element[relation.propertyName] = elements;
-                        element[relation.propertyName] = [
-                            ...related,
-                            ...elements,
-                        ];
-                    }
-                }
+                    promises.push(
+                        this.createSingleRelation(element, relation, data),
+                    );
+                else
+                    promises.push(
+                        this.createMultipleRelation(element, relation, data),
+                    );
             }
         }
 
+        await Promise.all(promises);
+
         return element;
+    }
+    private async createSingleRelation(element, relation, data) {
+        element[relation.propertyName] = await this.createObjectAndRelations(
+            relation.type,
+            data[`${relation.propertyName}`],
+        );
+    }
+
+    private async createMultipleRelation(element, relation, data) {
+        const to_create = [];
+        const to_select = [];
+        const related = [];
+        const promises = [];
+
+        data[relation.propertyName].map((e) => {
+            if (typeof e === 'object') to_create.push(e);
+            else to_select.push(e);
+        });
+
+        if (to_create.length > 0)
+            promises.push(
+                this.createObjectAndRelations(relation.type, to_create),
+            );
+
+        if (to_select.length > 0)
+            promises.push(
+                this.collectionQuery(relation.type, to_select).getMany(),
+            );
+
+        (await Promise.all(promises)).forEach((elements) =>
+            related.push(...elements),
+        );
+
+        if (related.length > 0) element[relation.propertyName] = related;
     }
 }
