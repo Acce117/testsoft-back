@@ -10,4 +10,5 @@ export class ExecuteTestDto {
     answers: Array<{ answer: any; id_question: number; top_value?: number }>;
 
     user_id?: any;
+    group_id?: any;
 }

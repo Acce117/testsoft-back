@@ -132,13 +132,14 @@ export class ExecuteTestService {
     }
 
     private async processAnswers(
-        { user_id, id_test, answers }: ExecuteTestDto,
+        { user_id, id_test, group_id, answers }: ExecuteTestDto,
         test: PsiTest,
     ) {
         const testApplication: TestApplication =
             await this.testAppService.create({
                 fk_id_user: user_id,
                 fk_id_test: id_test,
+                fk_id_group: group_id,
             });
 
         const finalAnswers = {};

@@ -30,6 +30,7 @@ export class ExecuteTestController implements IController {
     executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
         return handleTransaction(this.dataSource, async () => {
             body.user_id = jwtPayload.user_id;
+            body.group_id = jwtPayload.group_id;
             const result = await this.service.executeTest(body);
 
             return this.service.getResult(result);
