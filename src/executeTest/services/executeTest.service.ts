@@ -9,7 +9,7 @@ import { ApplicationAnswerService } from './applicationAnswer.service';
 import { ApplicationAnswerValueService } from './applicationAnswerValue.service';
 import { TestApplication } from '../models/testApplication.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
 import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
@@ -47,7 +47,7 @@ export class ExecuteTestService {
     @InjectDataSource()
     dataSource: DataSource;
 
-    public async executeTest(data: ExecuteTestDto) {
+    public async executeTest(data: ExecuteTestDto, manager: EntityManager) {
         const test: PsiTest = await this.psiTestService.getOne(
             {
                 select: [
@@ -64,8 +64,9 @@ export class ExecuteTestService {
         const { testApplication, finalAnswers } = await this.processAnswers(
             data,
             test,
+            manager,
         );
-        await this.processResult(testApplication, finalAnswers);
+        await this.processResult(testApplication, finalAnswers, manager);
         return testApplication.id_test_application;
     }
 
@@ -134,13 +135,17 @@ export class ExecuteTestService {
     private async processAnswers(
         { user_id, id_test, group_id, answers }: ExecuteTestDto,
         test: PsiTest,
+        manager: EntityManager,
     ) {
         const testApplication: TestApplication =
-            await this.testAppService.create({
-                fk_id_user: user_id,
-                fk_id_test: id_test,
-                fk_id_group: group_id,
-            });
+            await this.testAppService.create(
+                {
+                    fk_id_user: user_id,
+                    fk_id_test: id_test,
+                    fk_id_group: group_id,
+                },
+                manager,
+            );
 
         const finalAnswers = {};
         const series: TestSerie[] = test.series;
@@ -200,9 +205,15 @@ export class ExecuteTestService {
         }
 
         if (appAnswers.not_value.length != 0)
-            this.applicationAnswerService.create(appAnswers.not_value);
+            await this.applicationAnswerService.create(
+                appAnswers.not_value,
+                manager,
+            );
         if (appAnswers.value.length != 0)
-            this.applicationAnswerValueService.create(appAnswers.value);
+            await this.applicationAnswerValueService.create(
+                appAnswers.value,
+                manager,
+            );
 
         return { testApplication, finalAnswers };
     }
@@ -223,6 +234,7 @@ export class ExecuteTestService {
     async processResult(
         testApplication: TestApplication,
         finalAnswers: object,
+        manager: EntityManager,
     ) {
         const accumulated = {};
         // let corrects = null;
@@ -292,7 +304,7 @@ export class ExecuteTestService {
                 value_result: accumulated[id_item],
             });
         }
-        await this.appResultService.create(app_result);
+        return this.appResultService.create(app_result, manager);
     }
 
     async findCorrectAnswers(id_question) {

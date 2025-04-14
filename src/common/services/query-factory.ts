@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { BaseEntity, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+    BaseEntity,
+    EntityManager,
+    Repository,
+    SelectQueryBuilder,
+} from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 @Injectable()
@@ -133,8 +138,8 @@ export class QueryFactory {
         };
     }
 
-    public async createQuery(data, model, manager) {
-        const repository = model.getRepository();
+    public async createQuery(data, model, manager: EntityManager) {
+        const repository: Repository<any> = model.getRepository();
         const element = await this.createObjectAndRelations(
             model,
             data,

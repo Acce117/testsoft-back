@@ -11,7 +11,7 @@ import { ExecuteTestService } from '../services/executeTest.service';
 import { ExecuteTestDto } from '../dto/executeTest.dto';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { IController } from 'src/common/controllers/controller.interface';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { TestApplicationService } from '../services/testApplication.service';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
@@ -21,20 +21,20 @@ import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 export class ExecuteTestController implements IController {
     @Inject(ExecuteTestService) service: ExecuteTestService;
     @Inject(TestApplicationService) testAppService: TestApplicationService;
-
     @InjectDataSource() dataSource?: DataSource;
 
     @Post()
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
-    executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
-        return handleTransaction(this.dataSource, async () => {
-            body.user_id = jwtPayload.user_id;
-            body.group_id = jwtPayload.group_id;
-            const result = await this.service.executeTest(body);
-
-            return this.service.getResult(result);
-        });
+    async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
+        return handleTransaction(
+            this.dataSource,
+            async (manager: EntityManager) => {
+                body.user_id = jwtPayload.user_id;
+                body.group_id = jwtPayload.group;
+                return this.service.executeTest(body, manager);
+            },
+        );
     }
 
     @Get('/:id')
