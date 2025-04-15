@@ -13,9 +13,9 @@ export class PsiTestService extends CrudBaseService({
     @Inject(GroupService) groupService: GroupService;
     @Inject(GroupForTestService) groupForTestService: GroupForTestService;
 
-    create(data: CreatePsiTestDto, manager?: any) {
+    async create(data: CreatePsiTestDto, manager?: any) {
         const aux = data.id_owner;
-        const groups: Group[] = this.groupService.getAncestors({}, aux);
+        const groups: Group[] = await this.groupService.getAncestors({}, aux);
         if (groups.length != 0) {
             data.id_owner = groups[0].id_group;
         }

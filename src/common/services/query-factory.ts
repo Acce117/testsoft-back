@@ -207,7 +207,10 @@ export class QueryFactory {
 
         if (to_select.length > 0)
             promises.push(
-                this.collectionQuery(relation.type, to_select).getMany(),
+                this.collectionQuery(
+                    { where: to_select },
+                    relation.type,
+                ).getMany(),
             );
 
         (await Promise.all(promises)).forEach((elements) =>
