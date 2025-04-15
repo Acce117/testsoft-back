@@ -14,7 +14,7 @@ import { Answer } from './answer.entity';
 import { TypeQuestion } from './typeQuestion.entity';
 import { Image } from './image.entity';
 import { QuestionTopValue } from './questionValue.entity';
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 
 @Entity()
 export class Question extends BaseModel {
@@ -47,6 +47,21 @@ export class Question extends BaseModel {
     serie: TestSerie;
 
     @OneToMany(() => Answer, (answer) => answer.question)
+    @Transform(({ value, obj }) => {
+        let result = value;
+        if (obj.answers) {
+            if (
+                obj.fk_id_type_question === 3 ||
+                obj.fk_id_type_question === 6
+            ) {
+                result = value.map((answer) => ({
+                    ...answer,
+                    text: undefined,
+                }));
+            }
+        }
+        return result;
+    })
     answers: Answer[];
 
     @OneToOne(() => TypeQuestion)
