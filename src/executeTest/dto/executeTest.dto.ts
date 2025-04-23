@@ -1,4 +1,5 @@
 import { IsInt, IsDefined, IsArray, ArrayNotEmpty } from 'class-validator';
+import { ValueAnswer } from '../classes/finalAnswers';
 
 export class ExecuteTestDto {
     @IsDefined()
@@ -7,7 +8,12 @@ export class ExecuteTestDto {
 
     @IsArray()
     @ArrayNotEmpty()
-    answers: Array<{ answer: any; id_question: number; top_value?: number }>;
+    answers: Array<{
+        answer: string | ValueAnswer | Array<number> | number;
+        id_question: number;
+        top_value?: number;
+        id_answer?: number | Array<number>;
+    }>;
 
     user_id?: any;
     group_id?: any;

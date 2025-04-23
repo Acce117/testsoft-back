@@ -16,12 +16,17 @@ import { EquationService } from 'src/psiTest/services/equation.service';
 import { Item } from 'src/psiTest/models/item.entity';
 import { ApplicationResultService } from './appResult.service';
 import {
+    MULTIPLE_OPTION_ALL_OR_NOTHING,
     MULTIPLE_OPTIONS_VALUE_ASSIGN,
     multipleOptionTypes,
     SIMPLE_OPTION,
     simpleOptionTypes,
     valueAnswerTypes,
+    WRITTEN_ANSER,
+    WRITTEN_ANSER_ALL_OR_NOTHING,
+    writtenAnswerTypes,
 } from './appAnswerHandler/valueAnswerHandler';
+import { FinalAnswers, ValueAnswer } from '../classes/finalAnswers';
 
 @Injectable()
 export class ExecuteTestService {
@@ -60,7 +65,7 @@ export class ExecuteTestService {
             data.id_test,
         );
 
-        await this.validateTest(data, test);
+        // await this.validateTest(data, test);
         const { testApplication, finalAnswers } = await this.processAnswers(
             data,
             test,
@@ -114,7 +119,7 @@ export class ExecuteTestService {
                         questions[j].type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN
                     ) {
                         let value = 0;
-                        for (const id_key in answer.answer)
+                        for (const id_key in answer.answer as ValueAnswer)
                             value += answer.answer[id_key];
                         is_complete = value === answer.top_value;
                     }
@@ -147,7 +152,7 @@ export class ExecuteTestService {
                 manager,
             );
 
-        const finalAnswers = {};
+        const finalAnswers: FinalAnswers = {};
         const series: TestSerie[] = test.series;
         let question: Question = null;
 
@@ -164,7 +169,16 @@ export class ExecuteTestService {
             if (
                 multipleOptionTypes.find((type) => question.type.name === type)
             ) {
-                //TODO
+                finalAnswers[`${question.type.name}`][`${answer.id_question}`] =
+                    answer.answer;
+
+                for (const id_answer of answer.answer as Array<number>) {
+                    appAnswers.not_value.push({
+                        fk_id_test_aplication:
+                            testApplication.id_test_application,
+                        fk_id_answer: id_answer,
+                    });
+                }
             } else if (
                 simpleOptionTypes.find((type) => question.type.name === type)
             ) {
@@ -180,7 +194,7 @@ export class ExecuteTestService {
             ) {
                 const values = answer.answer;
 
-                for (const ans in values) {
+                for (const ans in values as ValueAnswer) {
                     if (
                         !finalAnswers[`${question.type.name}`][
                             `${answer.id_question}`
@@ -201,6 +215,42 @@ export class ExecuteTestService {
                         value: values[`${ans}`],
                     });
                 }
+            } else if (
+                writtenAnswerTypes.find((type) => question.type.name === type)
+            ) {
+                if (answer.id_answer && Array.isArray(answer.id_answer))
+                    for (const fk_id_answer of answer.id_answer) {
+                        if (answer.id_answer)
+                            finalAnswers[`${question.type.name}`][
+                                `${answer.id_question}`
+                            ] = { [fk_id_answer]: answer.answer };
+                        else
+                            finalAnswers[`${question.type.name}`][
+                                `${answer.id_question}`
+                            ] = answer.answer;
+                        appAnswers.value.push({
+                            fk_id_test_aplication:
+                                testApplication.id_test_application,
+                            fk_id_answer: fk_id_answer,
+                            value: answer.answer,
+                        });
+                    }
+                else {
+                    if (answer.id_answer)
+                        finalAnswers[`${question.type.name}`][
+                            `${answer.id_question}`
+                        ] = { [answer.id_answer as number]: answer.answer };
+                    else
+                        finalAnswers[`${question.type.name}`][
+                            `${answer.id_question}`
+                        ] = answer.answer;
+                    appAnswers.value.push({
+                        fk_id_test_aplication:
+                            testApplication.id_test_application,
+                        fk_id_answer: answer.id_answer,
+                        value: answer.answer,
+                    });
+                }
             }
         }
 
@@ -218,28 +268,84 @@ export class ExecuteTestService {
         return { testApplication, finalAnswers };
     }
 
-    private findQuestion(series, questionKey) {
-        let question = null;
-        let i: number = 0;
-
-        while (!question && i < series.length) {
-            question = series[i++].questions.find(
-                (q) => q.id_question == questionKey,
-            );
-        }
-
-        return question;
-    }
-
     async processResult(
         testApplication: TestApplication,
-        finalAnswers: object,
+        finalAnswers: FinalAnswers,
         manager: EntityManager,
     ) {
         const accumulated = {};
         // let corrects = null;
         for (const type_question in finalAnswers) {
-            if (type_question === SIMPLE_OPTION) {
+            if (type_question === MULTIPLE_OPTION_ALL_OR_NOTHING) {
+                for (const id_question in finalAnswers[`${type_question}`]) {
+                    const correctAnswers: Array<any> =
+                        await this.findCorrectAnswers(id_question);
+
+                    let i = 0;
+                    let result = false;
+                    while (!result && i < correctAnswers.length) {
+                        if (
+                            correctAnswers[i].text ===
+                            finalAnswers[`${type_question}`][id_question][
+                                correctAnswers[i++].fk_id_answer
+                            ]
+                        )
+                            result = true;
+                    }
+
+                    for (const id_answer of finalAnswers[`${type_question}`][
+                        `${id_question}`
+                    ]) {
+                        const tribute = await this.tributeService.getOne({
+                            where: {
+                                fk_id_answer: id_answer,
+                            },
+                        });
+
+                        if (!accumulated[tribute.fk_id_item])
+                            accumulated[tribute.fk_id_item] =
+                                tribute.tribute_value;
+                        else
+                            accumulated[tribute.fk_id_item] +=
+                                tribute.tribute_value;
+                    }
+                }
+            } else if (type_question === WRITTEN_ANSER_ALL_OR_NOTHING) {
+                for (const id_question in finalAnswers[`${type_question}`]) {
+                    const correctAnswers: Array<any> =
+                        await this.findCorrectAnswers(id_question);
+
+                    if (correctAnswers) {
+                        let i = 0;
+                        let result = false;
+                        while (!result && i < correctAnswers.length) {
+                            if (
+                                correctAnswers[i].text ===
+                                finalAnswers[`${type_question}`][id_question][
+                                    correctAnswers[i++].fk_id_answer
+                                ]
+                            )
+                                result = true;
+                        }
+                        for (const id_answer in finalAnswers[
+                            `${type_question}`
+                        ][`${id_question}`]) {
+                            const tribute = await this.tributeService.getOne({
+                                where: {
+                                    fk_id_answer: id_answer,
+                                },
+                            });
+
+                            if (!accumulated[tribute.fk_id_item])
+                                accumulated[tribute.fk_id_item] =
+                                    tribute.tribute_value;
+                            else
+                                accumulated[tribute.fk_id_item] +=
+                                    tribute.tribute_value;
+                        }
+                    }
+                }
+            } else if (type_question === SIMPLE_OPTION) {
                 for (const id_question in finalAnswers[`${type_question}`]) {
                     // corrects = await this.findCorrectAnswers(id_question);
                     // const equation = await this.equationService.getOne({
@@ -292,6 +398,44 @@ export class ExecuteTestService {
                                 answers[`${id_answer}`];
                     }
                 }
+            } else if (type_question === WRITTEN_ANSER) {
+                const questions = finalAnswers[type_question];
+                for (const id_question in questions) {
+                    if (typeof questions[id_question] !== 'string') {
+                        const correctAnswers: any[] =
+                            await this.findCorrectAnswers(id_question);
+
+                        if (correctAnswers) {
+                            let i = 0;
+                            let result = false;
+                            while (!result && i < correctAnswers.length) {
+                                if (
+                                    correctAnswers[i].text ===
+                                    questions[id_question][
+                                        correctAnswers[i++].fk_id_answer
+                                    ]
+                                )
+                                    result = true;
+                            }
+
+                            for (const id_answer in questions[
+                                id_question
+                            ] as ValueAnswer) {
+                                const tribute =
+                                    await this.tributeService.getOne({
+                                        where: { fk_id_answer: id_answer },
+                                    });
+
+                                if (!accumulated[tribute.fk_id_item])
+                                    accumulated[tribute.fk_id_item] =
+                                        tribute.tribute_value;
+                                else
+                                    accumulated[tribute.fk_id_item] +=
+                                        tribute.tribute_value;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -305,18 +449,6 @@ export class ExecuteTestService {
             });
         }
         return this.appResultService.create(app_result, manager);
-    }
-
-    async findCorrectAnswers(id_question) {
-        const correctByQuestion = await this.dataSource.query(`
-                SELECT id_answer, text, answer.fk_id_question
-                FROM answer
-                INNER JOIN question ON answer.fk_id_question = question.id_question
-                INNER JOIN correct_answer ON correct_answer.fk_id_answer = answer.id_answer
-                WHERE question.id_question = ${id_question}
-        `);
-
-        return correctByQuestion;
     }
 
     //TODO solve problems with ties in Belbin
@@ -411,6 +543,31 @@ export class ExecuteTestService {
             }
 
         return final_results;
+    }
+
+    private findQuestion(series, questionKey) {
+        let question = null;
+        let i: number = 0;
+
+        while (!question && i < series.length) {
+            question = series[i++].questions.find(
+                (q) => q.id_question == questionKey,
+            );
+        }
+
+        return question;
+    }
+
+    async findCorrectAnswers(id_question) {
+        const correctByQuestion = await this.dataSource.query(`
+                SELECT id_answer, text, answer.fk_id_question
+                FROM answer
+                INNER JOIN question ON answer.fk_id_question = question.id_question
+                INNER JOIN correct_answer ON correct_answer.fk_id_answer = answer.id_answer
+                WHERE question.id_question = ${id_question}
+        `);
+
+        return correctByQuestion;
     }
 
     private merge(

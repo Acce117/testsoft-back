@@ -11,8 +11,9 @@ export const MULTIPLE_OPTION = 'Opción Múltiple';
 
 export const MULTIPLE_OPTION_ALL_OR_NOTHING = 'Todo o nada selección múltiple';
 
-export const valueAnswerTypes: string[] = [
-    MULTIPLE_OPTIONS_VALUE_ASSIGN,
+export const valueAnswerTypes: string[] = [MULTIPLE_OPTIONS_VALUE_ASSIGN];
+
+export const writtenAnswerTypes: string[] = [
     WRITTEN_ANSER,
     WRITTEN_ANSER_ALL_OR_NOTHING,
 ];
