@@ -32,7 +32,8 @@ export class ExecuteTestController implements IController {
             async (manager: EntityManager) => {
                 body.user_id = jwtPayload.user_id;
                 body.group_id = jwtPayload.group;
-                return this.service.executeTest(body, manager);
+                const testApp = await this.service.executeTest(body, manager);
+                return this.service.testResult(testApp);
             },
         );
     }
