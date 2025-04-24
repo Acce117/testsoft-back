@@ -72,7 +72,7 @@ export class ExecuteTestService {
             manager,
         );
         await this.processResult(testApplication, finalAnswers, manager);
-        return testApplication.id_test_application;
+        return testApplication;
     }
 
     async getResult(id_test_app) {
