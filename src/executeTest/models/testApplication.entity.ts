@@ -27,7 +27,7 @@ export class TestApplication extends BaseEntity {
     })
     user: User;
 
-    @ManyToOne(() => PsiTest, (test) => test.test_apps)
+    @ManyToOne(() => PsiTest, (test) => test.test_apps, { eager: true })
     @JoinColumn({
         name: 'fk_id_test',
         referencedColumnName: 'id_test',
