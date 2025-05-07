@@ -224,7 +224,7 @@ export class ExecuteTestService {
                         `${answer.id_question}`
                     ] = { [fk_id_answer]: value };
                     appAnswers.value.push({
-                        fk_id_test_application:
+                        fk_id_test_aplication:
                             testApplication.id_test_application,
                         fk_id_answer,
                         value,
