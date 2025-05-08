@@ -103,7 +103,16 @@ export class SiteService {
         return {
             token: this.generateToken({
                 user_id: user.user_id,
-                group: user.groups.length > 0 ? user.groups[0].id_group : null,
+            }),
+            groups: user.groups,
+        };
+    }
+
+    public selectGroup(user_id, group_id) {
+        return {
+            token: this.generateToken({
+                user_id,
+                group: group_id,
             }),
         };
     }
