@@ -501,7 +501,12 @@ export class ExecuteTestService {
                     if (!final_results['categories'][[`${category_name}`]])
                         final_results['categories'][[`${category_name}`]] = {
                             ...items_ordered[i].item.category,
-                            items: [],
+                            items: [
+                                {
+                                    ...items_ordered[i].item,
+                                    category: undefined,
+                                },
+                            ],
                         };
 
                     if (
@@ -555,7 +560,7 @@ export class ExecuteTestService {
 
                     final_results[`${category}`] = {
                         ...app_result.item.category,
-                        items: [],
+                        items: [{ ...app_result.item, category: undefined }],
                     };
                 }
             }
