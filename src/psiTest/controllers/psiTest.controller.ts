@@ -6,6 +6,7 @@ import { CrudBaseController } from 'src/common/controllers/controller';
 import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { MyTestsInterceptor } from '../interceptor/myTests.interceptor';
+import { AssignedTestGuard } from '../guards/AssignedTest.guard';
 
 export class PsiTestController extends CrudBaseController({
     prefix: 'psi_test',
@@ -20,7 +21,12 @@ export class PsiTestController extends CrudBaseController({
             UseInterceptors(MyTestsInterceptor),
         ],
     },
-    getOne: { decorators: [UseGuards(RoleGuard), Roles(['Executor'])] },
+    getOne: {
+        decorators: [
+            UseGuards(RoleGuard, AssignedTestGuard),
+            Roles(['Executor']),
+        ],
+    },
 }) {
     @Post('assign_test_to_group')
     public assignTestToGroup(@Body() { id_group, id_test }) {
