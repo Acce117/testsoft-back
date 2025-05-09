@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BelbinGeneralResults } from '../models/BelbinGeneralResults.model';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { MBTIGeneralResults } from '../models/MBTIGeneralResults.model';
 import { TEGeneralResults } from '../models/TEGeneralResults.model';
 import { TestAppCount } from '../models/TestAppCount.model';
@@ -24,6 +24,8 @@ export class ReportsService {
     @InjectRepository(TestResultAnalysis)
     testResultAnalysisRepository: Repository<TestResultAnalysis>;
 
+    @InjectDataSource() dataSource: DataSource;
+
     getBelbinGeneralResults() {
         return this.belbinGeneralResultsRepository.find();
     }
@@ -42,5 +44,15 @@ export class ReportsService {
 
     getTestResultAnalysis() {
         return this.testResultAnalysisRepository.find();
+    }
+
+    amountOfTestedInGroup(group_id: any) {
+        return this.dataSource.query(`
+            select count(DISTINCT test_application.fk_id_user, auth_assignment.group_id) tested_in_group
+            from 
+	            user join auth_assignment on user.user_id = auth_assignment.user_id
+	            right join test_application on user.user_id = test_application.fk_id_user
+            where group_id = ${group_id}
+        `);
     }
 }

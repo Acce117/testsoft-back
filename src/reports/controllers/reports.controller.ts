@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { IController } from 'src/common/controllers/controller.interface';
 import { DataSource } from 'typeorm';
 import { ReportsService } from '../providers/reports.service';
@@ -31,5 +31,10 @@ export class ReportsController implements IController {
     @Get('test_result_analysis')
     getTestResultAnalysis() {
         return this.service.getTestResultAnalysis();
+    }
+
+    @Get('tested_in_group/:group_id')
+    amountOfTestedInAGroup(@Param('group_id') group_id) {
+        return this.service.amountOfTestedInGroup(group_id);
     }
 }
