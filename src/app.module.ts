@@ -17,9 +17,11 @@ import { mailerConfig } from './config/mailer.config';
 import { BullModule } from '@nestjs/bullmq';
 import { bullConfig } from './config/bullMQ.config';
 import { SendMailModule } from './mailer/sendMail.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
     imports: [
+        ReportsModule,
         SiteModule,
         PsiTestModule,
         TenantModule,
