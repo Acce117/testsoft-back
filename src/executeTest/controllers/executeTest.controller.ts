@@ -27,15 +27,15 @@ export class ExecuteTestController implements IController {
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
     async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
-        return handleTransaction(
+        const testApp = await handleTransaction(
             this.dataSource,
             async (manager: EntityManager) => {
                 body.user_id = jwtPayload.user_id;
                 body.group_id = jwtPayload.group;
-                const testApp = await this.service.executeTest(body, manager);
-                return this.service.testResult(testApp);
+                return await this.service.executeTest(body, manager);
             },
         );
+        return this.service.testResult(testApp);
     }
 
     @Get('/:id')

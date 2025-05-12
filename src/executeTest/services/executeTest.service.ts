@@ -218,37 +218,16 @@ export class ExecuteTestService {
             } else if (
                 writtenAnswerTypes.find((type) => question.type.name === type)
             ) {
-                if (answer.id_answer && Array.isArray(answer.id_answer))
-                    for (const fk_id_answer of answer.id_answer) {
-                        if (answer.id_answer)
-                            finalAnswers[`${question.type.name}`][
-                                `${answer.id_question}`
-                            ] = { [fk_id_answer]: answer.answer };
-                        else
-                            finalAnswers[`${question.type.name}`][
-                                `${answer.id_question}`
-                            ] = answer.answer;
-                        appAnswers.value.push({
-                            fk_id_test_aplication:
-                                testApplication.id_test_application,
-                            fk_id_answer: fk_id_answer,
-                            value: answer.answer,
-                        });
-                    }
-                else {
-                    if (answer.id_answer)
-                        finalAnswers[`${question.type.name}`][
-                            `${answer.id_question}`
-                        ] = { [answer.id_answer as number]: answer.answer };
-                    else
-                        finalAnswers[`${question.type.name}`][
-                            `${answer.id_question}`
-                        ] = answer.answer;
+                for (const fk_id_answer in answer.answer as ValueAnswer) {
+                    const value = answer.answer[fk_id_answer];
+                    finalAnswers[`${question.type.name}`][
+                        `${answer.id_question}`
+                    ] = { [fk_id_answer]: value };
                     appAnswers.value.push({
                         fk_id_test_aplication:
                             testApplication.id_test_application,
-                        fk_id_answer: answer.id_answer,
-                        value: answer.answer,
+                        fk_id_answer,
+                        value,
                     });
                 }
             }
@@ -453,6 +432,16 @@ export class ExecuteTestService {
 
     //TODO solve problems with ties in Belbin
     async testResult(testApp: TestApplication) {
+        testApp = await this.testAppService.getOne(
+            {
+                relations: [
+                    'test.display_parameters',
+                    'application_result.item.category',
+                ],
+            },
+            testApp.id_test_application,
+        );
+
         const parameters = testApp.test.display_parameters;
 
         const final_results = { parameters };
@@ -482,8 +471,18 @@ export class ExecuteTestService {
                     final_results['avoided'].push(items_ordered[i]);
                 }
             } else {
+                const app_result = testApp.application_result;
+
+                const items_ordered = this.mergeSort(
+                    app_result.map((el) => ({
+                        item: el.item,
+                        value: el.value_result,
+                    })),
+                );
+
+                final_results['items'] = items_ordered;
             }
-        } else if (parameters.element_by_category)
+        } else if (parameters.element_by_category) {
             if (parameters.tops_values) {
                 final_results['categories'] = {};
 
@@ -502,7 +501,12 @@ export class ExecuteTestService {
                     if (!final_results['categories'][[`${category_name}`]])
                         final_results['categories'][[`${category_name}`]] = {
                             ...items_ordered[i].item.category,
-                            items: [],
+                            items: [
+                                {
+                                    ...items_ordered[i].item,
+                                    category: undefined,
+                                },
+                            ],
                         };
 
                     if (
@@ -540,7 +544,27 @@ export class ExecuteTestService {
                         });
                     }
                 }
+            } else {
+                const app_results = testApp.application_result;
+
+                const items_ordered = this.mergeSort(
+                    app_results.map((el) => ({
+                        item: el.item,
+                        value: el.value_result,
+                    })),
+                );
+
+                for (const app_result of items_ordered) {
+                    const item = app_result.item;
+                    const category = item.category.name;
+
+                    final_results[`${category}`] = {
+                        ...app_result.item.category,
+                        items: [{ ...app_result.item, category: undefined }],
+                    };
+                }
             }
+        }
 
         return final_results;
     }
