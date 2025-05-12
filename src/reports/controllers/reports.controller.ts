@@ -37,4 +37,9 @@ export class ReportsController implements IController {
     amountOfTestedInAGroup(@Param('group_id') group_id) {
         return this.service.amountOfTestedInGroup(group_id);
     }
+
+    @Get('preferred_avoided_roles/:group_id')
+    preferredAvoidedRoles(@Param('group_id') group_id) {
+        return this.service.preferredAvoidedRoles(group_id);
+    }
 }

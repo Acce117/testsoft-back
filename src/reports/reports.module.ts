@@ -7,6 +7,7 @@ import { MBTIGeneralResults } from './models/MBTIGeneralResults.model';
 import { TEGeneralResults } from './models/TEGeneralResults.model';
 import { TestAppCount } from './models/TestAppCount.model';
 import { TestResultAnalysis } from './models/TestResultAnalysus.model';
+import { PreferredAvoidedRoles } from './models/PreferredAvoidedRoles.model';
 
 @Module({
     controllers: [ReportsController],
@@ -18,6 +19,7 @@ import { TestResultAnalysis } from './models/TestResultAnalysus.model';
             TEGeneralResults,
             TestAppCount,
             TestResultAnalysis,
+            PreferredAvoidedRoles,
         ]),
     ],
     exports: [],

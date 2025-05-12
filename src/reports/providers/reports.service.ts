@@ -6,6 +6,7 @@ import { MBTIGeneralResults } from '../models/MBTIGeneralResults.model';
 import { TEGeneralResults } from '../models/TEGeneralResults.model';
 import { TestAppCount } from '../models/TestAppCount.model';
 import { TestResultAnalysis } from '../models/TestResultAnalysus.model';
+import { PreferredAvoidedRoles } from '../models/PreferredAvoidedRoles.model';
 
 @Injectable()
 export class ReportsService {
@@ -23,6 +24,9 @@ export class ReportsService {
 
     @InjectRepository(TestResultAnalysis)
     testResultAnalysisRepository: Repository<TestResultAnalysis>;
+
+    @InjectRepository(PreferredAvoidedRoles)
+    preferredAvoidedRolesRepository: Repository<PreferredAvoidedRoles>;
 
     @InjectDataSource() dataSource: DataSource;
 
@@ -54,5 +58,13 @@ export class ReportsService {
 	            right join test_application on user.user_id = test_application.fk_id_user
             where group_id = ${group_id}
         `);
+    }
+
+    preferredAvoidedRoles(group_id: any) {
+        return this.preferredAvoidedRolesRepository.find({
+            where: {
+                id_group: group_id,
+            },
+        });
     }
 }
