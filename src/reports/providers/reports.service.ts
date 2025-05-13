@@ -50,14 +50,27 @@ export class ReportsService {
         return this.testResultAnalysisRepository.find();
     }
 
-    amountOfTestedInGroup(group_id: any) {
-        return this.dataSource.query(`
-            select count(DISTINCT test_application.fk_id_user, auth_assignment.group_id) tested_in_group
+    async amountOfTestedInGroup(group_id: any) {
+        const data: Array<{ group_id: number; name: string; tested: string }> =
+            await this.dataSource.query(`
+            select auth_assignment.group_id, test.name, count(DISTINCT test_application.fk_id_user) tested
             from 
-	            user join auth_assignment on user.user_id = auth_assignment.user_id
-	            right join test_application on user.user_id = test_application.fk_id_user
-            where group_id = ${group_id}
+		        user join auth_assignment on user.user_id = auth_assignment.user_id
+	            join test_application on user.user_id = test_application.fk_id_user
+        		join test on test_application.fk_id_test = test.id_test
+            where auth_assignment.group_id = ${group_id}
+            GROUP BY test.name, auth_assignment.group_id
+            ORDER BY auth_assignment.group_id
         `);
+
+        const result: { [test: string]: number } = {};
+
+        if (data.length != 0) {
+            for (const element of data)
+                result[element.name] = parseInt(element.tested);
+        }
+
+        return result;
     }
 
     preferredAvoidedRoles(group_id: any) {
