@@ -108,7 +108,16 @@ export class SiteService {
         };
     }
 
-    public selectGroup(user_id, group_id) {
+    public async selectGroup(user_id, group_id) {
+        const assignment = await this.authAssignmentService.getOne({
+            where: {
+                user_id,
+                group_id,
+            },
+        });
+
+        if (!assignment) throw new UnauthorizedException();
+
         return {
             token: this.generateToken({
                 user_id,
