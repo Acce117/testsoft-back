@@ -7,7 +7,7 @@ import { paginateResult } from 'src/common/utils/paginateResult';
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
 
-    public async userTests(user_id: number, params) {
+    public async userTests(user_id: number, group_id, params) {
         const result = [];
 
         const user: User = await this.getOne(
@@ -34,8 +34,12 @@ export class UserService extends CrudBaseService({ model: User }) {
             user_id,
         );
 
-        if (user?.groups)
-            user.groups.forEach((group) => result.push(...group.psiTests));
+        if (user?.groups) {
+            const group = user.groups.find(
+                (group) => group.id_group == group_id,
+            );
+            result.push(group.psiTests);
+        }
 
         return paginateResult(params, result);
     }

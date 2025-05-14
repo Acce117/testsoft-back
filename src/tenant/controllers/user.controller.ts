@@ -19,11 +19,15 @@ export class UserController extends CrudBaseController({
         Roles(['Admin', 'Super Admin', 'Client']),
     ],
 }) {
-    @Get('/:user_id/tests')
+    @Get('tests')
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
-    public getUserTests(@Param('user_id') user_id: number, @Query() params) {
-        return (this.service as UserService).userTests(user_id, params);
+    public getUserTests(@JwtPayload() payload, @Query() params) {
+        return (this.service as UserService).userTests(
+            payload.user_id,
+            payload.group,
+            params,
+        );
     }
 
     @Post('/my_group')
