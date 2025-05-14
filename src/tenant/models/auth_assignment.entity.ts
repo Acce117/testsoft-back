@@ -1,6 +1,7 @@
 import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -27,6 +28,9 @@ export class AuthAssignment extends BaseModel {
 
     @Column()
     group_id: number;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 
     @ManyToOne(() => Group)
     @JoinColumn({
