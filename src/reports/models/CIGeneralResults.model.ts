@@ -2,10 +2,10 @@ import { BaseModel } from 'src/common/models/baseModel';
 import { ViewColumn, ViewEntity } from 'typeorm';
 
 @ViewEntity({
-    name: 'resultados_generales_de_belbin',
+    name: 'resultados_generales_ci',
 })
-export class BelbinGeneralResults extends BaseModel {
-    static alias: string = 'belbinGeneralResults';
+export class CIGeneralResults extends BaseModel {
+    static alias: string = 'ciGeneralResults';
     static primaryKey: string;
 
     @ViewColumn({ name: 'CI' })

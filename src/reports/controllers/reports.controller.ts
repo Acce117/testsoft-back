@@ -23,6 +23,21 @@ export class ReportsController implements IController {
         return this.service.getTEGeneralResults();
     }
 
+    @Get('leyes_general-results')
+    getLeyesGeneralResults() {
+        return this.service.getLeyesGeneralResults();
+    }
+
+    @Get('terman_general-results')
+    getTermanGeneralResults() {
+        return this.service.getTermanGeneralResults();
+    }
+
+    @Get('ci_general-results')
+    getCIGeneralResults() {
+        return this.service.getCIGeneralResults();
+    }
+
     @Get('test_app_count')
     getTestAppCount() {
         return this.service.getTestAppCount();

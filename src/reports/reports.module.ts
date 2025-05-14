@@ -8,6 +8,9 @@ import { TEGeneralResults } from './models/TEGeneralResults.model';
 import { TestAppCount } from './models/TestAppCount.model';
 import { TestResultAnalysis } from './models/TestResultAnalysus.model';
 import { PreferredAvoidedRoles } from './models/PreferredAvoidedRoles.model';
+import { CIGeneralResults } from './models/CIGeneralResults.model';
+import { TermanGeneralResults } from './models/TermanGeneralResults.model';
+import { LeyesGeneralResults } from './models/LeyesGeneralResults.model';
 
 @Module({
     controllers: [ReportsController],
@@ -20,6 +23,9 @@ import { PreferredAvoidedRoles } from './models/PreferredAvoidedRoles.model';
             TestAppCount,
             TestResultAnalysis,
             PreferredAvoidedRoles,
+            CIGeneralResults,
+            TermanGeneralResults,
+            LeyesGeneralResults,
         ]),
     ],
     exports: [],

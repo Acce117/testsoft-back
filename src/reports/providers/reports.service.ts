@@ -7,6 +7,9 @@ import { TEGeneralResults } from '../models/TEGeneralResults.model';
 import { TestAppCount } from '../models/TestAppCount.model';
 import { TestResultAnalysis } from '../models/TestResultAnalysus.model';
 import { PreferredAvoidedRoles } from '../models/PreferredAvoidedRoles.model';
+import { LeyesGeneralResults } from '../models/LeyesGeneralResults.model';
+import { CIGeneralResults } from '../models/CIGeneralResults.model';
+import { TermanGeneralResults } from '../models/TermanGeneralResults.model';
 
 @Injectable()
 export class ReportsService {
@@ -30,6 +33,15 @@ export class ReportsService {
 
     @InjectDataSource() dataSource: DataSource;
 
+    @InjectRepository(LeyesGeneralResults)
+    leyesGeneralResultsRepository: Repository<LeyesGeneralResults>;
+
+    @InjectRepository(CIGeneralResults)
+    ciGeneralResultsRepository: Repository<CIGeneralResults>;
+
+    @InjectRepository(TermanGeneralResults)
+    termanGeneralResultsRepository: Repository<TermanGeneralResults>;
+
     getBelbinGeneralResults() {
         return this.belbinGeneralResultsRepository.find();
     }
@@ -40,6 +52,18 @@ export class ReportsService {
 
     getTEGeneralResults() {
         return this.teGeneralResultsRepository.find();
+    }
+
+    getLeyesGeneralResults() {
+        return this.leyesGeneralResultsRepository.find();
+    }
+
+    getTermanGeneralResults() {
+        return this.termanGeneralResultsRepository.find();
+    }
+
+    getCIGeneralResults() {
+        return this.ciGeneralResultsRepository.find();
     }
 
     getTestAppCount() {

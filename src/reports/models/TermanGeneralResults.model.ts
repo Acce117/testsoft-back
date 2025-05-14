@@ -2,11 +2,17 @@ import { BaseModel } from 'src/common/models/baseModel';
 import { ViewColumn, ViewEntity } from 'typeorm';
 
 @ViewEntity({
-    name: 'resultados_generales_de_belbin',
+    name: 'resultados_generales_terman',
 })
-export class BelbinGeneralResults extends BaseModel {
-    static alias: string = 'belbinGeneralResults';
+export class TermanGeneralResults extends BaseModel {
+    static alias: string = 'termanGeneralResults';
     static primaryKey: string;
+
+    @ViewColumn({ name: 'test_app' })
+    test_app: number;
+
+    @ViewColumn({ name: 'name' })
+    name: string;
 
     @ViewColumn({ name: 'CI' })
     ci: string;
@@ -16,4 +22,7 @@ export class BelbinGeneralResults extends BaseModel {
 
     @ViewColumn({ name: 'item_name' })
     item_name: string;
+
+    @ViewColumn({ name: 'calificacion' })
+    rating: string;
 }
