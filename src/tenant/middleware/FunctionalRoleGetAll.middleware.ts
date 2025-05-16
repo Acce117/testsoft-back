@@ -28,10 +28,16 @@ export class FunctionalRoleGetAllMiddleware implements NestMiddleware {
                 assignment.group_id == payload.group,
         );
 
+        const query = req.query;
+
         if (assignment.role.name === 'Analyst')
-            return res.redirect('/functional_role/analyst');
+            return res.redirect(
+                `/functional_role/analyst?${query.limit ? 'limit=' + query.limit + '&' : ''}${query.offset ? 'offset=' + query.offset : ''}`,
+            );
         else if (assignment.role.name === 'Executor')
-            return res.redirect('/functional_role/executor');
+            return res.redirect(
+                `/functional_role/executor?${query.limit ? 'limit=' + query.limit + '&' : ''}${query.offset ? 'offset=' + query.offset : ''}`,
+            );
 
         return next();
     }
