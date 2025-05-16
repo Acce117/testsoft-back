@@ -38,7 +38,7 @@ export class UserService extends CrudBaseService({ model: User }) {
             const group = user.groups.find(
                 (group) => group.id_group == group_id,
             );
-            result.push(group.psiTests);
+            result.push(...group.psiTests);
         }
 
         return paginateResult(params, result);
