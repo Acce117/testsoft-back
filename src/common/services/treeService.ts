@@ -64,6 +64,14 @@ export function TreeBaseService<T extends { children }>(
             );
         }
 
+        async getDescendants(params: object, id?: any) {
+            const element = await super.getOne(params, id);
+            return await this.treeRepository.findDescendants(
+                element,
+                this.parseParams(params),
+            );
+        }
+
         async create(data: any) {
             const father = await this.getOne({}, data.father_group);
 

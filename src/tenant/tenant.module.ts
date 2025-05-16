@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+    RequestMethod,
+} from '@nestjs/common';
 import { GroupController } from './controllers/group.controller';
 import { GroupService } from './services/group.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,6 +33,7 @@ import { SendMailModule } from 'src/mailer/sendMail.module';
 import { SelectedRoleService } from './services/selected_role.service';
 import { SelectedRoleController } from './controllers/selected_role.controller';
 import { SelectedRole } from './models/selected_role.entity';
+import { FunctionalRoleGetAllMiddleware } from './middleware/FunctionalRoleGetAll.middleware';
 
 @Module({
     controllers: [
@@ -51,6 +57,7 @@ import { SelectedRole } from './models/selected_role.entity';
         CompatibilityService,
         LeadershipService,
         SelectedRoleService,
+        FunctionalRoleGetAllMiddleware,
     ],
     imports: [
         SendMailModule,
@@ -68,4 +75,10 @@ import { SelectedRole } from './models/selected_role.entity';
     ],
     exports: [UserService, AuthAssignmentService, GroupService],
 })
-export class TenantModule {}
+export class TenantModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(FunctionalRoleGetAllMiddleware)
+            .forRoutes({ method: RequestMethod.GET, path: 'functional_role' });
+    }
+}
