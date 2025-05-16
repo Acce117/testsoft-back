@@ -30,6 +30,14 @@ export class UserController extends CrudBaseController({
         );
     }
 
+    @Get('selected_roles')
+    public getSelectedRoles(@JwtPayload() payload) {
+        return (this.service as UserService).selectedRoles(
+            payload.user_id,
+            payload.group,
+        );
+    }
+
     @Post('/my_group')
     @UseGuards(RoleGuard)
     @Roles(['Client'])

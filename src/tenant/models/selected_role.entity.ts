@@ -17,4 +17,7 @@ export class SelectedRole extends BaseModel {
 
     @Column()
     preferred: boolean;
+
+    @Column()
+    fk_id_group: number;
 }

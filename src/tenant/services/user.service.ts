@@ -44,6 +44,21 @@ export class UserService extends CrudBaseService({ model: User }) {
         return paginateResult(params, result);
     }
 
+    async selectedRoles(user_id: any, group: any) {
+        const user: User = await this.getOne(
+            {
+                relations: ['selected_role'],
+            },
+            user_id,
+        );
+
+        const selected_roles = user.selected_role.filter(
+            (role) => role.fk_id_group == group,
+        );
+
+        return selected_roles;
+    }
+
     public async createMyGroup(group, id_user: number) {
         const newGroup = await this.groupService.create(group);
 

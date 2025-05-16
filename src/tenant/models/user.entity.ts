@@ -128,5 +128,5 @@ export class User extends BaseModel {
     my_groups: Group[];
 
     @ManyToMany(() => SelectedRole)
-    selected_role: SelectedRole;
+    selected_role: SelectedRole[];
 }
