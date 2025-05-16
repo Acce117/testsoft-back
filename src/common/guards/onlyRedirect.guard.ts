@@ -12,10 +12,7 @@ export class OnlyRedirectGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const req = context.switchToHttp().getRequest();
-        if (
-            !req.headers.referer ||
-            !req.headers.referer.includes(process.env.DOMAIN)
-        ) {
+        if (!req.headers.referer) {
             throw new NotFoundException();
         }
 
