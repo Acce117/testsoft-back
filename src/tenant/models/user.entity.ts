@@ -17,6 +17,7 @@ import { Country } from './country.entity';
 import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
 import { Compatibility } from './compatibility.entity';
+import { SelectedRole } from './selected_role.entity';
 
 @Entity({ name: 'user' })
 export class User extends BaseModel {
@@ -125,4 +126,7 @@ export class User extends BaseModel {
         },
     })
     my_groups: Group[];
+
+    @ManyToMany(() => SelectedRole)
+    selected_role: SelectedRole;
 }

@@ -25,6 +25,9 @@ import { LeadershipController } from './controllers/leadership.controller';
 import { CompatibilityService } from './services/compatibility.service';
 import { LeadershipService } from './services/leadership.service';
 import { SendMailModule } from 'src/mailer/sendMail.module';
+import { SelectedRoleService } from './services/selected_role.service';
+import { SelectedRoleController } from './controllers/selected_role.controller';
+import { SelectedRole } from './models/selected_role.entity';
 
 @Module({
     controllers: [
@@ -36,6 +39,7 @@ import { SendMailModule } from 'src/mailer/sendMail.module';
         FunctionalRoleController,
         CompatibilityController,
         LeadershipController,
+        SelectedRoleController,
     ],
     providers: [
         GroupService,
@@ -46,6 +50,7 @@ import { SendMailModule } from 'src/mailer/sendMail.module';
         FunctionalRoleService,
         CompatibilityService,
         LeadershipService,
+        SelectedRoleService,
     ],
     imports: [
         SendMailModule,
@@ -58,6 +63,7 @@ import { SendMailModule } from 'src/mailer/sendMail.module';
             FunctionalRole,
             Leadership,
             Compatibility,
+            SelectedRole,
         ]),
     ],
     exports: [UserService, AuthAssignmentService, GroupService],
