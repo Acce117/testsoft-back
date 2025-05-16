@@ -31,6 +31,7 @@ export class UserController extends CrudBaseController({
     }
 
     @Get('selected_roles')
+    @Roles(['Executor'])
     public getSelectedRoles(@JwtPayload() payload) {
         return (this.service as UserService).selectedRoles(
             payload.user_id,

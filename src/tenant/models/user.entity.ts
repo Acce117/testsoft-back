@@ -18,6 +18,7 @@ import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
 import { Compatibility } from './compatibility.entity';
 import { SelectedRole } from './selected_role.entity';
+import { FunctionalRole } from './functional_role.entity';
 
 @Entity({ name: 'user' })
 export class User extends BaseModel {
@@ -127,6 +128,17 @@ export class User extends BaseModel {
     })
     my_groups: Group[];
 
-    @ManyToMany(() => SelectedRole)
-    selected_role: SelectedRole[];
+    @ManyToMany(() => FunctionalRole)
+    @JoinTable({
+        name: 'selected_rol',
+        joinColumn: {
+            name: 'fk_id_user',
+            referencedColumnName: 'user_id',
+        },
+        inverseJoinColumn: {
+            name: 'fk_id_rol',
+            referencedColumnName: 'id_rol',
+        },
+    })
+    selected_role: FunctionalRole[];
 }

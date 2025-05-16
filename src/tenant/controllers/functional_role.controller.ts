@@ -1,6 +1,6 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { FunctionalRoleService } from '../services/functional_role.service';
-import { Body, Get, Query, UseGuards } from '@nestjs/common';
+import { Get, Query, UseGuards } from '@nestjs/common';
 import { OnlyRedirectGuard } from 'src/common/guards/onlyRedirect.guard';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 
