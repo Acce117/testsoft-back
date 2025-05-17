@@ -13,6 +13,14 @@ export class MeController implements IController {
     @Get()
     async me(@JwtPayload() payload) {
         const user = await this.service.me(payload.user_id);
-        return instanceToPlain(user);
+        const plain_user = instanceToPlain(user);
+
+        return {
+            ...plain_user,
+            assignments: undefined,
+            assignment: user.assignments.find(
+                (assign) => assign.group_id == payload.group,
+            ),
+        };
     }
 }

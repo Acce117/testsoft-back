@@ -23,7 +23,7 @@ export class FunctionalRole extends BaseModel {
     rol_descrip: string;
 
     @Column()
-    id_group: number;
+    fk_id_group: number;
 
     @ManyToOne(() => Group, (group) => group.functional_roles)
     @JoinColumn({

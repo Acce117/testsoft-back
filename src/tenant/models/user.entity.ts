@@ -17,7 +17,6 @@ import { Country } from './country.entity';
 import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
 import { Compatibility } from './compatibility.entity';
-import { SelectedRole } from './selected_role.entity';
 import { FunctionalRole } from './functional_role.entity';
 
 @Entity({ name: 'user' })
