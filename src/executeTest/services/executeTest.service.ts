@@ -436,7 +436,16 @@ export class ExecuteTestService {
             {
                 relations: [
                     'test.display_parameters',
-                    'application_result.item.category',
+                    // 'application_result.item.category',
+                    {
+                        name: 'application_result',
+                        relations: [
+                            {
+                                name: 'item',
+                                relations: ['ranges', 'category'],
+                            },
+                        ],
+                    },
                 ],
             },
             testApp.id_test_application,
@@ -505,6 +514,7 @@ export class ExecuteTestService {
                                 {
                                     ...items_ordered[i].item,
                                     category: undefined,
+                                    value: items_ordered[i].value,
                                 },
                             ],
                         };
