@@ -100,7 +100,7 @@ export class ReportsService {
     preferredAvoidedRoles(group_id: any) {
         return this.preferredAvoidedRolesRepository.find({
             where: {
-                id_group: group_id,
+                fk_id_group: group_id,
             },
         });
     }

@@ -7,6 +7,12 @@ export class PreferredAvoidedRoles {
     @ViewColumn({ name: 'id_group' })
     id_group: number;
 
+    @ViewColumn({ name: 'fk_id_group' })
+    fk_id_group: string;
+
+    @ViewColumn({ name: 'id_rol' })
+    id_rol: number;
+
     @ViewColumn({ name: 'rol_name' })
     rol_name: number;
 
