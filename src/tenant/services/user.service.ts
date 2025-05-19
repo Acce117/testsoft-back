@@ -53,7 +53,7 @@ export class UserService extends CrudBaseService({ model: User }) {
         );
 
         const selected_roles = user.selected_role.filter(
-            (role) => role.fk_id_group == group,
+            (role) => role.id_group == group,
         );
 
         return selected_roles;
