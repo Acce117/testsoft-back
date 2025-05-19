@@ -3,6 +3,7 @@ import { TreeBaseService } from 'src/common/services/treeService';
 import { User } from '../models/user.entity';
 import { Compatibility } from '../models/compatibility.entity';
 import { paginateResult } from 'src/common/utils/paginateResult';
+import { Leadership } from '../models/leadership.entity';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
     //add filter
@@ -16,14 +17,30 @@ export class GroupService extends TreeBaseService({ model: Group }) {
                 group,
             )
             .leftJoinAndSelect(`${this.model.alias}.users`, User.alias)
-            .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
+            .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups')
+            .leftJoinAndSelect(`${User.alias}.leadership`, 'leadership')
+            .leftJoinAndSelect(`${User.alias}.compatibility`, 'compatibility');
     }
 
-    public async getUsersFromGroup(params, id) {
+    public async getUsersFromGroup(params, id, auth_user) {
         const query = await this.getUsers(params, id);
 
         const data = await query.getOne();
-        const users = data.users;
+        let users = data.users;
+
+        users = users.map((user) => {
+            user.leadership.filter(
+                (l: Leadership) => l.fk_user_destination == auth_user,
+            );
+            return user;
+        });
+
+        users = users.map((user) => {
+            user.compatibility = user.compatibility.filter(
+                (l: Compatibility) => l.fk_user_destination == auth_user,
+            );
+            return user;
+        });
 
         return paginateResult(params, users);
     }

@@ -27,6 +27,7 @@ export class User extends BaseModel {
     @PrimaryGeneratedColumn()
     user_id: number;
 
+    @Exclude()
     @VirtualColumn({ query: (alias) => alias })
     created_scenario: 'created' | 'sign_in' = 'created';
 
