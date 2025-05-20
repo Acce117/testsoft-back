@@ -17,13 +17,15 @@ export class GroupService extends TreeBaseService({ model: Group }) {
                 group,
             )
             .leftJoinAndSelect(`${this.model.alias}.users`, User.alias)
-            .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups')
-            .leftJoinAndSelect(`${User.alias}.leadership`, 'leadership')
-            .leftJoinAndSelect(`${User.alias}.compatibility`, 'compatibility');
+            .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
     }
 
     public async getUsersFromGroup(params, id, auth_user) {
-        const query = await this.getUsers(params, id);
+        let query = await this.getUsers(params, id);
+
+        query = query
+            .leftJoinAndSelect(`${User.alias}.leadership`, 'leadership')
+            .leftJoinAndSelect(`${User.alias}.compatibility`, 'compatibility');
 
         const data = await query.getOne();
         let users = data.users;
