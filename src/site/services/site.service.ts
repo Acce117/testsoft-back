@@ -100,11 +100,30 @@ export class SiteService {
             }
         }
 
+        const assignments = user.assignments.map((assignment) => {
+            const role = assignment.role;
+            const groups = user.groups;
+
+            let result = null;
+            let i = 0;
+            while (!result) {
+                if (groups[i].id_group === assignment.group_id) {
+                    result = {
+                        name: groups[i].name_group,
+                        role: role.name,
+                    };
+                }
+
+                i++;
+            }
+            return result;
+        });
+
         return {
             token: this.generateToken({
                 user_id: user.user_id,
             }),
-            groups: user.groups,
+            groups: assignments,
         };
     }
 
