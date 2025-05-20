@@ -58,7 +58,7 @@ export class UserService extends CrudBaseService({ model: User }) {
 
         const result = selectedRoles.map((sr) => {
             sr.fk_id_group == group;
-            return sr.role;
+            return { ...sr.role, preferred: sr.preferred };
         });
 
         return result;
