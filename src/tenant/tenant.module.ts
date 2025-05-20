@@ -34,6 +34,8 @@ import { SelectedRoleService } from './services/selected_role.service';
 import { SelectedRoleController } from './controllers/selected_role.controller';
 import { SelectedRole } from './models/selected_role.entity';
 import { FunctionalRoleGetAllMiddleware } from './middleware/FunctionalRoleGetAll.middleware';
+import { AuthAssignmentSubscriber } from './models/auth_assignment.subscriber';
+import { AuthItemService } from './services/authItem.service';
 
 @Module({
     controllers: [
@@ -52,11 +54,13 @@ import { FunctionalRoleGetAllMiddleware } from './middleware/FunctionalRoleGetAl
         UserService,
         CountryService,
         AuthAssignmentService,
-        UserSubscriber,
         FunctionalRoleService,
         CompatibilityService,
         LeadershipService,
         SelectedRoleService,
+        AuthItemService,
+        UserSubscriber,
+        AuthAssignmentSubscriber,
         FunctionalRoleGetAllMiddleware,
     ],
     imports: [
