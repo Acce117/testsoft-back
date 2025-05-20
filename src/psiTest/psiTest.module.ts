@@ -59,6 +59,7 @@ import { TestAuthor } from './models/test_author.entity';
 import { SendMailModule } from 'src/mailer/sendMail.module';
 import { GroupForTestSubscriber } from './models/groupForTest.subscriber';
 import { AssignedTestGuard } from './guards/AssignedTest.guard';
+import { AllowAssignTestGuard } from './guards/allowAssignTest.guard';
 
 @Module({
     controllers: [
@@ -102,6 +103,7 @@ import { AssignedTestGuard } from './guards/AssignedTest.guard';
         GroupForTestService,
         GroupForTestSubscriber,
         AssignedTestGuard,
+        AllowAssignTestGuard,
     ],
     imports: [
         SendMailModule,
