@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindTreeOptions, TreeRepository } from 'typeorm';
+import { EntityManager, FindTreeOptions, TreeRepository } from 'typeorm';
 import { Injectable, Type } from '@nestjs/common';
 import { CrudBaseService, ServiceOptions } from './service';
 import { ICrudTreeService } from './service.interface';
@@ -83,7 +83,7 @@ export function TreeBaseService<T extends { children }>(
         }
 
         //TODO generalized, this is too specific
-        async update(id: number, data: any) {
+        async update(id: number, data: any, manager: EntityManager) {
             if (data.father_group !== undefined) {
                 const group = await super.getOne({}, id);
                 const old_father = group.father_group;
@@ -100,7 +100,7 @@ export function TreeBaseService<T extends { children }>(
                 group.save();
             }
 
-            const result = super.update(id, data);
+            const result = super.update(id, data, manager);
 
             return result;
         }
