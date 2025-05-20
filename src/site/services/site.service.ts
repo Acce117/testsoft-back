@@ -66,7 +66,7 @@ export class SiteService {
             )
         ) {
             const assignment = user.assignments.find(
-                (assigment) => (assigment.group_id = user.groups[0].id_group),
+                (assignment) => (assignment.group_id = user.groups[0].id_group),
             );
 
             switch (assignment.role.name) {
