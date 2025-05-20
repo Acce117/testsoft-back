@@ -77,7 +77,7 @@ export class SiteService {
                 default:
                     const group = user.groups[0];
                     if (group.father_group === null) {
-                        if (group.owner.length > 0) {
+                        if (group.owner?.length > 0) {
                             group.owner.forEach((owner) => {
                                 if (!owner.enabled)
                                     throw new ForbiddenException();
