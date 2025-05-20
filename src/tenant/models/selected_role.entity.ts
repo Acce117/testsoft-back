@@ -1,5 +1,12 @@
 import { BaseModel } from 'src/common/models/baseModel';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { FunctionalRole } from './functional_role.entity';
 
 @Entity({
     name: 'selected_rol',
@@ -22,4 +29,11 @@ export class SelectedRole extends BaseModel {
 
     @Column()
     fk_id_group: number;
+
+    @ManyToOne(() => FunctionalRole)
+    @JoinColumn({
+        referencedColumnName: 'id_rol',
+        name: 'fk_id_rol',
+    })
+    role: FunctionalRole;
 }

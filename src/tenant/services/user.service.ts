@@ -3,9 +3,12 @@ import { User } from '../models/user.entity';
 import { Inject } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { paginateResult } from 'src/common/utils/paginateResult';
+import { SelectedRoleService } from './selected_role.service';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
+    @Inject(SelectedRoleService)
+    private readonly selectedRoleService: SelectedRoleService;
 
     public async userTests(user_id: number, group_id, params) {
         const result = [];
@@ -45,18 +48,20 @@ export class UserService extends CrudBaseService({ model: User }) {
     }
 
     async selectedRoles(user_id: any, group: any) {
-        const user: User = await this.getOne(
-            {
-                relations: ['selected_role'],
+        const selectedRoles = await this.selectedRoleService.getAll({
+            relations: ['role'],
+            where: {
+                fk_id_user: user_id,
+                fk_id_group: group,
             },
-            user_id,
-        );
+        });
 
-        const selected_roles = user.selected_role.filter(
-            (role) => role.id_group == group,
-        );
+        const result = selectedRoles.map((sr) => {
+            sr.fk_id_group == group;
+            return sr.role;
+        });
 
-        return selected_roles;
+        return result;
     }
 
     public async createMyGroup(group, id_user: number) {
