@@ -109,6 +109,7 @@ export class SiteService {
             while (!result) {
                 if (groups[i].id_group === assignment.group_id) {
                     result = {
+                        id_group: groups[i].id_group,
                         name: groups[i].name_group,
                         role: role.name,
                     };
