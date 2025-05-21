@@ -18,6 +18,7 @@ import { Group } from './group.entity';
 import { AuthAssignment } from './auth_assignment.entity';
 import { Compatibility } from './compatibility.entity';
 import { FunctionalRole } from './functional_role.entity';
+import { Leadership } from './leadership.entity';
 
 @Entity({ name: 'user' })
 export class User extends BaseModel {
@@ -86,13 +87,14 @@ export class User extends BaseModel {
     })
     assignments: AuthAssignment[];
 
-    @ManyToMany(() => User)
-    @JoinTable({
-        name: 'leadership',
-        joinColumn: { name: 'fk_user_origin' },
-        inverseJoinColumn: { name: 'fk_user_destination' },
-    })
-    leadership: User[];
+    // @ManyToMany(() => User)
+    // @JoinTable({
+    //     name: 'leadership',
+    //     joinColumn: { name: 'fk_user_origin' },
+    //     inverseJoinColumn: { name: 'fk_user_destination' },
+    // })
+    @OneToMany(() => Leadership, (leadership) => leadership.user_origin)
+    leadership: Leadership[];
 
     @OneToMany(
         () => Compatibility,

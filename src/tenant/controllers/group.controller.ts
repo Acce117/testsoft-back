@@ -5,7 +5,6 @@ import { UpdateGroupDto } from '../dto/update_group.dto';
 import { Body, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { MyGroupInterceptor } from '../interceptors/myGroup.interceptor';
 import { instanceToPlain } from 'class-transformer';
-import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 
 export class GroupController extends CrudBaseController({
     prefix: 'groups',
@@ -29,12 +28,10 @@ export class GroupController extends CrudBaseController({
         @Param('id') id,
         @Query() query,
         @Body() body,
-        @JwtPayload() payload,
     ) {
         const data = await (this.service as GroupService).getUsersFromGroup(
             { ...query, ...body },
             id,
-            payload.user_id,
         );
 
         return instanceToPlain(data);
