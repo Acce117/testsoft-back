@@ -15,9 +15,13 @@ export class UserController extends CrudBaseController({
     // updateDto: UpdateUserDto,
 
     decorators: [
-        // UseGuards(RoleGuard),
-        // Roles(['Admin', 'Super Admin', 'Client']),
+        UseGuards(RoleGuard),
+        Roles(['Admin', 'Super Admin', 'Client']),
     ],
+
+    getOne: {
+        decorators: [UseGuards(RoleGuard), Roles(['Executor'])],
+    },
 }) {
     @Get('tests')
     @UseGuards(RoleGuard)
