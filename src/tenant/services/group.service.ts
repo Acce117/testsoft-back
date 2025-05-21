@@ -32,14 +32,14 @@ export class GroupService extends TreeBaseService({ model: Group }) {
 
         users = users.map((user) => {
             user.leadership.filter(
-                (l: Leadership) => l.fk_user_destination == auth_user,
+                (l: Leadership) => l.fk_user_origin == auth_user,
             );
             return user;
         });
 
         users = users.map((user) => {
             user.compatibility = user.compatibility.filter(
-                (l: Compatibility) => l.fk_user_destination == auth_user,
+                (l: Compatibility) => l.fk_user_origin == auth_user,
             );
             return user;
         });
