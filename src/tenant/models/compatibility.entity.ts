@@ -25,6 +25,9 @@ export class Compatibility extends BaseModel {
     @Column()
     compatible: boolean;
 
+    @Column()
+    fk_id_group: number;
+
     @ManyToOne(() => User)
     @JoinColumn({
         name: 'fk_user_origin',

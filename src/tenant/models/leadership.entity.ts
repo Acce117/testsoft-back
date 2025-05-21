@@ -22,6 +22,9 @@ export class Leadership extends BaseModel {
     @Column()
     fk_user_destination: number;
 
+    @Column()
+    fk_id_group: number;
+
     @ManyToOne(() => User)
     @JoinColumn({
         name: 'fk_user_origin',
