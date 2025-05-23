@@ -25,7 +25,7 @@ export class PsiTestController extends CrudBaseController({
     getOne: {
         decorators: [
             UseGuards(RoleGuard, AssignedTestGuard),
-            Roles(['Executor', 'Analyst']),
+            Roles(['Executor']),
         ],
     },
 }) {
