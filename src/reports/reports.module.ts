@@ -11,6 +11,8 @@ import { PreferredAvoidedRoles } from './models/PreferredAvoidedRoles.model';
 import { CIGeneralResults } from './models/CIGeneralResults.model';
 import { TermanGeneralResults } from './models/TermanGeneralResults.model';
 import { LeyesGeneralResults } from './models/LeyesGeneralResults.model';
+import { TenantModule } from 'src/tenant/tenant.module';
+import { ExecuteTestModule } from 'src/executeTest/executeTest.module';
 
 @Module({
     controllers: [ReportsController],
@@ -27,6 +29,8 @@ import { LeyesGeneralResults } from './models/LeyesGeneralResults.model';
             TermanGeneralResults,
             LeyesGeneralResults,
         ]),
+        TenantModule,
+        ExecuteTestModule,
     ],
     exports: [],
 })

@@ -16,7 +16,7 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
         @Inject(QueryFactory) readonly queryFactory: QueryFactory;
 
         getAll(params): Promise<any> {
-            params.limit = params.limit ? params.limit : DATA_LIMIT;
+            // params.limit = params.limit ? params.limit : DATA_LIMIT;
             return this.queryFactory.selectQuery(params, this.model).getMany();
         }
 

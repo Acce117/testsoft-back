@@ -35,7 +35,27 @@ export class ExecuteTestController implements IController {
                 return await this.service.executeTest(body, manager);
             },
         );
-        return this.service.testResult(testApp);
+
+        return this.service.testResult(
+            await this.testAppService.getOne(
+                {
+                    relations: [
+                        'test.display_parameters',
+                        // 'application_result.item.category',
+                        {
+                            name: 'application_result',
+                            relations: [
+                                {
+                                    name: 'item',
+                                    relations: ['ranges', 'category'],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                testApp.id_test_application,
+            ),
+        );
     }
 
     @Get('/:id')

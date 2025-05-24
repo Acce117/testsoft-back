@@ -431,26 +431,7 @@ export class ExecuteTestService {
     }
 
     //TODO solve problems with ties in Belbin
-    async testResult(testApp: TestApplication) {
-        testApp = await this.testAppService.getOne(
-            {
-                relations: [
-                    'test.display_parameters',
-                    // 'application_result.item.category',
-                    {
-                        name: 'application_result',
-                        relations: [
-                            {
-                                name: 'item',
-                                relations: ['ranges', 'category'],
-                            },
-                        ],
-                    },
-                ],
-            },
-            testApp.id_test_application,
-        );
-
+    testResult(testApp: TestApplication) {
         const parameters = testApp.test.display_parameters;
 
         const final_results = { parameters };

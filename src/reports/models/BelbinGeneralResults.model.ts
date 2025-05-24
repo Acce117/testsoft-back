@@ -6,7 +6,10 @@ import { ViewColumn, ViewEntity } from 'typeorm';
 })
 export class BelbinGeneralResults extends BaseModel {
     static alias: string = 'belbinGeneralResults';
-    static primaryKey: string;
+    static primaryKey: string = 'group';
+
+    @ViewColumn({ name: 'id_test_application' })
+    id_test_application: number;
 
     @ViewColumn({ name: 'CI' })
     ci: string;
@@ -16,4 +19,7 @@ export class BelbinGeneralResults extends BaseModel {
 
     @ViewColumn({ name: 'item_name' })
     item_name: string;
+
+    @ViewColumn({ name: 'group' })
+    group: number;
 }

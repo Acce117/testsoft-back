@@ -8,9 +8,9 @@ export class ReportsController implements IController {
     @Inject(ReportsService) service: ReportsService;
     @Inject(DataSource) dataSource?: DataSource;
 
-    @Get('belbin_general-results')
-    getBelbinGeneralResults() {
-        return this.service.getBelbinGeneralResults();
+    @Get('belbin_general-results/:group_id')
+    async getBelbinGeneralResults(@Param('group_id') group_id) {
+        return this.service.getBelbinGeneralResults(group_id);
     }
 
     @Get('mbti_general-results')

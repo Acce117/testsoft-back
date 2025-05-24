@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { BelbinGeneralResults } from '../models/BelbinGeneralResults.model';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
@@ -10,9 +10,22 @@ import { PreferredAvoidedRoles } from '../models/PreferredAvoidedRoles.model';
 import { LeyesGeneralResults } from '../models/LeyesGeneralResults.model';
 import { CIGeneralResults } from '../models/CIGeneralResults.model';
 import { TermanGeneralResults } from '../models/TermanGeneralResults.model';
+import { QueryFactory } from 'src/common/services/query-factory';
+import { GroupService } from 'src/tenant/services/group.service';
+import { Group } from 'src/tenant/models/group.entity';
+import { TestApplicationService } from 'src/executeTest/services/testApplication.service';
+import { ExecuteTestService } from 'src/executeTest/services/executeTest.service';
 
 @Injectable()
 export class ReportsService {
+    @Inject(QueryFactory) queryFactory: QueryFactory;
+
+    @Inject(GroupService) groupService: GroupService;
+
+    @Inject(TestApplicationService) testAppService: TestApplicationService;
+
+    @Inject(ExecuteTestService) executeTestService: ExecuteTestService;
+
     @InjectRepository(BelbinGeneralResults)
     belbinGeneralResultsRepository: Repository<BelbinGeneralResults>;
 
@@ -42,8 +55,73 @@ export class ReportsService {
     @InjectRepository(TermanGeneralResults)
     termanGeneralResultsRepository: Repository<TermanGeneralResults>;
 
-    getBelbinGeneralResults() {
-        return this.belbinGeneralResultsRepository.find();
+    async getBelbinGeneralResults(group_id) {
+        const groups: Group[] = await this.groupService.getDescendants(
+            {},
+            group_id,
+        );
+
+        const groups_id: number[] = groups.map((group) => group.id_group);
+        const data = await this.queryFactory
+            .selectQuery(
+                {
+                    where: groups_id,
+                },
+                BelbinGeneralResults,
+            )
+            .getMany();
+
+        const testApps = await this.testAppService.getAll({
+            relations: [
+                'test.display_parameters',
+                {
+                    name: 'application_result',
+                    relations: [
+                        {
+                            name: 'item',
+                            relations: ['ranges', 'category'],
+                        },
+                    ],
+                },
+            ],
+            where: data.map((e: BelbinGeneralResults) => e.id_test_application),
+        });
+
+        const examined = await this.belbinGeneralResultsRepository.query(
+            'SELECT count(DISTINCT user_id, `group`) examined FROM resultados_generales_de_belbin where `group` in (?)',
+            [groups_id],
+        );
+        const result: {
+            examined: number;
+            avoided: {
+                [item: string]: number;
+            };
+            preferred: {
+                [item: string]: number;
+            };
+        } = {
+            examined: parseInt(examined[0].examined),
+            avoided: {},
+            preferred: {},
+        };
+
+        const testResults = testApps.map((ta) =>
+            this.executeTestService.testResult(ta),
+        );
+        testResults.forEach((tr) => {
+            for (const { item } of tr.preferred) {
+                if (result.preferred[item.name])
+                    result.preferred[item.name] += 1;
+                else result.preferred[item.name] = 1;
+            }
+
+            for (const { item } of tr.avoided) {
+                if (result.avoided[item.name]) result.avoided[item.name] += 1;
+                else result.avoided[item.name] = 1;
+            }
+        });
+
+        return result;
     }
 
     getMBTIGeneralResults() {

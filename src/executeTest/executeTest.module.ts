@@ -33,6 +33,6 @@ import { TenantModule } from 'src/tenant/tenant.module';
         ]),
         TenantModule,
     ],
-    exports: [],
+    exports: [ExecuteTestService, TestApplicationService],
 })
 export class ExecuteTestModule {}
