@@ -13,24 +13,29 @@ export class AssignedTestGuard implements CanActivate {
     @Inject(GroupService) groupService: GroupService;
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request: Request = context.switchToHttp().getRequest();
-        const id = request.params['id'];
+        let result: boolean =
+            context['user'].assignments.find(
+                (a) => a.role.name == 'Analyst',
+            ) !== undefined;
 
-        let result = false;
-        const payload = jwtPayload(context);
+        if (!result) {
+            const request: Request = context.switchToHttp().getRequest();
+            const id = request.params['id'];
 
-        if (payload.group) {
-            const group = await this.groupService.getOne(
-                {
-                    relations: ['psiTests'],
-                },
-                payload.group,
-            );
+            const payload = jwtPayload(context);
 
-            const test = group.psiTests.find((test) => test.id_test == id);
-            result = test !== undefined;
+            if (payload.group) {
+                const group = await this.groupService.getOne(
+                    {
+                        relations: ['psiTests'],
+                    },
+                    payload.group,
+                );
+
+                const test = group.psiTests.find((test) => test.id_test == id);
+                result = test !== undefined;
+            }
         }
-
         return result;
     }
 }

@@ -29,6 +29,7 @@ export class RoleGuard implements CanActivate {
             payload.user_id,
         );
 
+        context['user'] = user;
         if (roles.length > 0) {
             result =
                 user.assignments.find((assignment) =>
