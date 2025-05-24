@@ -13,9 +13,9 @@ export class ReportsController implements IController {
         return this.service.getBelbinGeneralResults(group_id);
     }
 
-    @Get('mbti_general-results')
-    getMBTIGeneralResults() {
-        return this.service.getMBTIGeneralResults();
+    @Get('mbti_general-results/:group_id')
+    getMBTIGeneralResults(@Param('group_id') group_id) {
+        return this.service.getMBTIGeneralResults(group_id);
     }
 
     @Get('te_general-results')

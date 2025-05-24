@@ -55,7 +55,7 @@ export class ReportsService {
     @InjectRepository(TermanGeneralResults)
     termanGeneralResultsRepository: Repository<TermanGeneralResults>;
 
-    async getBelbinGeneralResults(group_id) {
+    private async baseData(group_id, reportModel) {
         const groups: Group[] = await this.groupService.getDescendants(
             {},
             group_id,
@@ -67,7 +67,7 @@ export class ReportsService {
                 {
                     where: groups_id,
                 },
-                BelbinGeneralResults,
+                reportModel,
             )
             .getMany();
 
@@ -91,6 +91,23 @@ export class ReportsService {
             'SELECT count(DISTINCT user_id, `group`) examined FROM resultados_generales_de_belbin where `group` in (?)',
             [groups_id],
         );
+
+        const testResults = testApps.map((ta) =>
+            this.executeTestService.testResult(ta),
+        );
+
+        return {
+            examined,
+            testResults,
+        };
+    }
+
+    async getBelbinGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            BelbinGeneralResults,
+        );
+
         const result: {
             examined: number;
             avoided: {
@@ -105,9 +122,6 @@ export class ReportsService {
             preferred: {},
         };
 
-        const testResults = testApps.map((ta) =>
-            this.executeTestService.testResult(ta),
-        );
         testResults.forEach((tr) => {
             for (const { item } of tr.preferred) {
                 if (result.preferred[item.name])
@@ -124,8 +138,26 @@ export class ReportsService {
         return result;
     }
 
-    getMBTIGeneralResults() {
-        return this.mbtiGeneralResultsRepository.find();
+    async getMBTIGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            MBTIGeneralResults,
+        );
+
+        const result: {
+            examined: number;
+            categories: { [category: string]: number };
+        } = { examined: parseInt(examined[0].examined), categories: {} };
+
+        testResults.forEach((tr) => {
+            for (const category in tr.categories) {
+                if (result.categories[category])
+                    result.categories[category] += 1;
+                else result.categories[category] = 1;
+            }
+        });
+
+        return result;
     }
 
     getTEGeneralResults() {
