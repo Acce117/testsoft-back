@@ -161,9 +161,12 @@ export class ReportsService {
 
         testResults.forEach((tr) => {
             for (const category in tr.categories) {
-                if (result.categories[category])
-                    result.categories[category] += 1;
-                else result.categories[category] = 1;
+                if (result.categories[tr.categories[category].items[0].name])
+                    result.categories[tr.categories[category].items[0].name] +=
+                        1;
+                else
+                    result.categories[tr.categories[category].items[0].name] =
+                        1;
             }
         });
 
