@@ -56,6 +56,11 @@ export class ReportsService {
     termanGeneralResultsRepository: Repository<TermanGeneralResults>;
 
     private async baseData(group_id, reportModel) {
+        const result: { examined: number; testResults: Array<any> } = {
+            examined: 0,
+            testResults: [],
+        };
+
         const groups: Group[] = await this.groupService.getDescendants(
             {},
             group_id,
@@ -71,35 +76,40 @@ export class ReportsService {
             )
             .getMany();
 
-        const testApps = await this.testAppService.getAll({
-            relations: [
-                'test.display_parameters',
-                {
-                    name: 'application_result',
-                    relations: [
-                        {
-                            name: 'item',
-                            relations: ['ranges', 'category'],
-                        },
-                    ],
-                },
-            ],
-            where: data.map((e: BelbinGeneralResults) => e.id_test_application),
-        });
+        if (data.length > 0) {
+            const testApps = await this.testAppService.getAll({
+                relations: [
+                    'test.display_parameters',
+                    {
+                        name: 'application_result',
+                        relations: [
+                            {
+                                name: 'item',
+                                relations: ['ranges', 'category'],
+                            },
+                        ],
+                    },
+                ],
+                where: data.map(
+                    (e: BelbinGeneralResults) => e.id_test_application,
+                ),
+            });
+
+            const testResults = testApps.map((ta) =>
+                this.executeTestService.testResult(ta),
+            );
+
+            result.testResults = testResults;
+        }
 
         const examined = await this.belbinGeneralResultsRepository.query(
             'SELECT count(DISTINCT user_id, `group`) examined FROM resultados_generales_de_belbin where `group` in (?)',
             [groups_id],
         );
 
-        const testResults = testApps.map((ta) =>
-            this.executeTestService.testResult(ta),
-        );
+        result.examined = examined;
 
-        return {
-            examined,
-            testResults,
-        };
+        return result;
     }
 
     async getBelbinGeneralResults(group_id) {
