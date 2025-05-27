@@ -60,6 +60,7 @@ import { SendMailModule } from 'src/mailer/sendMail.module';
 import { GroupForTestSubscriber } from './models/groupForTest.subscriber';
 import { AssignedTestGuard } from './guards/AssignedTest.guard';
 import { AllowAssignTestGuard } from './guards/allowAssignTest.guard';
+import { QuestionSubscriber } from './models/question.subscriber';
 
 @Module({
     controllers: [
@@ -89,6 +90,7 @@ import { AllowAssignTestGuard } from './guards/allowAssignTest.guard';
         TypePsiTestService,
         TestSerieService,
         QuestionService,
+        QuestionSubscriber,
         CategoryService,
         ItemService,
         QuestionValueService,
