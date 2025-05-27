@@ -36,6 +36,7 @@ export class Image extends BaseModel {
 
     @OneToOne(() => Question, (question) => question.picture, {
         onDelete: 'CASCADE',
+        cascade: true,
     })
     @JoinColumn({
         name: 'id_question',
@@ -43,7 +44,10 @@ export class Image extends BaseModel {
     })
     question: Question;
 
-    @OneToOne(() => Answer, (answer) => answer.image, { onDelete: 'CASCADE' })
+    @OneToOne(() => Answer, (answer) => answer.image, {
+        onDelete: 'CASCADE',
+        cascade: true,
+    })
     @JoinColumn({
         name: 'id_answer',
         referencedColumnName: 'id_answer',

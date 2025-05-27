@@ -10,7 +10,10 @@ export class Equation extends BaseModel {
     @PrimaryColumn()
     fk_id_test: number;
 
-    @OneToOne(() => PsiTest, (test) => test.equation, { onDelete: 'CASCADE' })
+    @OneToOne(() => PsiTest, (test) => test.equation, {
+        onDelete: 'CASCADE',
+        cascade: true,
+    })
     @JoinColumn({
         name: 'fk_id_test',
         referencedColumnName: 'id_test',

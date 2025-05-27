@@ -23,7 +23,7 @@ export class CorrectAnswer extends BaseModel {
     @Exclude()
     fk_id_answer: number;
 
-    @OneToOne(() => Answer, { onDelete: 'CASCADE' })
+    @OneToOne(() => Answer, { onDelete: 'CASCADE', cascade: true })
     @JoinColumn({
         name: 'fk_id_answer',
         referencedColumnName: 'id_answer',

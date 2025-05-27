@@ -34,6 +34,7 @@ export class Answer extends BaseModel {
 
     @ManyToOne(() => Question, (question) => question.answers, {
         onDelete: 'CASCADE',
+        cascade: true,
     })
     @JoinColumn({
         name: 'fk_id_question',

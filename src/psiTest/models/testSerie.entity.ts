@@ -43,7 +43,10 @@ export class TestSerie extends BaseModel {
     @Exclude()
     fk_id_test: number;
 
-    @ManyToOne(() => PsiTest, (test) => test.series, { onDelete: 'CASCADE' })
+    @ManyToOne(() => PsiTest, (test) => test.series, {
+        onDelete: 'CASCADE',
+        cascade: true,
+    })
     @JoinColumn({
         name: 'fk_id_test',
     })

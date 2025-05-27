@@ -40,6 +40,7 @@ export class Question extends BaseModel {
 
     @ManyToOne(() => TestSerie, (serie) => serie.questions, {
         onDelete: 'CASCADE',
+        cascade: true,
     })
     @JoinColumn({
         name: 'fk_id_serie',

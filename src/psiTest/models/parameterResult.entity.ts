@@ -41,6 +41,7 @@ export class ParameterDisplayResult extends BaseModel {
 
     @OneToOne(() => PsiTest, (test) => test.display_parameters, {
         onDelete: 'CASCADE',
+        cascade: true,
     })
     @JoinColumn({
         name: 'fk_id_test',

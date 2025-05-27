@@ -36,7 +36,7 @@ export class TestRange extends BaseModel {
     @ManyToOne(
         () => Classification,
         (classification) => classification.ranges,
-        { onDelete: 'CASCADE' },
+        { onDelete: 'CASCADE', cascade: true },
     )
     @JoinColumn({
         name: 'fk_id_classification',

@@ -28,6 +28,7 @@ export class Classification extends BaseModel {
 
     @ManyToOne(() => PsiTest, (test) => test.classifications, {
         onDelete: 'CASCADE',
+        cascade: true,
     })
     @JoinColumn({
         name: 'fk_id_test',
