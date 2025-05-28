@@ -15,6 +15,8 @@ import { GroupService } from 'src/tenant/services/group.service';
 import { Group } from 'src/tenant/models/group.entity';
 import { TestApplicationService } from 'src/executeTest/services/testApplication.service';
 import { ExecuteTestService } from 'src/executeTest/services/executeTest.service';
+import { Compatibility } from 'src/tenant/models/compatibility.entity';
+import { Leadership } from 'src/tenant/models/leadership.entity';
 
 @Injectable()
 export class ReportsService {
@@ -226,5 +228,57 @@ export class ReportsService {
                 fk_id_group: group_id,
             },
         });
+    }
+
+    async mostConsidered(group_id: any) {
+        const compatibility_data = await Compatibility.getRepository().query(`
+            SELECT 
+                compatible,
+                fk_user_destination,
+                COUNT(*) as count,
+		        compatibility.fk_id_group,
+                user.*
+            FROM 
+                compatibility join user 
+                on compatibility.fk_user_destination = user.user_id
+            where compatibility.fk_id_group = ${group_id}
+            GROUP BY compatible, fk_user_destination
+            ORDER BY count, compatible
+        `);
+
+        const leadership_data = await Leadership.getRepository().query(`
+            SELECT 
+                fk_user_destination,
+                COUNT(*) as count,
+		        leadership.fk_id_group,
+		        user.*
+            FROM 
+                leadership
+                join user on leadership.fk_user_destination = user.user_id
+            where leadership.fk_id_group = ${group_id}
+            GROUP BY fk_user_destination
+            ORDER BY count DESC
+        `);
+
+        const result = {
+            most_considered_leader: null,
+            most_compatible: null,
+            less_compatible: null,
+        };
+
+        if (compatibility_data.length > 0) {
+            if (compatibility_data[0].compatible == 1)
+                result.most_compatible = compatibility_data[0];
+            const reverseData = compatibility_data.reverse();
+
+            if (reverseData[0].compatible == 0)
+                result.less_compatible = reverseData[0];
+        }
+
+        if (leadership_data.length > 0) {
+            result.most_considered_leader = leadership_data[0];
+        }
+
+        return result;
     }
 }

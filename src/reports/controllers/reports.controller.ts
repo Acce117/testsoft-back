@@ -57,4 +57,9 @@ export class ReportsController implements IController {
     preferredAvoidedRoles(@Param('group_id') group_id) {
         return this.service.preferredAvoidedRoles(group_id);
     }
+
+    @Get('most_considered/:group_id')
+    mostConsidered(@Param('group_id') group_id) {
+        return this.service.mostConsidered(group_id);
+    }
 }
