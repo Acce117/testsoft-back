@@ -41,7 +41,7 @@ export class Answer extends BaseModel {
     })
     question: Question;
 
-    @OneToOne(() => Image, (image) => image.question)
+    @OneToOne(() => Image, (image) => image.answer)
     image: Image;
 
     @VirtualColumn({ query: (alias) => alias })
