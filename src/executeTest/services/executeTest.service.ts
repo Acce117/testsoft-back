@@ -552,6 +552,7 @@ export class ExecuteTestService {
                     final_results[`${category}`] = {
                         ...app_result.item.category,
                         items: [{ ...app_result.item, category: undefined }],
+                        value: app_result.value,
                     };
                 }
             }
