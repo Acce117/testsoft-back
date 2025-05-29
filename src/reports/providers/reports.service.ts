@@ -237,13 +237,14 @@ export class ReportsService {
                 fk_user_destination,
                 COUNT(*) as count,
 		        compatibility.fk_id_group,
-                user.*
+                user.name,
+                user.user_id
             FROM 
                 compatibility join user 
                 on compatibility.fk_user_destination = user.user_id
             where compatibility.fk_id_group = ${group_id}
             GROUP BY compatible, fk_user_destination
-            ORDER BY count, compatible
+            ORDER BY count DESC, compatible DESC
         `);
 
         const leadership_data = await Leadership.getRepository().query(`
@@ -251,7 +252,8 @@ export class ReportsService {
                 fk_user_destination,
                 COUNT(*) as count,
 		        leadership.fk_id_group,
-		        user.*
+		        user.name,
+                user.user_id
             FROM 
                 leadership
                 join user on leadership.fk_user_destination = user.user_id
@@ -267,12 +269,12 @@ export class ReportsService {
         };
 
         if (compatibility_data.length > 0) {
-            if (compatibility_data[0].compatible == 1)
-                result.most_compatible = compatibility_data[0];
-            const reverseData = compatibility_data.reverse();
-
-            if (reverseData[0].compatible == 0)
-                result.less_compatible = reverseData[0];
+            result.most_compatible = compatibility_data.find(
+                (item) => item.compatible == 1,
+            );
+            result.less_compatible = compatibility_data.find(
+                (item) => item.compatible == 0,
+            );            
         }
 
         if (leadership_data.length > 0) {
