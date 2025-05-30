@@ -3,6 +3,7 @@ import {
     EntitySubscriberInterface,
     EventSubscriber,
     InsertEvent,
+    UpdateEvent,
 } from 'typeorm';
 import { Question } from './question.entity';
 import { Inject } from '@nestjs/common';
@@ -21,15 +22,22 @@ export class QuestionSubscriber implements EntitySubscriberInterface<Question> {
         return Question;
     }
 
-    afterInsert(event: InsertEvent<Question>): Promise<any> | void {
-        const entity: Question = event.entity;
+    saveFile(entity: any) {
         if (entity.file) {
             const path = this.fileHandler.saveFile(entity.file);
             const image = new Image();
             image.url = path;
-            image.question = entity;
+            image.answer = entity;
 
-            image.save();
+            image.save({ listeners: false });
         }
+    }
+
+    afterInsert(event: InsertEvent<Question>): Promise<any> | void {
+        this.saveFile(event.entity);
+    }
+
+    afterUpdate(event: UpdateEvent<Question>): Promise<any> | void {
+        this.saveFile(event.entity);
     }
 }
