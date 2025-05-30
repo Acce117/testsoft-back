@@ -92,9 +92,7 @@ export class ReportsService {
                         ],
                     },
                 ],
-                where: data.map(
-                    (e: BelbinGeneralResults) => e.id_test_application,
-                ),
+                where: data.map((e: any) => e.id_test_application),
             });
 
             const testResults = testApps.map((ta) =>
@@ -104,8 +102,10 @@ export class ReportsService {
             result.testResults = testResults;
         }
 
+        const view_name = (reportModel.getRepository() as Repository<any>)
+            .metadata.tableName;
         const examined = await this.belbinGeneralResultsRepository.query(
-            'SELECT count(DISTINCT user_id, `group`) examined FROM resultados_generales_de_belbin where `group` in (?)',
+            `SELECT count(DISTINCT user_id, \`group\`) examined FROM ${view_name} where \`group\` in (?)`,
             [groups_id],
         );
 
@@ -259,29 +259,35 @@ export class ReportsService {
         const result: {
             examined: number;
             categories: {
-                malo: number;
-                aceptable: number;
-                excelente: number;
+                [item: string]: {
+                    malo: number;
+                    aceptable: number;
+                    excelente: number;
+                };
             };
         } = {
             examined: parseInt(examined[0].examined),
-            categories: {
-                malo: 0,
-                aceptable: 0,
-                excelente: 0,
-            },
+            categories: {},
         };
 
         testResults.forEach((tr) => {
             for (const category in tr.categories) {
                 tr.categories[category].items.forEach((item) => {
+                    if (!result.categories[item.name])
+                        result.categories[item.name] = {
+                            malo: 0,
+                            aceptable: 0,
+                            excelente: 0,
+                        };
+
                     item.ranges.forEach((range) => {
                         if (
                             item.value > range.min_val &&
                             item.value < range.max_val
                         )
-                            result.categories[range.indicator.toLowerCase()] +=
-                                1;
+                            result.categories[item.name][
+                                range.indicator.toLowerCase()
+                            ] += 1;
                     });
                 });
             }
