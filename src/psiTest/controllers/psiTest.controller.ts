@@ -19,7 +19,7 @@ export class PsiTestController extends CrudBaseController({
         decorators: [
             UseGuards(RoleGuard),
             Roles(['Executor']),
-            // UseInterceptors(MyTestsInterceptor),
+            UseInterceptors(MyTestsInterceptor),
         ],
     },
     getOne: {
