@@ -1,7 +1,7 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { UserService } from '../../tenant/services/user.service';
 
-import { Body, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { CreateUserDto } from '../dto/create_user.dto';
@@ -34,13 +34,9 @@ export class UserController extends CrudBaseController({
         );
     }
 
-    @Get('selected_roles/:user_id')
-    @Roles(['Executor'])
-    public getSelectedRoles(@JwtPayload() payload) {
-        return (this.service as UserService).selectedRoles(
-            payload.user_id,
-            payload.group,
-        );
+    @Get('selected_roles/:user_id/:group_id')
+    public getSelectedRoles(@Param() { user_id, group_id }) {
+        return (this.service as UserService).selectedRoles(user_id, group_id);
     }
 
     @Post('/my_group')
