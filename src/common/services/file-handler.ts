@@ -12,9 +12,10 @@ export class FSFileHandler implements FileHandler {
 
     saveFile(file: Express.Multer.File, destination?: string): string {
         let file_path = `${this.base_path}`;
+        const file_name = `${Date.now()}.${file.mimetype.split('/')[1]}`;
         destination
-            ? (file_path += `${destination}/${Date.now()}.${file.mimetype.split('/')[1]}`)
-            : (file_path += `${Date.now()}.${file.mimetype.split('/')[1]}`);
+            ? (file_path += `${destination}/${file_name}`)
+            : (file_path += `${file_name}`);
 
         try {
             const f = createWriteStream(file_path);
@@ -24,7 +25,7 @@ export class FSFileHandler implements FileHandler {
             this.deleteFile(file_path);
         }
 
-        return file_path;
+        return file_name;
     }
 
     private deleteFile(file_path: string) {

@@ -6,7 +6,7 @@ import { join } from 'path';
 export class FileStreamerController {
     @Get()
     getFile(@Query('path') path: string): StreamableFile {
-        const file = createReadStream(join(process.cwd(), path));
+        const file = createReadStream(join(process.cwd(), `/uploads/${path}`));
         return new StreamableFile(file);
     }
 }
