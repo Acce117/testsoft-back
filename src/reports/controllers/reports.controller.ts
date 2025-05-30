@@ -18,24 +18,24 @@ export class ReportsController implements IController {
         return this.service.getMBTIGeneralResults(group_id);
     }
 
-    @Get('te_general-results')
-    getTEGeneralResults() {
-        return this.service.getTEGeneralResults();
+    @Get('te_general-results/:group_id')
+    getTEGeneralResults(@Param('group_id') group_id) {
+        return this.service.getTEGeneralResults(group_id);
     }
 
-    @Get('leyes_general-results')
-    getLeyesGeneralResults() {
-        return this.service.getLeyesGeneralResults();
+    @Get('leyes_general-results/:group_id')
+    getLeyesGeneralResults(@Param('group_id') group_id) {
+        return this.service.getLeyesGeneralResults(group_id);
     }
 
-    @Get('terman_general-results')
-    getTermanGeneralResults() {
-        return this.service.getTermanGeneralResults();
+    @Get('terman_general-results/:group_id')
+    getTermanGeneralResults(@Param('group_id') group_id) {
+        return this.service.getTermanGeneralResults(group_id);
     }
 
-    @Get('ci_general-results')
-    getCIGeneralResults() {
-        return this.service.getCIGeneralResults();
+    @Get('ci_general-results/:group_id')
+    getCIGeneralResults(@Param('group_id') group_id) {
+        return this.service.getCIGeneralResults(group_id);
     }
 
     @Get('test_app_count')

@@ -473,33 +473,33 @@ export class ExecuteTestService {
                 final_results['items'] = items_ordered;
             }
         } else if (parameters.element_by_category) {
-            if (parameters.tops_values) {
-                final_results['categories'] = {};
+            final_results['categories'] = {};
 
-                const app_result = testApp.application_result;
+            const app_result = testApp.application_result;
 
-                const items_ordered = this.mergeSort(
-                    app_result.map((el) => ({
-                        item: el.item,
-                        value: el.value_result,
-                    })),
-                );
+            const items_ordered = this.mergeSort(
+                app_result.map((el) => ({
+                    item: el.item,
+                    value: el.value_result,
+                })),
+            );
 
-                for (let i = 0; i < items_ordered.length; i++) {
-                    const category_name = items_ordered[i].item.category.name;
+            for (let i = 0; i < items_ordered.length; i++) {
+                const category_name = items_ordered[i].item.category.name;
 
-                    if (!final_results['categories'][[`${category_name}`]])
-                        final_results['categories'][[`${category_name}`]] = {
-                            ...items_ordered[i].item.category,
-                            items: [
-                                {
-                                    ...items_ordered[i].item,
-                                    category: undefined,
-                                    value: items_ordered[i].value,
-                                },
-                            ],
-                        };
+                if (!final_results['categories'][[`${category_name}`]])
+                    final_results['categories'][[`${category_name}`]] = {
+                        ...items_ordered[i].item.category,
+                        items: [],
+                    };
 
+                final_results['categories'][[`${category_name}`]].items.push({
+                    ...items_ordered[i].item,
+                    category: undefined,
+                    value: items_ordered[i].value,
+                });
+
+                if (parameters.tops_values) {
                     if (
                         final_results['categories'][`${category_name}`].items
                             .length !== 0
@@ -535,27 +535,19 @@ export class ExecuteTestService {
                         });
                     }
                 }
-            } else {
-                const app_results = testApp.application_result;
-
-                const items_ordered = this.mergeSort(
-                    app_results.map((el) => ({
-                        item: el.item,
-                        value: el.value_result,
-                    })),
-                );
-
-                for (const app_result of items_ordered) {
-                    const item = app_result.item;
-                    const category = item.category.name;
-
-                    final_results[`${category}`] = {
-                        ...app_result.item.category,
-                        items: [{ ...app_result.item, category: undefined }],
-                        value: app_result.value,
-                    };
-                }
             }
+            // else {
+            //     for (const app_result of items_ordered) {
+            //         const item = app_result.item;
+            //         const category = item.category.name;
+
+            //         final_results[`${category}`] = {
+            //             ...app_result.item.category,
+            //             items: [{ ...app_result.item, category: undefined }],
+            //             value: app_result.value,
+            //         };
+            //     }
+            // }
         }
 
         return final_results;

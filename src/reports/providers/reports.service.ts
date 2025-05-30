@@ -175,20 +175,119 @@ export class ReportsService {
         return result;
     }
 
-    getTEGeneralResults() {
-        return this.teGeneralResultsRepository.find();
+    async getTEGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            MBTIGeneralResults,
+        );
+
+        const result: {
+            examined: number;
+            categories: { [category: string]: number };
+        } = { examined: parseInt(examined[0].examined), categories: {} };
+
+        testResults.forEach((tr) => {
+            for (const category in tr.categories) {
+                if (result.categories[tr.categories[category].items[0].name])
+                    result.categories[tr.categories[category].items[0].name] +=
+                        1;
+                else
+                    result.categories[tr.categories[category].items[0].name] =
+                        1;
+            }
+        });
+
+        return result;
     }
 
-    getLeyesGeneralResults() {
-        return this.leyesGeneralResultsRepository.find();
+    async getLeyesGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            MBTIGeneralResults,
+        );
+
+        const result: {
+            examined: number;
+            categories: { [category: string]: number };
+        } = { examined: parseInt(examined[0].examined), categories: {} };
+
+        testResults.forEach((tr) => {
+            for (const category in tr.categories) {
+                if (result.categories[tr.categories[category].items[0].name])
+                    result.categories[tr.categories[category].items[0].name] +=
+                        1;
+                else
+                    result.categories[tr.categories[category].items[0].name] =
+                        1;
+            }
+        });
+
+        return result;
     }
 
-    getTermanGeneralResults() {
-        return this.termanGeneralResultsRepository.find();
+    async getTermanGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            MBTIGeneralResults,
+        );
+
+        const result: {
+            examined: number;
+            categories: { [category: string]: number };
+        } = { examined: parseInt(examined[0].examined), categories: {} };
+
+        testResults.forEach((tr) => {
+            for (const category in tr.categories) {
+                if (result.categories[tr.categories[category].items[0].name])
+                    result.categories[tr.categories[category].items[0].name] +=
+                        1;
+                else
+                    result.categories[tr.categories[category].items[0].name] =
+                        1;
+            }
+        });
+
+        return result;
     }
 
-    getCIGeneralResults() {
-        return this.ciGeneralResultsRepository.find();
+    async getCIGeneralResults(group_id) {
+        const { examined, testResults } = await this.baseData(
+            group_id,
+            CIGeneralResults,
+        );
+
+        const result: {
+            examined: number;
+            categories: {
+                malo: number;
+                aceptable: number;
+                excelente: number;
+            };
+        } = {
+            examined: parseInt(examined[0].examined),
+            categories: {
+                malo: 0,
+                aceptable: 0,
+                excelente: 0,
+            },
+        };
+
+        testResults.forEach((tr) => {
+            for (const category in tr.categories) {
+                tr.categories[category].items.forEach((item) => {
+                    item.ranges.forEach((range) => {
+                        if (
+                            item.value > range.min_val &&
+                            item.value < range.max_val
+                        )
+                            result.categories[range.indicator.toLowerCase()] +=
+                                1;
+                    });
+                });
+            }
+        });
+
+        return result;
     }
 
     getTestAppCount() {
@@ -274,7 +373,7 @@ export class ReportsService {
             );
             result.less_compatible = compatibility_data.find(
                 (item) => item.compatible == 0,
-            );            
+            );
         }
 
         if (leadership_data.length > 0) {
