@@ -121,7 +121,9 @@ export class QueryFactory {
                 //TODO handle NOT operator
                 if (resultString !== '') resultString += ` ${oper} `;
 
-                resultString += `${alias}.${key} = :${key}`;
+                if (Array.isArray(params[key]))
+                    resultString += `${alias}.${key} in (${params[key]})`;
+                else resultString += `${alias}.${key} = :${key}`;
 
                 resultParams[key] = params[key];
             }
