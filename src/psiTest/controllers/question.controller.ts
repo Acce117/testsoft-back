@@ -8,4 +8,7 @@ export class QuestionController extends CrudBaseController({
     create: {
         decorators: [FileInBody('file')],
     },
+    update: {
+        decorators: [FileInBody('file')],
+    },
 }) {}

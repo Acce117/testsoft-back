@@ -10,5 +10,8 @@ export class AnswerController extends CrudBaseController({
     create: {
         decorators: [FileInBody('file')],
     },
+    update: {
+        decorators: [FileInBody('file')],
+    },
     decorators: [UseGuards(RoleGuard), Roles(['Analyst'])],
 }) {}
