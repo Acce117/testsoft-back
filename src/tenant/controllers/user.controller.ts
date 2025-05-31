@@ -52,4 +52,11 @@ export class UserController extends CrudBaseController({
                 ),
         );
     }
+
+    @Post('/invite_to_group')
+    inviteToGroup(
+        @Body() data: { group_id: string; user_id: string; item_id: string },
+    ): Promise<any> {
+        return (this.service as UserService).inviteToGroup(data);
+    }
 }

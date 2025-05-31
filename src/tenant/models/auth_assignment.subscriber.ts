@@ -33,37 +33,38 @@ export class AuthAssignmentSubscriber implements EntitySubscriberInterface {
         return AuthAssignment;
     }
 
-    async afterInsert(event: InsertEvent<AuthAssignment>): Promise<any> {
-        const user: User = await this.userService.getOne(
-            {},
-            event.entity.user_id,
-        );
-        const group: Group = await this.groupService.getOne(
-            {},
-            event.entity.group_id,
-        );
-        const role: AuthItem = await this.authItemService.getOne(
-            {},
-            event.entity.item_id,
-        );
+    // async afterInsert(event: InsertEvent<AuthAssignment>): Promise<any> {
+    //     const user: User = await this.userService.getOne(
+    //         {},
+    //         event.entity.user_id,
+    //     );
+    //     const group: Group = await this.groupService.getOne(
+    //         {},
+    //         event.entity.group_id,
+    //     );
+    //     const role: AuthItem = await this.authItemService.getOne(
+    //         {},
+    //         event.entity.item_id,
+    //     );
 
-        try {
-            const mailOptions: ISendMailOptions = {
-                to: user.email,
-                subject: 'Assigned to group with role',
-                template: './notify_assignment',
-                context: {
-                    name: user.name,
-                    group: group.name_group,
-                    role: role.name,
-                    supportEmail: 'support@email.com',
-                    supportPhone: 1234567,
-                },
-            };
+    //     try {
+    //         const mailOptions: ISendMailOptions = {
+    //             to: user.email,
+    //             subject: 'Assigned to group with role',
+    //             template: './notify_assignment',
+    //             context: {
+    //                 name: user.name,
+    //                 group: group.name_group,
+    //                 role: role.name,
+    //                 link: '#',
+    //                 supportEmail: 'support@email.com',
+    //                 supportPhone: 1234567,
+    //             },
+    //         };
 
-            this.mailsQueue.add('assignment_to_group', mailOptions);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //         this.mailsQueue.add('assignment_to_group', mailOptions);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 }
