@@ -44,4 +44,9 @@ export class SiteController {
                 ),
         );
     }
+
+    @Post('/existing_user')
+    existingUser(@Body('email') email: string) {
+        return this.siteService.existingUser(email);
+    }
 }

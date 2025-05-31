@@ -161,4 +161,12 @@ export class SiteService {
             manager.withRepository(User.getRepository()).save(user);
         } else throw new UnauthorizedException();
     }
+
+    async existingUser(email: string) {
+        const user: User = await this.userService.getOne({
+            where: { email, deleted: 0 },
+        });
+
+        return user !== null;
+    }
 }
