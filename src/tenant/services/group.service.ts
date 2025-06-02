@@ -7,8 +7,6 @@ import { QueryFactory } from 'src/common/services/query-factory';
 import { Inject } from '@nestjs/common';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
-    //add filter
-
     @Inject(QueryFactory) queryFactory: QueryFactory;
 
     private async getUsers(params, id) {
