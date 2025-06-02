@@ -57,7 +57,7 @@ export class MyTestsInterceptor implements NestInterceptor {
 
                 if (
                     !user.assignments.find((a) => a.role.name === 'Super Admin')
-                )
+                ) {
                     value.data.forEach((element: PsiTest) => {
                         if ([3, 4, 7, 12, 14, 15].includes(element.id_test))
                             filtered.push(element);
@@ -85,7 +85,8 @@ export class MyTestsInterceptor implements NestInterceptor {
                         }
                     });
 
-                value.data = filtered;
+                    value.data = filtered;
+                }
 
                 return value;
             }),
