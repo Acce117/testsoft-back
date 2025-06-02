@@ -36,6 +36,7 @@ import { SelectedRole } from './models/selected_role.entity';
 import { FunctionalRoleGetAllMiddleware } from './middleware/FunctionalRoleGetAll.middleware';
 import { AuthAssignmentSubscriber } from './models/auth_assignment.subscriber';
 import { AuthItemService } from './services/authItem.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     controllers: [
@@ -76,6 +77,8 @@ import { AuthItemService } from './services/authItem.service';
             Compatibility,
             SelectedRole,
         ]),
+        SendMailModule,
+        JwtModule,
     ],
     exports: [UserService, AuthAssignmentService, GroupService],
 })

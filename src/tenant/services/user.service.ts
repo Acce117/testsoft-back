@@ -9,6 +9,8 @@ import { AuthItem } from '../models/auth_item.entity';
 import { ISendMailOptions } from '@nestjs-modules/mailer';
 import { AuthItemService } from './authItem.service';
 import { JwtService } from '@nestjs/jwt';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
@@ -16,11 +18,14 @@ export class UserService extends CrudBaseService({ model: User }) {
     @Inject(SelectedRoleService)
     private readonly selectedRoleService: SelectedRoleService;
 
-    @Inject('mails') private readonly mailsQueue;
-
     @Inject(AuthItemService) private readonly authItemService: AuthItemService;
 
     @Inject(JwtService) private readonly jwtService: JwtService;
+
+    constructor(@InjectQueue('mails') private readonly mailsQueue: Queue) {
+        super();
+    }
+
     public async userTests(user_id: number, group_id, params) {
         const result = [];
 
