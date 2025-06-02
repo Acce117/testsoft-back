@@ -117,13 +117,17 @@ export class QueryFactory {
                 recursiveCall = this.buildWhere(params[key], alias, key);
                 resultString += `(${recursiveCall.resultString})`;
             } else {
-                //TODO handle another operator than equals
-                //TODO handle NOT operator
+                const regex = /^(?:=|!=|<>|<|>|<=|>=|LIKE)\s+(?:[^\s]+)$/;
                 if (resultString !== '') resultString += ` ${oper} `;
 
                 if (Array.isArray(params[key]))
                     resultString += `${alias}.${key} in (${params[key]})`;
-                else resultString += `${alias}.${key} = :${key}`;
+                else {
+                    if (regex.test(params[key])) {
+                        const expression = params[key].split(' ');
+                        resultString += `${alias}.${key} ${expression[0]} :${key}`;
+                    } else resultString += `${alias}.${key} = :${key}`;
+                }
 
                 resultParams[key] = params[key];
             }
