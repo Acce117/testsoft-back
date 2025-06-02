@@ -15,7 +15,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             params.where,
             User.alias,
         );
-        return this.treeRepository
+        let query = this.treeRepository
             .createDescendantsQueryBuilder(
                 this.model.alias,
                 this.model.alias + 'Clousure',
@@ -28,6 +28,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
                 resultParams,
             )
             .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
+        if (params.groups)
+            query = query.where(`group.id_group in (${params.groups})`);
+
+        return query;
     }
 
     public async getUsersFromGroup(params, id) {
