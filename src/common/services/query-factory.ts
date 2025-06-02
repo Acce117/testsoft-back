@@ -107,7 +107,7 @@ export class QueryFactory {
         return query;
     }
 
-    private buildWhere(params, alias, oper = 'and') {
+    public buildWhere(params, alias, oper = 'and') {
         let resultString = '';
         let resultParams = {};
         let recursiveCall = null;

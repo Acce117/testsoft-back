@@ -3,19 +3,32 @@ import { TreeBaseService } from 'src/common/services/treeService';
 import { User } from '../models/user.entity';
 import { Compatibility } from '../models/compatibility.entity';
 import { paginateResult } from 'src/common/utils/paginateResult';
+import { QueryFactory } from 'src/common/services/query-factory';
+import { Inject } from '@nestjs/common';
 
 export class GroupService extends TreeBaseService({ model: Group }) {
     //add filter
+
+    @Inject(QueryFactory) queryFactory: QueryFactory;
+
     private async getUsers(params, id) {
         const group = await this.getOne({ depth: 0 }, id);
-
+        const { resultString, resultParams } = this.queryFactory.buildWhere(
+            params.where,
+            User.alias,
+        );
         return this.treeRepository
             .createDescendantsQueryBuilder(
                 this.model.alias,
                 this.model.alias + 'Clousure',
                 group,
             )
-            .leftJoinAndSelect(`${this.model.alias}.users`, User.alias)
+            .leftJoinAndSelect(
+                `${this.model.alias}.users`,
+                User.alias,
+                resultString,
+                resultParams,
+            )
             .leftJoinAndSelect(`${User.alias}.groups`, 'user_groups');
     }
 
