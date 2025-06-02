@@ -38,7 +38,7 @@ export class MyTestsInterceptor implements NestInterceptor {
                                 where: {
                                     group_id: [
                                         ...groups.map((g) => g.id_group),
-                                        null,
+                                        'NULL',
                                     ],
                                     // or: {
                                     //     group_id: groups.map((g) => g.id_group),
