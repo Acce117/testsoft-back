@@ -35,6 +35,8 @@ export class UserController extends CrudBaseController({
     }
 
     @Get('selected_roles/:user_id/:group_id')
+    @UseGuards(RoleGuard)
+    @Roles(['Executor'])
     public getSelectedRoles(@Param() { user_id, group_id }) {
         return (this.service as UserService).selectedRoles(user_id, group_id);
     }
