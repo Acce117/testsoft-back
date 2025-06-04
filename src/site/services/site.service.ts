@@ -40,7 +40,7 @@ export class SiteService {
         });
 
         return {
-            token: this.generateToken({ user_id: newUser.user_id }),
+            token: this.jwtService.sign({ user_id: newUser.user_id }),
         };
     }
 
@@ -121,7 +121,7 @@ export class SiteService {
         });
 
         return {
-            token: this.generateToken({
+            token: this.jwtService.sign({
                 user_id: user.user_id,
             }),
             groups: assignments,
@@ -139,15 +139,29 @@ export class SiteService {
         if (!assignment) throw new UnauthorizedException();
 
         return {
-            token: this.generateToken({
+            token: this.jwtService.sign({
                 user_id,
                 group: group_id,
             }),
+            refresh_token: this.jwtService.sign(
+                {
+                    user_id,
+                    group: group_id,
+                },
+                {
+                    expiresIn: '5h',
+                },
+            ),
         };
     }
 
-    private generateToken(payload: object) {
-        return this.jwtService.sign(payload);
+    refreshToken(payload: any) {
+        return {
+            token: this.jwtService.sign(payload),
+            refresh_token: this.jwtService.sign(payload, {
+                expiresIn: '5h',
+            }),
+        };
     }
 
     public async changePassword(

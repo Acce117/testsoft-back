@@ -32,6 +32,11 @@ export class SiteController {
         return this.siteService.selectGroup(payload.user_id, group_id);
     }
 
+    @Post('refresh_token')
+    refreshToken(@JwtPayload() payload) {
+        return this.siteService.refreshToken(payload);
+    }
+
     @Patch('/change_password')
     async changePassword(@Body() body, @JwtPayload() payload) {
         return handleTransaction(
