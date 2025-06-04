@@ -33,12 +33,12 @@ export class UserSubscriber implements EntitySubscriberInterface {
         if (event.entity.created_scenario === 'created')
             event.entity.password = process.env.DEFAULT_PASSWORD;
 
-        event.entity = this.hashPassword(event.entity.password);
+        event.entity.password = this.hashPassword(event.entity.password);
     }
 
     beforeUpdate(event: UpdateEvent<User>): Promise<any> | void {
         if (event.entity.password)
-            event.entity = this.hashPassword(event.entity.password);
+            event.entity.password = this.hashPassword(event.entity.password);
     }
 
     afterInsert(event: InsertEvent<User>): Promise<any> | void {
