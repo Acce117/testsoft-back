@@ -67,7 +67,7 @@ export class ExecuteTestService {
         if (start_time === null)
             throw new BadRequestException('Start time key is invalid');
 
-        const execution_time = (Date.now() - start_time) * 60000;
+        const execution_time = (Date.now() - start_time) / 1000;
 
         const test: PsiTest = await this.psiTestService.getOne(
             {
