@@ -61,12 +61,61 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         return paginateResult(params, data.users);
     }
 
-    public async getUsersFromTree(params, id) {
-        const data = await (await this.getUsers(params, id)).getMany();
+    public async getUsersFromTree(params) {
+        // const data = await (await this.getUsers(params, id)).getMany();
 
-        const users = [];
-        data.forEach((group) => users.push(...group.users));
+        // const users = [];
+        // data.forEach((group) => users.push(...group.users));
 
-        return paginateResult(params, users);
+        // return paginateResult(params, users);
+        const query = User.getRepository()
+            .createQueryBuilder('user')
+            .select([
+                'user.user_id',
+                'user.CI',
+                'user.name',
+                'user.last_name',
+                'user.username',
+                'user.email',
+                'user.sex',
+                'user.deleted',
+                'user.country_id',
+                'user.enabled',
+                'user.deleted_at',
+                `JSON_ARRAYAGG(JSON_OBJECT('id', group_id, 'nombre', name_group, 'role', auth_item.name)) AS assignments`,
+            ])
+            .innerJoin('user.assignments', 'assignment')
+            .innerJoin('assignment.groups', 'group')
+            .innerJoin('assignment.role', 'auth_item')
+            .where('group.id_group IN (:...ids)', { ids: params.groups })
+            .groupBy('user.email, user.name, user.last_name, user.CI');
+
+        if (params.where) {
+            const { resultParams, resultString } = this.queryFactory.buildWhere(
+                params.where,
+                User.alias,
+            );
+            query.andWhere(resultString, resultParams);
+        }
+        const result = await query.getRawMany();
+
+        const data = paginateResult(params, result);
+
+        data.data = data.data.map((element) => ({
+            user_id: element.user_user_id,
+            CI: element.user_CI,
+            name: element.user_name,
+            last_name: element.user_last_name,
+            username: element.user_username,
+            email: element.user_email,
+            sex: element.user_sex,
+            deleted: element.user_deleted,
+            enabled: element.user_enabled,
+            deleted_at: element.user_deleted_at,
+            country_id: element.user_country_id,
+            assignments: JSON.parse(element.assignments),
+        }));
+
+        return data;
     }
 }
