@@ -5,6 +5,7 @@ import {
     Inject,
     Param,
     Post,
+    Query,
     UseGuards,
 } from '@nestjs/common';
 import { ExecuteTestService } from '../services/executeTest.service';
@@ -23,16 +24,29 @@ export class ExecuteTestController implements IController {
     @Inject(TestApplicationService) testAppService: TestApplicationService;
     @InjectDataSource() dataSource?: DataSource;
 
+    @Get('start_time')
+    testStarted() {
+        return this.service.testStarted();
+    }
+
     @Post()
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
-    async executeTest(@Body() body: ExecuteTestDto, @JwtPayload() jwtPayload) {
+    async executeTest(
+        @Body() body: ExecuteTestDto,
+        @JwtPayload() jwtPayload,
+        @Query('start_time_key') start_time_key: string,
+    ) {
         const testApp = await handleTransaction(
             this.dataSource,
             async (manager: EntityManager) => {
                 body.user_id = jwtPayload.user_id;
                 body.group_id = jwtPayload.group;
-                return await this.service.executeTest(body, manager);
+                return await this.service.executeTest(
+                    body,
+                    start_time_key,
+                    manager,
+                );
             },
         );
 

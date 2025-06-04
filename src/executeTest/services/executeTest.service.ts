@@ -27,7 +27,9 @@ import {
     writtenAnswerTypes,
 } from './appAnswerHandler/valueAnswerHandler';
 import { FinalAnswers, ValueAnswer } from '../classes/finalAnswers';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import * as bcrypt from 'bcrypt';
+import { Cache } from 'cache-manager';
 @Injectable()
 export class ExecuteTestService {
     @Inject(TestApplicationService) testAppService: TestApplicationService;
@@ -52,7 +54,19 @@ export class ExecuteTestService {
     @InjectDataSource()
     dataSource: DataSource;
 
-    public async executeTest(data: ExecuteTestDto, manager: EntityManager) {
+    @Inject(CACHE_MANAGER) cacheManager: Cache;
+
+    public async executeTest(
+        data: ExecuteTestDto,
+        start_time_key,
+        manager: EntityManager,
+    ) {
+        const start_time: number = await this.cacheManager.get(start_time_key);
+        if (start_time === null)
+            throw new BadRequestException('Start time key is invalid');
+
+        const execution_time = (Date.now() - start_time) * 60000;
+
         const test: PsiTest = await this.psiTestService.getOne(
             {
                 select: [
@@ -68,6 +82,7 @@ export class ExecuteTestService {
         // await this.validateTest(data, test);
         const { testApplication, finalAnswers } = await this.processAnswers(
             data,
+            execution_time,
             test,
             manager,
         );
@@ -139,6 +154,7 @@ export class ExecuteTestService {
 
     private async processAnswers(
         { user_id, id_test, group_id, answers }: ExecuteTestDto,
+        execution_time: number,
         test: PsiTest,
         manager: EntityManager,
     ) {
@@ -148,6 +164,7 @@ export class ExecuteTestService {
                     fk_id_user: user_id,
                     fk_id_test: id_test,
                     fk_id_group: group_id,
+                    execution_time,
                 },
                 manager,
             );
@@ -614,5 +631,12 @@ export class ExecuteTestService {
         const right = unsortedArray.slice(middle);
 
         return this.merge(this.mergeSort(left), this.mergeSort(right));
+    }
+
+    async testStarted() {
+        const now = Date.now();
+        const key = bcrypt.hashSync(now.toString(), 10);
+        this.cacheManager.set(key, now);
+        return key;
     }
 }

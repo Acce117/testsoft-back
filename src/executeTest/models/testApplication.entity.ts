@@ -49,6 +49,9 @@ export class TestApplication extends BaseEntity {
     })
     fk_id_group: number;
 
+    @Column()
+    execution_time: number;
+
     @Column({
         type: 'timestamp',
         name: 'date',

@@ -18,9 +18,11 @@ import { BullModule } from '@nestjs/bullmq';
 import { bullConfig } from './config/bullMQ.config';
 import { SendMailModule } from './mailer/sendMail.module';
 import { ReportsModule } from './reports/reports.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
     imports: [
+        CacheModule.register({ isGlobal: true }),
         ReportsModule,
         SiteModule,
         PsiTestModule,
