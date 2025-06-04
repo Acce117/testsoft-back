@@ -24,24 +24,22 @@ export class UserSubscriber implements EntitySubscriberInterface {
         return User;
     }
 
-    private hashPassword(data) {
-        if (!data.password) throw new BadRequestException();
+    private hashPassword(password) {
+        password = bcrypt.hashSync(password, parseInt(process.env.HASH_SALT));
 
-        data.password = bcrypt.hashSync(
-            data.password,
-            parseInt(process.env.HASH_SALT),
-        );
-
-        return data;
+        return password;
     }
 
-    beforeInsert(event: InsertEvent<any>): Promise<any> | void {
-        event.entity = this.hashPassword(event.entity);
+    beforeInsert(event: InsertEvent<User>): Promise<any> | void {
+        if (event.entity.created_scenario === 'created')
+            event.entity.password = process.env.DEFAULT_PASSWORD;
+
+        event.entity = this.hashPassword(event.entity.password);
     }
 
-    beforeUpdate(event: UpdateEvent<any>): Promise<any> | void {
+    beforeUpdate(event: UpdateEvent<User>): Promise<any> | void {
         if (event.entity.password)
-            event.entity = this.hashPassword(event.entity);
+            event.entity = this.hashPassword(event.entity.password);
     }
 
     afterInsert(event: InsertEvent<User>): Promise<any> | void {
