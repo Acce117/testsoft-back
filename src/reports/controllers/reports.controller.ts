@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Query } from '@nestjs/common';
 import { IController } from 'src/common/controllers/controller.interface';
 import { DataSource } from 'typeorm';
 import { ReportsService } from '../providers/reports.service';
@@ -8,34 +8,34 @@ export class ReportsController implements IController {
     @Inject(ReportsService) service: ReportsService;
     @Inject(DataSource) dataSource?: DataSource;
 
-    @Get('belbin_general-results/:group_id')
-    async getBelbinGeneralResults(@Param('group_id') group_id) {
-        return this.service.getBelbinGeneralResults(group_id);
+    @Get('belbin_general-results')
+    async getBelbinGeneralResults(@Query('groups') groups) {
+        return this.service.getBelbinGeneralResults(groups);
     }
 
-    @Get('mbti_general-results/:group_id')
-    getMBTIGeneralResults(@Param('group_id') group_id) {
-        return this.service.getMBTIGeneralResults(group_id);
+    @Get('mbti_general-results')
+    getMBTIGeneralResults(@Query('groups') groups) {
+        return this.service.getMBTIGeneralResults(groups);
     }
 
-    @Get('te_general-results/:group_id')
-    getTEGeneralResults(@Param('group_id') group_id) {
-        return this.service.getTEGeneralResults(group_id);
+    @Get('te_general-results')
+    getTEGeneralResults(@Query('groups') groups) {
+        return this.service.getTEGeneralResults(groups);
     }
 
-    @Get('leyes_general-results/:group_id')
-    getLeyesGeneralResults(@Param('group_id') group_id) {
-        return this.service.getLeyesGeneralResults(group_id);
+    @Get('leyes_general-results')
+    getLeyesGeneralResults(@Query('groups') groups) {
+        return this.service.getLeyesGeneralResults(groups);
     }
 
-    @Get('terman_general-results/:group_id')
-    getTermanGeneralResults(@Param('group_id') group_id) {
-        return this.service.getTermanGeneralResults(group_id);
+    @Get('terman_general-results')
+    getTermanGeneralResults(@Query('groups') groups) {
+        return this.service.getTermanGeneralResults(groups);
     }
 
-    @Get('ci_general-results/:group_id')
-    getCIGeneralResults(@Param('group_id') group_id) {
-        return this.service.getCIGeneralResults(group_id);
+    @Get('ci_general-results')
+    getCIGeneralResults(@Query('groups') groups) {
+        return this.service.getCIGeneralResults(groups);
     }
 
     @Get('test_app_count')
@@ -48,9 +48,9 @@ export class ReportsController implements IController {
         return this.service.getTestResultAnalysis();
     }
 
-    @Get('tested_in_group/:group_id')
-    amountOfTestedInAGroup(@Param('group_id') group_id) {
-        return this.service.amountOfTestedInGroup(group_id);
+    @Get('tested_in_group')
+    amountOfTestedInAGroup(@Query('groups') groups) {
+        return this.service.amountOfTestedInGroup(groups);
     }
 
     @Get('preferred_avoided_roles/:group_id')

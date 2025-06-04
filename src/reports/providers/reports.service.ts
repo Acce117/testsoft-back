@@ -12,7 +12,6 @@ import { CIGeneralResults } from '../models/CIGeneralResults.model';
 import { TermanGeneralResults } from '../models/TermanGeneralResults.model';
 import { QueryFactory } from 'src/common/services/query-factory';
 import { GroupService } from 'src/tenant/services/group.service';
-import { Group } from 'src/tenant/models/group.entity';
 import { TestApplicationService } from 'src/executeTest/services/testApplication.service';
 import { ExecuteTestService } from 'src/executeTest/services/executeTest.service';
 import { Compatibility } from 'src/tenant/models/compatibility.entity';
@@ -57,22 +56,22 @@ export class ReportsService {
     @InjectRepository(TermanGeneralResults)
     termanGeneralResultsRepository: Repository<TermanGeneralResults>;
 
-    private async baseData(group_id, reportModel) {
+    private async baseData(groups, reportModel) {
         const result: { examined: number; testResults: Array<any> } = {
             examined: 0,
             testResults: [],
         };
 
-        const groups: Group[] = await this.groupService.getDescendants(
-            {},
-            group_id,
-        );
+        // const groups: Group[] = await this.groupService.getDescendants(
+        //     {},
+        //     group_id,
+        // );
 
-        const groups_id: number[] = groups.map((group) => group.id_group);
+        // const groups_id: number[] = groups.map((group) => group.id_group);
         const data = await this.queryFactory
             .selectQuery(
                 {
-                    where: groups_id,
+                    where: groups,
                 },
                 reportModel,
             )
@@ -106,7 +105,7 @@ export class ReportsService {
             .metadata.tableName;
         const examined = await this.belbinGeneralResultsRepository.query(
             `SELECT count(DISTINCT user_id, \`group\`) examined FROM ${view_name} where \`group\` in (?)`,
-            [groups_id],
+            [groups],
         );
 
         result.examined = examined;
@@ -114,9 +113,9 @@ export class ReportsService {
         return result;
     }
 
-    async getBelbinGeneralResults(group_id) {
+    async getBelbinGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             BelbinGeneralResults,
         );
 
@@ -150,9 +149,9 @@ export class ReportsService {
         return result;
     }
 
-    async getMBTIGeneralResults(group_id) {
+    async getMBTIGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             MBTIGeneralResults,
         );
 
@@ -175,9 +174,9 @@ export class ReportsService {
         return result;
     }
 
-    async getTEGeneralResults(group_id) {
+    async getTEGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             MBTIGeneralResults,
         );
 
@@ -200,9 +199,9 @@ export class ReportsService {
         return result;
     }
 
-    async getLeyesGeneralResults(group_id) {
+    async getLeyesGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             MBTIGeneralResults,
         );
 
@@ -225,9 +224,9 @@ export class ReportsService {
         return result;
     }
 
-    async getTermanGeneralResults(group_id) {
+    async getTermanGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             MBTIGeneralResults,
         );
 
@@ -250,9 +249,9 @@ export class ReportsService {
         return result;
     }
 
-    async getCIGeneralResults(group_id) {
+    async getCIGeneralResults(groups) {
         const { examined, testResults } = await this.baseData(
-            group_id,
+            groups,
             CIGeneralResults,
         );
 
@@ -304,7 +303,7 @@ export class ReportsService {
         return this.testResultAnalysisRepository.find();
     }
 
-    async amountOfTestedInGroup(group_id: any) {
+    async amountOfTestedInGroup(groups: any) {
         const data: Array<{ group_id: number; name: string; tested: string }> =
             await this.dataSource.query(`
             select auth_assignment.group_id, test.name, count(DISTINCT test_application.fk_id_user) tested
@@ -312,7 +311,7 @@ export class ReportsService {
 		        user join auth_assignment on user.user_id = auth_assignment.user_id
 	            join test_application on user.user_id = test_application.fk_id_user
         		join test on test_application.fk_id_test = test.id_test
-            where auth_assignment.group_id = ${group_id}
+            where auth_assignment.group_id in (${groups})
             GROUP BY test.name, auth_assignment.group_id
             ORDER BY auth_assignment.group_id
         `);
@@ -327,10 +326,10 @@ export class ReportsService {
         return result;
     }
 
-    preferredAvoidedRoles(group_id: any) {
+    preferredAvoidedRoles(groups) {
         return this.preferredAvoidedRolesRepository.find({
             where: {
-                fk_id_group: group_id,
+                fk_id_group: groups,
             },
         });
     }
