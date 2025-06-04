@@ -65,6 +65,6 @@ export class UserDto {
     })
     assignments: [];
 
-    @IsBoolean({ groups: ['updated'] })
+    @IsBoolean({ groups: ['update'] })
     enabled: boolean;
 }
