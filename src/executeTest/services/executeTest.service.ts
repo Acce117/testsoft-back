@@ -62,6 +62,8 @@ export class ExecuteTestService {
         manager: EntityManager,
     ) {
         const start_time: number = await this.cacheManager.get(start_time_key);
+        await this.cacheManager.del(start_time_key);
+
         if (start_time === null)
             throw new BadRequestException('Start time key is invalid');
 
