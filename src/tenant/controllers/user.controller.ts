@@ -4,15 +4,13 @@ import { UserService } from '../../tenant/services/user.service';
 import { Body, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
-import { CreateUserDto } from '../dto/create_user.dto';
-import { UpdateUserDto } from '../dto/update_user.dto';
+import { UserDto } from '../dto/user.dto';
 import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 
 export class UserController extends CrudBaseController({
     prefix: 'user',
     service: UserService,
-    createDto: CreateUserDto,
-    // updateDto: UpdateUserDto,
+    dto: UserDto,
 
     decorators: [
         UseGuards(RoleGuard),

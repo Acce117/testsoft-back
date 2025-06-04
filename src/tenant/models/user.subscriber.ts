@@ -6,7 +6,6 @@ import {
     UpdateEvent,
 } from 'typeorm';
 import { User } from './user.entity';
-import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';

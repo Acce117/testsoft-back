@@ -26,8 +26,7 @@ interface EndPointOptions {
 interface BaseControllerOptions extends EndPointOptions {
     prefix: string;
     service: object;
-    createDto?: any;
-    updateDto?: any;
+    dto?: any;
     getAll?: EndPointOptions;
     getOne?: EndPointOptions;
     create?: EndPointOptions;
@@ -90,7 +89,7 @@ export function CrudBaseController(
         @applyDecorators(
             ...(options.create?.decorators ? options.create.decorators : []),
         )
-        create(@Body(new ValidateDtoPipe(options.createDto)) body) {
+        create(@Body(new ValidateDtoPipe(options.dto, 'create')) body) {
             return handleTransaction(this.dataSource, async (manager) => {
                 const result = await this.service.create(body, manager);
                 return instanceToPlain(result);
@@ -103,7 +102,7 @@ export function CrudBaseController(
         )
         async update(
             @Param('id') id: number,
-            @Body(new ValidateDtoPipe(options.updateDto)) body,
+            @Body(new ValidateDtoPipe(options.dto, 'update')) body,
         ) {
             return handleTransaction(this.dataSource, async (manager) => {
                 const result = await this.service.update(id, body, manager);

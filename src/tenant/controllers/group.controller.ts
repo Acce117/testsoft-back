@@ -1,7 +1,6 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { GroupService } from '../services/group.service';
-import { CreateGroupDto } from '../dto/create_group.dto';
-import { UpdateGroupDto } from '../dto/update_group.dto';
+import { GroupDto } from '../dto/group.dto';
 import { Body, Get, Param, Query, UseInterceptors } from '@nestjs/common';
 import { MyGroupInterceptor } from '../interceptors/myGroup.interceptor';
 import { instanceToPlain } from 'class-transformer';
@@ -9,8 +8,7 @@ import { instanceToPlain } from 'class-transformer';
 export class GroupController extends CrudBaseController({
     prefix: 'groups',
     service: GroupService,
-    createDto: CreateGroupDto,
-    updateDto: UpdateGroupDto,
+    dto: GroupDto,
     getAll: {
         decorators: [UseInterceptors(MyGroupInterceptor)],
     },

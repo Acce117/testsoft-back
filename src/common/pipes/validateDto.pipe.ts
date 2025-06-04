@@ -6,7 +6,10 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 export class ValidateDtoPipe implements PipeTransform {
-    constructor(private readonly dtoType: any = null) {}
+    constructor(
+        private readonly dtoType: any = null,
+        private readonly scenario: string,
+    ) {}
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(value: any, metadata: ArgumentMetadata) {
@@ -18,7 +21,9 @@ export class ValidateDtoPipe implements PipeTransform {
                 data = result.data;
                 validationResult = result.validationResult;
             } else {
-                data = plainToInstance(this.dtoType, value);
+                data = plainToInstance(this.dtoType, value, {
+                    groups: [this.scenario],
+                });
                 validationResult = validateSync(data, {
                     whitelist: true,
                     forbidNonWhitelisted: true,

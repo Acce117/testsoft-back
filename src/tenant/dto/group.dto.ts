@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class CreateGroupDto {
+export class GroupDto {
     @IsString()
     name_group: string;
 
