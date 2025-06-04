@@ -33,9 +33,8 @@ export class UserDto {
     username: string;
 
     @IsString({
-        groups: ['create', 'update'],
+        groups: ['login', 'sign_in'],
     })
-    @IsOptional({ groups: ['update'] })
     password: string;
 
     @IsEmail({}, { groups: ['create', 'update'] })

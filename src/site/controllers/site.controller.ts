@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Patch,
+    Post,
+    ValidationPipe,
+} from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
@@ -14,12 +22,24 @@ export class SiteController {
     constructor(private readonly siteService: SiteService) {}
 
     @Post('/login')
-    async login(@Body() credentials: UserCredentials) {
+    async login(
+        @Body(new ValidationPipe({ groups: ['login'] }))
+        credentials: UserCredentials,
+    ) {
         return this.siteService.login(credentials);
     }
 
     @Post('/sign_in')
-    signIn(@Body('user') user: UserDto, @Body('group') group) {
+    signIn(
+        @Body(
+            'user',
+            new ValidationPipe({
+                groups: ['sign_in'],
+            }),
+        )
+        user: UserDto,
+        @Body('group') group,
+    ) {
         return handleTransaction(
             this.dataSource,
             async (manager) =>
