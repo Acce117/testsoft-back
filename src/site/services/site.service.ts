@@ -7,13 +7,13 @@ import {
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../../tenant/services/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../dto/register_user.dto';
 import { UserCredentials } from '../dto/userCredentials.dto';
 import { User } from '../../tenant/models/user.entity';
 import { AuthAssignmentService } from 'src/tenant/services/AuthAssignment.service';
 import { GroupService } from 'src/tenant/services/group.service';
 import { Group } from 'src/tenant/models/group.entity';
 import { EntityManager } from 'typeorm';
+import { UserDto } from 'src/tenant/dto/user.dto';
 
 @Injectable()
 export class SiteService {
@@ -23,7 +23,7 @@ export class SiteService {
     @Inject(AuthAssignmentService)
     private readonly authAssignmentService: AuthAssignmentService;
 
-    public async signIn(user: CreateUserDto, group, manager) {
+    public async signIn(user: UserDto, group, manager) {
         const newUser: User = await this.userService.create(
             { ...user, created_scenario: 'sign_in' },
             manager,

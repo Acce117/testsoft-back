@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { SiteService } from '../services/site.service';
 import { UserCredentials } from '../dto/userCredentials.dto';
-import { CreateUserDto } from '../dto/register_user.dto';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
+import { UserDto } from 'src/tenant/dto/user.dto';
 
 @Controller()
 export class SiteController {
@@ -19,7 +19,7 @@ export class SiteController {
     }
 
     @Post('/sign_in')
-    signIn(@Body('user') user: CreateUserDto, @Body('group') group) {
+    signIn(@Body('user') user: UserDto, @Body('group') group) {
         return handleTransaction(
             this.dataSource,
             async (manager) =>

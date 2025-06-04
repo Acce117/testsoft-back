@@ -10,7 +10,6 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-    VirtualColumn,
 } from 'typeorm';
 import { AuthItem } from './auth_item.entity';
 import { Country } from './country.entity';
@@ -29,7 +28,6 @@ export class User extends BaseModel {
     user_id: number;
 
     @Exclude()
-    @VirtualColumn({ query: (alias) => alias })
     created_scenario: 'created' | 'sign_in' = 'created';
 
     @Column({ type: 'varchar', length: 11, nullable: false, unique: true })
@@ -87,12 +85,6 @@ export class User extends BaseModel {
     })
     assignments: AuthAssignment[];
 
-    // @ManyToMany(() => User)
-    // @JoinTable({
-    //     name: 'leadership',
-    //     joinColumn: { name: 'fk_user_origin' },
-    //     inverseJoinColumn: { name: 'fk_user_destination' },
-    // })
     @OneToMany(() => Leadership, (leadership) => leadership.user_origin)
     leadership: Leadership[];
 
