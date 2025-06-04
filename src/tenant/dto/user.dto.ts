@@ -1,5 +1,6 @@
 import {
     IsArray,
+    IsBoolean,
     IsEmail,
     IsEnum,
     IsNumber,
@@ -63,4 +64,7 @@ export class UserDto {
         always: true,
     })
     assignments: [];
+
+    @IsBoolean({ groups: ['updated'] })
+    enabled: boolean;
 }
