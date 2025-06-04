@@ -12,7 +12,6 @@ import {
 import { TestSerie } from './testSerie.entity';
 import { Answer } from './answer.entity';
 import { TypeQuestion } from './typeQuestion.entity';
-import { Image } from './image.entity';
 import { QuestionTopValue } from './questionValue.entity';
 import { Exclude, Transform } from 'class-transformer';
 
@@ -72,8 +71,8 @@ export class Question extends BaseModel {
     })
     type: TypeQuestion;
 
-    @OneToOne(() => Image, (image) => image.question)
-    picture: Image;
+    @Column()
+    image_url: string;
 
     @OneToOne(() => QuestionTopValue, (top_value) => top_value.question)
     top_value: QuestionTopValue;

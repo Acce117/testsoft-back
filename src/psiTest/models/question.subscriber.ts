@@ -8,7 +8,6 @@ import {
 import { Question } from './question.entity';
 import { Inject } from '@nestjs/common';
 import { FileHandler, FSFileHandler } from 'src/common/services/file-handler';
-import { Image } from './image.entity';
 
 @EventSubscriber()
 export class QuestionSubscriber implements EntitySubscriberInterface<Question> {
@@ -25,11 +24,8 @@ export class QuestionSubscriber implements EntitySubscriberInterface<Question> {
     saveFile(entity: any) {
         if (entity.file) {
             const path = this.fileHandler.saveFile(entity.file);
-            const image = new Image();
-            image.url = path;
-            image.answer = entity;
-
-            image.save({ listeners: false });
+            entity.image_url = path;
+            entity.save({ listeners: false });
         }
     }
 

@@ -12,7 +12,6 @@ import { TypeQuestion } from './models/typeQuestion.entity';
 import { Category } from './models/category.entity';
 import { CorrectAnswer } from './models/correctAnswer.entity';
 import { Equation } from './models/equation.entity';
-import { Image } from './models/image.entity';
 import { Item } from './models/item.entity';
 import { TributeService } from './services/tribute.service';
 import { Tribute } from './models/tribute.entity';
@@ -119,7 +118,6 @@ import { QuestionSubscriber } from './models/question.subscriber';
             Category,
             CorrectAnswer,
             Equation,
-            Image,
             Item,
             Tribute,
             ParameterDisplayResult,

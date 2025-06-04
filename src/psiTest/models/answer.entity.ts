@@ -9,7 +9,6 @@ import {
     VirtualColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
-import { Image } from './image.entity';
 import { Exclude } from 'class-transformer';
 import { Tribute } from './tribute.entity';
 import { CorrectAnswer } from './correctAnswer.entity';
@@ -41,8 +40,8 @@ export class Answer extends BaseModel {
     })
     question: Question;
 
-    @OneToOne(() => Image, (image) => image.answer)
-    image: Image;
+    @Column()
+    image_url: string;
 
     @VirtualColumn({ query: (alias) => alias })
     file: Express.Multer.File;
