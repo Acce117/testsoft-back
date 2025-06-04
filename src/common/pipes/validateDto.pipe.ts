@@ -21,12 +21,11 @@ export class ValidateDtoPipe implements PipeTransform {
                 data = result.data;
                 validationResult = result.validationResult;
             } else {
-                data = plainToInstance(this.dtoType, value, {
-                    groups: [this.scenario],
-                });
+                data = plainToInstance(this.dtoType, value);
                 validationResult = validateSync(data, {
                     whitelist: true,
                     forbidNonWhitelisted: true,
+                    groups: [this.scenario],
                 });
             }
 

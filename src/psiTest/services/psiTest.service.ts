@@ -4,7 +4,7 @@ import { CrudBaseService } from 'src/common/services/service';
 import { GroupService } from 'src/tenant/services/group.service';
 import { Group } from 'src/tenant/models/group.entity';
 import { GroupForTestService } from './groupForTest.service';
-import { CreatePsiTestDto } from '../dto/create_psiTest.dto';
+import { PsiTestDto } from '../dto/psiTest.dto';
 
 export class PsiTestService extends CrudBaseService({
     model: PsiTest,
@@ -13,7 +13,7 @@ export class PsiTestService extends CrudBaseService({
     @Inject(GroupService) groupService: GroupService;
     @Inject(GroupForTestService) groupForTestService: GroupForTestService;
 
-    async create(data: CreatePsiTestDto, manager?: any) {
+    async create(data: PsiTestDto, manager?: any) {
         const aux = data.id_owner;
         const groups: Group[] = await this.groupService.getAncestors({}, aux);
         if (groups.length != 0) {
