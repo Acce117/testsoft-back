@@ -62,12 +62,6 @@ export class GroupService extends TreeBaseService({ model: Group }) {
     }
 
     public async getUsersFromTree(params) {
-        // const data = await (await this.getUsers(params, id)).getMany();
-
-        // const users = [];
-        // data.forEach((group) => users.push(...group.users));
-
-        // return paginateResult(params, users);
         const query = User.getRepository()
             .createQueryBuilder('user')
             .select([

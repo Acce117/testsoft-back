@@ -51,15 +51,10 @@ export class GroupController extends CrudBaseController({
     }
 
     @Get('users')
-    public async getUsers(
-        // @Param('id') id,
-        @Query() query: any,
-        @Body() body: any,
-    ) {
-        const data = await (this.service as GroupService).getUsersFromTree({
-            ...query,
-            ...body,
-        });
+    public async getUsers(@Query() query: { groups: Array<string> }) {
+        const data = await (this.service as GroupService).getUsersFromTree(
+            query,
+        );
 
         return instanceToPlain(data);
     }
