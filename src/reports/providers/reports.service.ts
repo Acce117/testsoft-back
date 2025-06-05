@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BelbinGeneralResults } from '../models/BelbinGeneralResults.model';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { MBTIGeneralResults } from '../models/MBTIGeneralResults.model';
 import { TEGeneralResults } from '../models/TEGeneralResults.model';
@@ -329,7 +329,7 @@ export class ReportsService {
     preferredAvoidedRoles(groups) {
         return this.preferredAvoidedRolesRepository.find({
             where: {
-                fk_id_group: groups,
+                fk_id_group: In(groups),
             },
         });
     }

@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Param, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Inject,
+    Param,
+    ParseArrayPipe,
+    Query,
+} from '@nestjs/common';
 import { IController } from 'src/common/controllers/controller.interface';
 import { DataSource } from 'typeorm';
 import { ReportsService } from '../providers/reports.service';
@@ -53,9 +60,12 @@ export class ReportsController implements IController {
         return this.service.amountOfTestedInGroup(groups);
     }
 
-    @Get('preferred_avoided_roles/:group_id')
-    preferredAvoidedRoles(@Param('group_id') group_id) {
-        return this.service.preferredAvoidedRoles(group_id);
+    @Get('preferred_avoided_roles')
+    preferredAvoidedRoles(
+        @Query('groups', new ParseArrayPipe({ expectedType: Array<number> }))
+        groups,
+    ) {
+        return this.service.preferredAvoidedRoles(groups);
     }
 
     @Get('most_considered/:group_id')
