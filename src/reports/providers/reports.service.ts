@@ -320,12 +320,32 @@ export class ReportsService {
         return result;
     }
 
-    preferredAvoidedRoles(groups) {
-        return this.preferredAvoidedRolesRepository.find({
+    async preferredAvoidedRoles(groups) {
+        const data = await this.preferredAvoidedRolesRepository.find({
             where: {
                 fk_id_group: In(groups),
             },
         });
+
+        const result: {
+            [functional_role: string]: {
+                preferred: number;
+                avoided: number;
+            };
+        } = {};
+
+        data.forEach((item) => {
+            if (!result[item.role_name]) {
+                result[item.role_name] = {
+                    preferred: 0,
+                    avoided: 0,
+                };
+            }
+            result[item.role_name].preferred += item.preferred;
+            result[item.role_name].avoided += item.avoided;
+        });
+
+        return result;
     }
 
     async mostConsidered(group_id: any) {

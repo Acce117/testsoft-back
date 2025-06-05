@@ -10,9 +10,21 @@ export class PreferredAvoidedRoles {
     @ViewColumn({ name: 'role_name' })
     role_name: number;
 
-    @ViewColumn({ name: 'preferred' })
+    @ViewColumn({
+        name: 'preferred',
+        transformer: {
+            from: (value) => parseInt(value),
+            to: (value) => value,
+        },
+    })
     preferred: number;
 
-    @ViewColumn({ name: 'avoided' })
+    @ViewColumn({
+        name: 'avoided',
+        transformer: {
+            from: (value) => parseInt(value),
+            to: (value) => value,
+        },
+    })
     avoided: number;
 }
