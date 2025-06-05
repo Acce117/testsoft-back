@@ -1,7 +1,14 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { GroupService } from '../services/group.service';
 import { GroupDto } from '../dto/group.dto';
-import { Body, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import {
+    Body,
+    Get,
+    Param,
+    ParseArrayPipe,
+    Query,
+    UseInterceptors,
+} from '@nestjs/common';
 import { MyGroupInterceptor } from '../interceptors/myGroup.interceptor';
 import { instanceToPlain } from 'class-transformer';
 
@@ -49,10 +56,14 @@ export class GroupController extends CrudBaseController({
     }
 
     @Get('users')
-    public async getUsers(@Query() query: { groups: Array<string> }) {
-        const data = await (this.service as GroupService).getUsersFromTree(
-            query,
-        );
+    public async getUsers(
+        @Query('groups', ParseArrayPipe) query,
+        @Query('where') where,
+    ) {
+        const data = await (this.service as GroupService).getUsersFromTree({
+            groups: query,
+            where,
+        });
 
         return instanceToPlain(data);
     }

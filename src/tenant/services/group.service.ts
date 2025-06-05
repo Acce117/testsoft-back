@@ -76,11 +76,13 @@ export class GroupService extends TreeBaseService({ model: Group }) {
                 'user.country_id',
                 'user.enabled',
                 'user.deleted_at',
+                'country.name',
                 `JSON_ARRAYAGG(JSON_OBJECT('id', group_id, 'nombre', name_group, 'role', auth_item.name)) AS assignments`,
             ])
             .innerJoin('user.assignments', 'assignment')
             .innerJoin('assignment.groups', 'group')
             .innerJoin('assignment.role', 'auth_item')
+            .innerJoin('user.country', 'country')
             .where('group.id_group IN (:...ids)', { ids: params.groups })
             .groupBy('user.email, user.name, user.last_name, user.CI');
 
@@ -108,6 +110,7 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             deleted_at: element.user_deleted_at,
             country_id: element.user_country_id,
             assignments: JSON.parse(element.assignments),
+            country: element.country_name,
         }));
 
         return data;
