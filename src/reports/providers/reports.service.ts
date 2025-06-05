@@ -313,8 +313,11 @@ export class ReportsService {
         const result: { [test: string]: number } = {};
 
         if (data.length != 0) {
-            for (const element of data)
-                result[element.name] = parseInt(element.tested);
+            for (const element of data) {
+                if (!result[element.name]) result[element.name] = 0;
+
+                result[element.name] += parseInt(element.tested);
+            }
         }
 
         return result;
