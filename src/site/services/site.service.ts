@@ -36,7 +36,7 @@ export class SiteService {
 
         this.authAssignmentService.create({
             user_id: newUser.user_id,
-            item_id: 4,
+            item_id: 5,
         });
 
         return {
