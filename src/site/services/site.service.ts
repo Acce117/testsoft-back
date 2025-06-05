@@ -40,7 +40,7 @@ export class SiteService {
         });
 
         return {
-            token: this.jwtService.sign({ user_id: newUser.user_id }),
+            token: this.jwtService.sign({ user_id: newUser.user_id, group: newGroup.id_group }),
         };
     }
 
