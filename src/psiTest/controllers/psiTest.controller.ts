@@ -1,4 +1,11 @@
-import { Body, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+    Body,
+    Get,
+    Param,
+    Post,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
 import { PsiTestDto } from '../dto/psiTest.dto';
 import { PsiTestService } from '../services/psiTest.service';
 import { CrudBaseController } from 'src/common/controllers/controller';
@@ -15,17 +22,7 @@ export class PsiTestController extends CrudBaseController({
 
     decorators: [UseGuards(RoleGuard), Roles(['Analyst', 'Super Admin'])],
     getAll: {
-        decorators: [
-            UseGuards(RoleGuard),
-            Roles(['Executor']),
-            UseInterceptors(MyTestsInterceptor),
-        ],
-    },
-    getOne: {
-        decorators: [
-            UseGuards(RoleGuard, AssignedTestGuard),
-            Roles(['Executor']),
-        ],
+        decorators: [UseInterceptors(MyTestsInterceptor)],
     },
 }) {
     @Post('assign_test_to_group')
@@ -38,5 +35,42 @@ export class PsiTestController extends CrudBaseController({
                 manager,
             );
         });
+    }
+
+    @UseGuards(RoleGuard, AssignedTestGuard)
+    @Roles(['Executor'])
+    @Get('test_to_execute/:id_test')
+    testToExecute(@Param('id_test') id_test: string) {
+        return (this.service as PsiTestService).getOne(
+            {
+                relations: [
+                    {
+                        name: 'type_psi_test',
+                    },
+                    {
+                        name: 'series',
+                        relations: [
+                            {
+                                name: 'questions',
+                                relations: [
+                                    {
+                                        name: 'type',
+                                    },
+
+                                    {
+                                        name: 'top_value',
+                                    },
+                                    {
+                                        name: 'answers',
+                                        relations: ['tribute'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            id_test,
+        );
     }
 }

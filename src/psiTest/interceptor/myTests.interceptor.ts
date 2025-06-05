@@ -71,17 +71,6 @@ export class MyTestsInterceptor implements NestInterceptor {
                                 )
                             )
                                 filtered.push(element);
-                            if (
-                                user.assignments.find(
-                                    (a) => a.role.name === 'Executor',
-                                )
-                            )
-                                if (
-                                    groups[groups.length - 1].psiTests.find(
-                                        (t) => t.id_test === element.id_test,
-                                    )
-                                )
-                                    filtered.push(element);
                         }
                     });
 
