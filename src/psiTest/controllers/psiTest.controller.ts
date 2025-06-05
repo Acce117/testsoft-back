@@ -37,9 +37,9 @@ export class PsiTestController extends CrudBaseController({
         });
     }
 
-    @UseGuards(RoleGuard, AssignedTestGuard)
-    @Roles(['Executor'])
     @Get('test_to_execute/:id_test')
+    @Roles(['Executor'])
+    @UseGuards(RoleGuard, AssignedTestGuard)
     testToExecute(@Param('id_test') id_test: string) {
         return (this.service as PsiTestService).getOne(
             {

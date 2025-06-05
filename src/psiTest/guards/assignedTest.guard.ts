@@ -20,7 +20,7 @@ export class AssignedTestGuard implements CanActivate {
 
         if (!result) {
             const request: Request = context.switchToHttp().getRequest();
-            const id = request.params['id'];
+            const id = request.params['id_test'];
 
             const payload = jwtPayload(context);
 
