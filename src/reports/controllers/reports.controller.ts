@@ -56,7 +56,7 @@ export class ReportsController implements IController {
     }
 
     @Get('tested_in_group')
-    amountOfTestedInAGroup(@Query('groups') groups) {
+    amountOfTestedInAGroup(@Query('groups', ParseArrayPipe) groups) {
         return this.service.amountOfTestedInGroup(groups);
     }
 

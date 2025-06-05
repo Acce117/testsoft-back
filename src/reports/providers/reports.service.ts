@@ -62,12 +62,6 @@ export class ReportsService {
             testResults: [],
         };
 
-        // const groups: Group[] = await this.groupService.getDescendants(
-        //     {},
-        //     group_id,
-        // );
-
-        // const groups_id: number[] = groups.map((group) => group.id_group);
         const data = await this.queryFactory
             .selectQuery(
                 {
