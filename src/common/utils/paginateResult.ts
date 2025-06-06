@@ -6,6 +6,7 @@ export function paginateResult(params, data) {
 
     return {
         pages: Math.ceil(data.length / limit),
+        actual_page: Math.ceil(offset / limit),
         elements_amount: data.length,
         data: data.slice(offset, offset + limit),
     };
