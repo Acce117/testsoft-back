@@ -35,6 +35,6 @@ export class ExistingAssignedGuard implements CanActivate {
             });
         }
 
-        return assignment == false || assignment === null;
+        return assignment != false && assignment !== null;
     }
 }

@@ -23,9 +23,9 @@ export class AnswerSubscriber implements EntitySubscriberInterface {
 
     saveFile(entity: any) {
         if (entity.file) {
-            const path = this.fileHandler.saveFile(entity.file);
+            const { file_name } = this.fileHandler.saveFile(entity.file);
 
-            entity.image_url = path;
+            entity.image_url = file_name;
             entity.save({ listeners: false });
         }
     }

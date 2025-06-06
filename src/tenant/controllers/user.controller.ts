@@ -1,11 +1,21 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { UserService } from '../../tenant/services/user.service';
 
-import { Body, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Get,
+    Param,
+    Post,
+    Query,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { UserDto } from '../dto/user.dto';
 import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 export class UserController extends CrudBaseController({
     prefix: 'user',
@@ -58,5 +68,18 @@ export class UserController extends CrudBaseController({
         @Body() data: { group_id: string; user_id: string; item_id: string },
     ): Promise<any> {
         return (this.service as UserService).inviteToGroup(data);
+    }
+
+    @Post('load-users')
+    @UseInterceptors(FileInterceptor('file'))
+    loadUsers(@UploadedFile('file') file: Express.Multer.File) {
+        try {
+            return (this.service as UserService).loadUsersFromCSV(
+                file,
+                this.dataSource,
+            );
+        } catch (error) {
+            throw error;
+        }
     }
 }

@@ -152,9 +152,16 @@ export class QueryFactory {
             data,
             repository,
         );
-        return manager
-            ? manager.withRepository(repository).save(element)
-            : repository.save(element);
+        let result = null;
+        if (manager) {
+            if (Array.isArray(element))
+                result = manager
+                    .withRepository(repository)
+                    .save(element.map((e) => repository.create(e)));
+            else result = manager.withRepository(repository).save(element);
+        } else result = repository.save(element);
+
+        return result;
     }
 
     public async createObjectAndRelations(

@@ -1,6 +1,6 @@
 import { CrudBaseService } from 'src/common/services/service';
 import { User } from '../models/user.entity';
-import { Inject } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { paginateResult } from 'src/common/utils/paginateResult';
 import { SelectedRoleService } from './selected_role.service';
@@ -11,6 +11,16 @@ import { AuthItemService } from './authItem.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { FSFileHandler } from 'src/common/services/file-handler';
+import { join } from 'path';
+import csvParser from 'csv-parser';
+import { createReadStream } from 'fs';
+import { handleTransaction } from 'src/common/utils/handleTransaction';
+import { plainToInstance } from 'class-transformer';
+import { UserDto } from '../dto/user.dto';
+import { validateArray } from 'src/common/pipes/validateDto.pipe';
+import { finished } from 'stream';
+import { promisify } from 'util';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
@@ -21,6 +31,8 @@ export class UserService extends CrudBaseService({ model: User }) {
     @Inject(AuthItemService) private readonly authItemService: AuthItemService;
 
     @Inject(JwtService) private readonly jwtService: JwtService;
+
+    @Inject(FSFileHandler) fileHandler: FSFileHandler;
 
     constructor(@InjectQueue('mails') private readonly mailsQueue: Queue) {
         super();
@@ -106,6 +118,7 @@ export class UserService extends CrudBaseService({ model: User }) {
             data.item_id,
         );
 
+        //TODO terminar flujo, crear assignment
         try {
             const mailOptions: ISendMailOptions = {
                 to: user.email,
@@ -125,6 +138,35 @@ export class UserService extends CrudBaseService({ model: User }) {
         } catch (error) {
             console.log(error);
         }
+        return;
+    }
+
+    public async loadUsersFromCSV(file: Express.Multer.File, dataSource) {
+        const { file_name, stream } = this.fileHandler.saveFile(file, '/csv');
+
+        const results: any[] = [];
+
+        const finishedAsync = promisify(finished);
+
+        await finishedAsync(stream.on('ready', () => {}));
+        await finishedAsync(
+            createReadStream(join(process.cwd(), 'uploads/csv', file_name))
+                .pipe(csvParser({ separator: ';' }))
+                .on('data', (data) => results.push(data)),
+        );
+
+        // const { validationResult } = validateArray(results, UserDto);
+
+        // if (validationResult.length > 0)
+        //     throw new BadRequestException(validationResult);
+
+        await handleTransaction(dataSource, async (manager) => {
+            return await this.create(results, manager);
+        });
+        this.fileHandler.deleteFile(
+            join(process.cwd(), 'uploads/csv', file_name),
+        );
+
         return;
     }
 }

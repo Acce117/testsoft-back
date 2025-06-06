@@ -5,7 +5,7 @@ const jwtConfig = (config: ConfigService): JwtModule => ({
     global: true,
     secret: config.get('JWT_SECRET'),
     signOptions: {
-        expiresIn: '1m',
+        expiresIn: '3h',
     },
 });
 

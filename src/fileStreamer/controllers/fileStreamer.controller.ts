@@ -9,4 +9,12 @@ export class FileStreamerController {
         const file = createReadStream(join(process.cwd(), `/uploads/${path}`));
         return new StreamableFile(file);
     }
+
+    @Get('get-csv')
+    async getCsv() {
+        const file = createReadStream(
+            join(process.cwd(), '/resources/template.csv'),
+        );
+        return new StreamableFile(file);
+    }
 }

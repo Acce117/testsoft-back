@@ -5,6 +5,24 @@ import {
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
+
+export function validateArray(value, dtoType) {
+    const validationResult = [];
+    const data = [];
+    let validation = null;
+    let entity = null;
+
+    for (let i = 0; i < value.length; i++) {
+        entity = plainToInstance(dtoType, value[i]);
+        validation = validateSync(entity);
+        data.push(entity);
+
+        if (validation.length > 0)
+            validationResult.push({ index: i, validation });
+    }
+
+    return { data, validationResult };
+}
 export class ValidateDtoPipe implements PipeTransform {
     constructor(
         private readonly dtoType: any = null,
@@ -17,7 +35,7 @@ export class ValidateDtoPipe implements PipeTransform {
         if (this.dtoType) {
             let validationResult = null;
             if (value instanceof Array) {
-                const result = this.validateArray(value);
+                const result = validateArray(value, this.dtoType);
                 data = result.data;
                 validationResult = result.validationResult;
             } else {
@@ -34,24 +52,5 @@ export class ValidateDtoPipe implements PipeTransform {
         }
 
         return data;
-    }
-
-    //TODO improve
-    validateArray(value) {
-        const validationResult = [];
-        const data = [];
-        let validation = null;
-        let entity = null;
-
-        for (let i = 0; i < value.length; i++) {
-            entity = plainToInstance(this.dtoType, value[i]);
-            validation = validateSync(entity);
-            data.push(entity);
-
-            if (validation.length > 0)
-                validationResult.push({ index: i, validation });
-        }
-
-        return { data, validationResult };
     }
 }

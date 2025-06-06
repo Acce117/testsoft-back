@@ -37,6 +37,7 @@ export class SiteService {
             {
                 user_id: newUser.user_id,
                 item_id: 5,
+                group_id: newGroup.id_group,
             },
             manager,
         );
@@ -52,7 +53,7 @@ export class SiteService {
                     group: newGroup.id_group,
                 },
                 {
-                    expiresIn: '3m',
+                    expiresIn: '5h',
                 },
             ),
         };
@@ -163,7 +164,7 @@ export class SiteService {
                     group: group_id,
                 },
                 {
-                    expiresIn: '3m',
+                    expiresIn: '5h',
                 },
             ),
         };
@@ -201,6 +202,6 @@ export class SiteService {
             where: { email, deleted: 0 },
         });
 
-        return user !== null;
+        return user ? user.user_id : false;
     }
 }

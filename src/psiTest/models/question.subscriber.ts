@@ -23,8 +23,8 @@ export class QuestionSubscriber implements EntitySubscriberInterface<Question> {
 
     saveFile(entity: any) {
         if (entity.file) {
-            const path = this.fileHandler.saveFile(entity.file);
-            entity.image_url = path;
+            const { file_name } = this.fileHandler.saveFile(entity.file);
+            entity.image_url = file_name;
             entity.save({ listeners: false });
         }
     }
