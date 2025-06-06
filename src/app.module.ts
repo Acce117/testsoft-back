@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+    RequestMethod,
+} from '@nestjs/common';
 import { SiteModule } from './site/site.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -19,9 +24,12 @@ import { bullConfig } from './config/bullMQ.config';
 import { SendMailModule } from './mailer/sendMail.module';
 import { ReportsModule } from './reports/reports.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { JwtMiddleware } from './common/middlewares/jwtMiddleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     imports: [
+        JwtModule.register({ global: true }),
         CacheModule.register({ isGlobal: true }),
         ReportsModule,
         SiteModule,
@@ -56,4 +64,14 @@ import { CacheModule } from '@nestjs/cache-manager';
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(JwtMiddleware)
+            .exclude(
+                { path: 'login', method: RequestMethod.POST },
+                { path: 'sign_in', method: RequestMethod.POST },
+            )
+            .forRoutes('*');
+    }
+}

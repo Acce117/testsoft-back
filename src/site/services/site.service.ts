@@ -46,6 +46,15 @@ export class SiteService {
                 user_id: newUser.user_id,
                 group: newGroup.id_group,
             }),
+            refresh_token: this.jwtService.sign(
+                {
+                    user_id: newUser.user_id,
+                    group: newGroup.id_group,
+                },
+                {
+                    expiresIn: '3m',
+                },
+            ),
         };
     }
 
@@ -154,7 +163,7 @@ export class SiteService {
                     group: group_id,
                 },
                 {
-                    expiresIn: '5h',
+                    expiresIn: '3m',
                 },
             ),
         };
