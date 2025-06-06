@@ -86,6 +86,11 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             .where('group.id_group IN (:...ids)', { ids: params.groups })
             .groupBy('user.email, user.name, user.last_name, user.CI');
 
+        if (params.limit) {
+            query.limit(params.limit);
+            if (params.offset) query.offset(params.offset);
+        }
+
         if (params.where) {
             const { resultParams, resultString } = this.queryFactory.buildWhere(
                 params.where,
@@ -95,9 +100,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
         }
         const result = await query.getRawMany();
 
-        const data = paginateResult(params, result);
+        const limit = parseInt(params.limit) || result.length;
+        const offset = parseInt(params.offset) || 0;
 
-        data.data = data.data.map((element) => ({
+        const data = result.map((element) => ({
             user_id: element.user_user_id,
             CI: element.user_CI,
             name: element.user_name,
@@ -113,6 +119,10 @@ export class GroupService extends TreeBaseService({ model: Group }) {
             country: element.country_name,
         }));
 
-        return data;
+        return {
+            pages: Math.ceil(data.length / limit),
+            elements_amount: data.length,
+            data: data.slice(offset, offset + limit),
+        };
     }
 }
