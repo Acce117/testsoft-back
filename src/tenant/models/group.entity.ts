@@ -34,11 +34,11 @@ export class Group extends BaseModel {
     })
     father_group: number;
 
+    @TreeParent()
     @JoinColumn({
         name: 'father_group',
         referencedColumnName: 'id_group',
     })
-    @TreeParent()
     parent: Group;
 
     @TreeChildren()

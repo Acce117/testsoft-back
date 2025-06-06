@@ -10,25 +10,25 @@ import {
 
 export class UserDto {
     @IsString({
-        groups: ['create', 'update'],
+        groups: ['create', 'update', 'sign_in'],
     })
     @IsOptional({ groups: ['update'] })
     CI: string;
 
     @IsString({
-        groups: ['create', 'update'],
+        groups: ['create', 'update', 'sign_in'],
     })
     @IsOptional({ groups: ['update'] })
     name: string;
 
     @IsString({
-        groups: ['create', 'update'],
+        groups: ['create', 'update', 'sign_in'],
     })
     @IsOptional({ groups: ['update'] })
     last_name: string;
 
     @IsString({
-        groups: ['create', 'update'],
+        groups: ['create', 'update', 'sign_in'],
     })
     @IsOptional({ groups: ['update'] })
     username: string;
@@ -38,12 +38,12 @@ export class UserDto {
     })
     password: string;
 
-    @IsEmail({}, { groups: ['create', 'update'] })
+    @IsEmail({}, { groups: ['create', 'update', 'sign_in'] })
     @IsOptional({ groups: ['update'] })
     email: string;
 
     @IsEnum(['M', 'F'], {
-        groups: ['create', 'update'],
+        groups: ['create', 'update', 'sign_in'],
     })
     @IsOptional({ groups: ['update'] })
     sex: 'M' | 'F';
@@ -51,7 +51,7 @@ export class UserDto {
     @IsNumber(
         {},
         {
-            groups: ['create', 'update'],
+            groups: ['create', 'update', 'sign_in'],
         },
     )
     @IsOptional({ always: true })
@@ -66,5 +66,6 @@ export class UserDto {
     assignments: [];
 
     @IsBoolean({ groups: ['update'] })
+    @IsOptional({ always: true })
     enabled: boolean;
 }

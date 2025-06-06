@@ -23,24 +23,29 @@ export class SiteService {
     @Inject(AuthAssignmentService)
     private readonly authAssignmentService: AuthAssignmentService;
 
-    public async signIn(user: UserDto, group, manager) {
+    public async signIn(user: UserDto, group, manager: EntityManager) {
         const newUser: User = await this.userService.create(
             { ...user, created_scenario: 'sign_in' },
             manager,
         );
-        const newGroup: Group = await this.groupService.create(group, manager);
+        const newGroup: Group = await this.groupService.create(
+            { ...group, owner: [newUser] },
+            manager,
+        );
 
-        newGroup.owner = [newUser];
-
-        newGroup.save();
-
-        this.authAssignmentService.create({
-            user_id: newUser.user_id,
-            item_id: 5,
-        });
+        await this.authAssignmentService.create(
+            {
+                user_id: newUser.user_id,
+                item_id: 5,
+            },
+            manager,
+        );
 
         return {
-            token: this.jwtService.sign({ user_id: newUser.user_id, group: newGroup.id_group }),
+            token: this.jwtService.sign({
+                user_id: newUser.user_id,
+                group: newGroup.id_group,
+            }),
         };
     }
 

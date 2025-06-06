@@ -72,13 +72,15 @@ export function TreeBaseService<T extends { children }>(
             );
         }
 
-        async create(data: any) {
-            const father = await this.getOne({}, data.father_group);
+        async create(data: any, manager: EntityManager) {
+            // const group = this.model.create(data);
+            const group = super.create(data, manager);
+            if (data.father_group) {
+                const father = await this.getOne({}, data.father_group);
+                group.parent = father;
+            }
 
-            const group = this.model.create(data);
-            group.parent = father;
-            group.save();
-
+            // manager.save(group);
             return group;
         }
 
