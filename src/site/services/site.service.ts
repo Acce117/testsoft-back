@@ -171,10 +171,16 @@ export class SiteService {
 
     refreshToken(payload: any) {
         return {
-            token: this.jwtService.sign(payload),
-            refresh_token: this.jwtService.sign(payload, {
-                expiresIn: '5h',
+            token: this.jwtService.sign({
+                user_id: payload.user_id,
+                group: payload.group,
             }),
+            refresh_token: this.jwtService.sign(
+                { user_id: payload.user_id, group: payload.group },
+                {
+                    expiresIn: '5h',
+                },
+            ),
         };
     }
 
