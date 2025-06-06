@@ -1,15 +1,24 @@
 import { CrudBaseController } from 'src/common/controllers/controller';
 import { AuthAssignmentService } from '../services/AuthAssignment.service';
-import { Delete, UseGuards } from '@nestjs/common';
+import { Delete, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtPayload } from 'src/common/decorators/jwtPayload.decorator';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { ExistingAssignedGuard } from '../guards/ExistingAssigned.guard';
+import { MyAuthAssignmentInterceptor } from '../interceptors/myAuthAssignments.interceptor';
+import { RoleGuard, Roles } from '../guards/RoleGuard.guard';
 
 export class AuthAssignmentController extends CrudBaseController({
     prefix: 'auth_assignment',
     service: AuthAssignmentService,
+    decorators: [
+        UseGuards(RoleGuard),
+        Roles(['Super Admin', 'Client', 'Admin', 'Analyst']),
+    ],
     create: {
         decorators: [UseGuards(ExistingAssignedGuard)],
+    },
+    getAll: {
+        decorators: [UseInterceptors(MyAuthAssignmentInterceptor)],
     },
 }) {
     @Delete()

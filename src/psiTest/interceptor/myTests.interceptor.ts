@@ -40,12 +40,6 @@ export class MyTestsInterceptor implements NestInterceptor {
                                         ...groups.map((g) => g.id_group),
                                         'NULL',
                                     ],
-                                    // or: {
-                                    //     group_id: groups.map((g) => g.id_group),
-                                    //     role: {
-                                    //         name: 'Super Admin',
-                                    //     },
-                                    // },
                                 },
                             },
                         ],
