@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { ISendMailOptions } from '@nestjs-modules/mailer';
+import { BadRequestException } from '@nestjs/common';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface {
@@ -29,7 +30,21 @@ export class UserSubscriber implements EntitySubscriberInterface {
         return password;
     }
 
-    beforeInsert(event: InsertEvent<User>): Promise<any> | void {
+    private async verifyUniqueEmail(email) {
+        const user = await User.getRepository().find({
+            where: {
+                email,
+            },
+        });
+
+        return user === null;
+    }
+
+    async beforeInsert(event: InsertEvent<User>): Promise<any> {
+        const result = await this.verifyUniqueEmail(event.entity.email);
+
+        if (!result) throw new BadRequestException('this email already exist');
+
         if (event.entity.created_scenario === 'created')
             event.entity.password = process.env.DEFAULT_PASSWORD;
 
