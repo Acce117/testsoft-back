@@ -5,6 +5,7 @@ import {
     Body,
     Get,
     Param,
+    ParseIntPipe,
     Post,
     Query,
     UploadedFile,
@@ -72,10 +73,14 @@ export class UserController extends CrudBaseController({
 
     @Post('load-users')
     @UseInterceptors(FileInterceptor('file'))
-    loadUsers(@UploadedFile('file') file: Express.Multer.File) {
+    loadUsers(
+        @UploadedFile('file') file: Express.Multer.File,
+        @Body('group_id', ParseIntPipe) group_id: number,
+    ) {
         try {
             return (this.service as UserService).loadUsersFromCSV(
                 file,
+                group_id,
                 this.dataSource,
             );
         } catch (error) {

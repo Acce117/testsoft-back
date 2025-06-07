@@ -21,6 +21,8 @@ import { UserDto } from '../dto/user.dto';
 import { validateArray } from 'src/common/pipes/validateDto.pipe';
 import { finished } from 'stream';
 import { promisify } from 'util';
+import { AuthAssignment } from '../models/auth_assignment.entity';
+import { EntityManager } from 'typeorm';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
@@ -141,7 +143,11 @@ export class UserService extends CrudBaseService({ model: User }) {
         return;
     }
 
-    public async loadUsersFromCSV(file: Express.Multer.File, dataSource) {
+    public async loadUsersFromCSV(
+        file: Express.Multer.File,
+        group_id,
+        dataSource,
+    ) {
         const { file_name, stream } = this.fileHandler.saveFile(file, '/csv');
 
         const results: any[] = [];
@@ -160,8 +166,22 @@ export class UserService extends CrudBaseService({ model: User }) {
         // if (validationResult.length > 0)
         //     throw new BadRequestException(validationResult);
 
-        await handleTransaction(dataSource, async (manager) => {
-            return await this.create(results, manager);
+        await handleTransaction(dataSource, async (manager: EntityManager) => {
+            const result: User[] = await this.create(results, manager);
+            // const group: Group = await this.groupService.getOne({}, group_id);
+
+            result.forEach((user) => {
+                const assignment = new AuthAssignment();
+                assignment.group_id = group_id;
+                assignment.item_id = 3;
+                // assignment.user_id = user.user_id;
+
+                // await manager.save(assignment);
+                user.assignments = [assignment];
+            });
+            await manager.save(result);
+
+            return result;
         });
         this.fileHandler.deleteFile(
             join(process.cwd(), 'uploads/csv', file_name),

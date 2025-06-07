@@ -31,11 +31,7 @@ export class UserSubscriber implements EntitySubscriberInterface {
     }
 
     private async verifyUniqueEmail(email) {
-        const user = await User.getRepository().find({
-            where: {
-                email,
-            },
-        });
+        const user = await User.getRepository().findOneBy({ email });
 
         return user === null;
     }
