@@ -183,7 +183,7 @@ export class UserService extends CrudBaseService({ model: User }) {
         );
 
         this.fileHandler.deleteFile(
-            join(process.cwd(), 'uploads/csv', file_name),
+            join(process.cwd(), `uploads/xlsx/${file_name}`),
         );
 
         return result;
