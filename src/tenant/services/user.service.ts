@@ -13,16 +13,14 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { FSFileHandler } from 'src/common/services/file-handler';
 import { join } from 'path';
-import csvParser from 'csv-parser';
-import { createReadStream } from 'fs';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
-import { plainToInstance } from 'class-transformer';
 import { UserDto } from '../dto/user.dto';
 import { validateArray } from 'src/common/pipes/validateDto.pipe';
 import { finished } from 'stream';
 import { promisify } from 'util';
 import { AuthAssignment } from '../models/auth_assignment.entity';
 import { EntityManager } from 'typeorm';
+import { readFile, utils } from 'xlsx';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
@@ -148,45 +146,46 @@ export class UserService extends CrudBaseService({ model: User }) {
         group_id,
         dataSource,
     ) {
-        const { file_name, stream } = this.fileHandler.saveFile(file, '/csv');
-
-        const results: any[] = [];
+        const { file_name, stream } = this.fileHandler.saveFile(file, '/xlsx');
 
         const finishedAsync = promisify(finished);
 
         await finishedAsync(stream.on('ready', () => {}));
-        await finishedAsync(
-            createReadStream(join(process.cwd(), 'uploads/csv', file_name))
-                .pipe(csvParser({ separator: ';' }))
-                .on('data', (data) => results.push(data)),
+
+        const workbook = readFile(
+            join(process.cwd(), `/uploads/xlsx/${file_name}`),
+        );
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const data = utils.sheet_to_json(worksheet);
+
+        const { validationResult } = validateArray(data, UserDto);
+
+        if (validationResult.length > 0)
+            throw new BadRequestException(validationResult);
+
+        const result = await handleTransaction(
+            dataSource,
+            async (manager: EntityManager) => {
+                const result: User[] = await this.create(data, manager);
+
+                result.forEach((user) => {
+                    const assignment = new AuthAssignment();
+                    assignment.group_id = group_id;
+                    assignment.item_id = 3;
+
+                    user.assignments = [assignment];
+                });
+                await manager.save(result);
+
+                return result;
+            },
         );
 
-        // const { validationResult } = validateArray(results, UserDto);
-
-        // if (validationResult.length > 0)
-        //     throw new BadRequestException(validationResult);
-
-        await handleTransaction(dataSource, async (manager: EntityManager) => {
-            const result: User[] = await this.create(results, manager);
-            // const group: Group = await this.groupService.getOne({}, group_id);
-
-            result.forEach((user) => {
-                const assignment = new AuthAssignment();
-                assignment.group_id = group_id;
-                assignment.item_id = 3;
-                // assignment.user_id = user.user_id;
-
-                // await manager.save(assignment);
-                user.assignments = [assignment];
-            });
-            await manager.save(result);
-
-            return result;
-        });
         this.fileHandler.deleteFile(
             join(process.cwd(), 'uploads/csv', file_name),
         );
 
-        return;
+        return result;
     }
 }
