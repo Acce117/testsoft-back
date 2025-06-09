@@ -37,6 +37,8 @@ import { FunctionalRoleGetAllMiddleware } from './middleware/FunctionalRoleGetAl
 import { AuthAssignmentSubscriber } from './models/auth_assignment.subscriber';
 import { AuthItemService } from './services/authItem.service';
 import { JwtModule } from '@nestjs/jwt';
+import { ClientService } from './services/client.service';
+import { Client } from './models/client.entity';
 
 @Module({
     controllers: [
@@ -63,10 +65,12 @@ import { JwtModule } from '@nestjs/jwt';
         UserSubscriber,
         AuthAssignmentSubscriber,
         FunctionalRoleGetAllMiddleware,
+        ClientService,
     ],
     imports: [
         SendMailModule,
         TypeOrmModule.forFeature([
+            Client,
             Group,
             User,
             AuthItem,
