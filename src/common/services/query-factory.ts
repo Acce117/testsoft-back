@@ -141,6 +141,7 @@ export class QueryFactory {
                 }
 
                 resultParams[key] = param;
+                param = '';
             }
         }
 
