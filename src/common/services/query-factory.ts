@@ -113,12 +113,13 @@ export class QueryFactory {
         let resultParams = {};
         let recursiveCall = null;
 
+        let param = null;
         for (const key in params) {
             if (key === 'or' || key === 'and') {
                 recursiveCall = this.buildWhere(params[key], alias, key);
                 resultString += `(${recursiveCall.resultString})`;
             } else {
-                const regex = /^(?:=|!=|<>|<|>|<=|>=|LIKE)\s+(?:[^\s]+)$/;
+                const regex = /^(?:=|!=|<>|<|>|<=|>=|LIKE|like)\s+(?:[^\s]+)$/;
                 if (resultString !== '') resultString += ` ${oper} `;
 
                 if (Array.isArray(params[key]))
@@ -127,10 +128,14 @@ export class QueryFactory {
                     if (regex.test(params[key])) {
                         const expression = params[key].split(' ');
                         resultString += `${alias}.${key} ${expression[0]} :${key}`;
-                    } else resultString += `${alias}.${key} = :${key}`;
+                        param = expression[1];
+                    } else {
+                        resultString += `${alias}.${key} = :${key}`;
+                        param = params[key];
+                    }
                 }
 
-                resultParams[key] = params[key];
+                resultParams[key] = param;
             }
         }
 
