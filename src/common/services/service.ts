@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException, Type } from '@nestjs/common';
 import { QueryFactory } from './query-factory';
 import { ICrudService } from './service.interface';
-import { EntityManager } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { DATA_LIMIT } from '../utils/constants';
 
 export interface ServiceOptions {
@@ -73,7 +73,8 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
         }
 
         async getPaginationData(limit = DATA_LIMIT, offset = 1, where?) {
-            const query = this.model.createQueryBuilder();
+            const query: SelectQueryBuilder<any> =
+                this.model.createQueryBuilder(this.model.alias);
 
             if (where) {
                 const { resultString, resultParams } =
