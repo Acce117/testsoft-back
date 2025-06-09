@@ -1,4 +1,4 @@
-import { Inject, Injectable, Type } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Type } from '@nestjs/common';
 import { QueryFactory } from './query-factory';
 import { ICrudService } from './service.interface';
 import { EntityManager } from 'typeorm';
@@ -39,15 +39,20 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
             return this.queryFactory.createQuery(data, this.model, manager);
         }
 
-        update(id: any, data: any, manager?: EntityManager) {
-            const query = manager
-                .withRepository(this.model.getRepository())
-                .createQueryBuilder()
-                .update()
-                .set(data)
-                .where(`${this.model.primaryKey} = :id`, { id });
+        async update(id: any, data: any, manager?: EntityManager) {
+            const existingEntity = await manager.findOne(this.model, {
+                where: { [this.model.primaryKey]: id },
+            });
 
-            return query.execute();
+            if (!existingEntity) {
+                throw new NotFoundException('Entidad no encontrada');
+            }
+
+            Object.keys(data).forEach((key) => {
+                existingEntity[key] = data[key];
+            });
+
+            return manager.save(existingEntity);
         }
 
         async delete(id: any, manager?: EntityManager): Promise<any> {
