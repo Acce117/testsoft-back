@@ -36,4 +36,7 @@ export class Client extends BaseModel {
 
     @ViewColumn()
     role: string;
+
+    @ViewColumn()
+    enabled: boolean;
 }
