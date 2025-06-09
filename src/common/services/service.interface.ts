@@ -7,7 +7,7 @@ export interface ICrudService {
     create(data, manager?);
     update(id, data, manager?);
     delete(id, manager?);
-    getPaginationData(limit?, offset?);
+    getPaginationData(limit?, offset?, where?);
 }
 
 export interface ICrudTreeService extends ICrudService {

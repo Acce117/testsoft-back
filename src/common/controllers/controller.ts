@@ -56,6 +56,7 @@ export function CrudBaseController(
                 result = await this.service.getPaginationData(
                     p.limit || undefined,
                     p.offset || undefined,
+                    p.where || undefined,
                 );
                 result.data = data;
             } catch (err) {

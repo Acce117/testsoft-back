@@ -72,10 +72,17 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
             return query.execute();
         }
 
-        async getPaginationData(limit = DATA_LIMIT, offset = 1) {
-            const elements_amount = await this.model
-                .createQueryBuilder()
-                .getCount();
+        async getPaginationData(limit = DATA_LIMIT, offset = 1, where?) {
+            const query = this.model.createQueryBuilder();
+
+            if (where) {
+                const { resultString, resultParams } =
+                    this.queryFactory.buildWhere(where, this.model.alias);
+
+                query.where(resultString, resultParams);
+            }
+
+            const elements_amount = await query.getCount();
 
             const pages = Math.ceil(elements_amount / limit);
             return {
