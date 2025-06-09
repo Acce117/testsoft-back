@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/models/baseModel';
 import { ViewColumn, ViewEntity } from 'typeorm';
 
@@ -24,6 +25,7 @@ export class Client extends BaseModel {
     username: string;
 
     @ViewColumn()
+    @Exclude()
     password: string;
 
     @ViewColumn()
