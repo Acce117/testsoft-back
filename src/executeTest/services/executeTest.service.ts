@@ -32,8 +32,10 @@ import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { ApplicationResult } from '../models/applicationResult.entity';
 import * as mathjs from 'mathjs';
+import { ClassificationService } from 'src/psiTest/services/classification.service';
 @Injectable()
 export class ExecuteTestService {
+    @Inject(ClassificationService) classificationService: ClassificationService;
     @Inject(TestApplicationService) testAppService: TestApplicationService;
 
     @Inject(PsiTestService) psiTestService: PsiTestService;
@@ -585,10 +587,27 @@ export class ExecuteTestService {
                 };
 
                 await this.defineDataGlobalResult(data, appResults, testApp);
-                final_results['global_result'] = this.evaluateData(
+                const result = this.evaluateData(
                     testApp.test.equation.equation,
                     data,
                 );
+
+                const classification = await this.classificationService.getOne({
+                    relations: ['ranges'],
+                    where: {
+                        fk_id_test: testApp.test.id_test,
+                    },
+                });
+
+                const range = classification.ranges.find((range) => {
+                    return range.min_val < result && result <= range.max_val;
+                });
+
+                final_results['global_result'] = {
+                    classification: classification.name_classification,
+                    indicator: range.indicator,
+                    result,
+                };
             }
         }
 

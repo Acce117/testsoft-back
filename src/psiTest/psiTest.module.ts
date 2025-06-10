@@ -130,6 +130,11 @@ import { QuestionSubscriber } from './models/question.subscriber';
         ]),
         TenantModule,
     ],
-    exports: [PsiTestService, TributeService, EquationService],
+    exports: [
+        PsiTestService,
+        TributeService,
+        EquationService,
+        ClassificationService,
+    ],
 })
 export class PsiTestModule {}
