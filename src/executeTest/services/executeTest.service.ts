@@ -30,6 +30,8 @@ import { FinalAnswers, ValueAnswer } from '../classes/finalAnswers';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
+import { ApplicationResult } from '../models/applicationResult.entity';
+import * as mathjs from 'mathjs';
 @Injectable()
 export class ExecuteTestService {
     @Inject(TestApplicationService) testAppService: TestApplicationService;
@@ -96,7 +98,10 @@ export class ExecuteTestService {
         const testApp = await this.testAppService.getOne(
             {
                 relations: [
-                    'test.display_parameters',
+                    {
+                        name: 'test',
+                        relations: ['display_parameters', 'equation'],
+                    },
                     {
                         name: 'application_result',
                         relations: [
@@ -449,8 +454,7 @@ export class ExecuteTestService {
         return this.appResultService.create(app_result, manager);
     }
 
-    //TODO solve problems with ties in Belbin
-    testResult(testApp: TestApplication) {
+    async testResult(testApp: TestApplication) {
         const parameters = testApp.test.display_parameters;
 
         const final_results = { parameters };
@@ -467,7 +471,6 @@ export class ExecuteTestService {
                 );
 
                 final_results['preferred'] = [];
-                //TODO deal with ties
                 for (let i = 0; i < parameters.count_max; i++) {
                     final_results['preferred'].push(items_ordered[i]);
                 }
@@ -569,7 +572,35 @@ export class ExecuteTestService {
             // }
         }
 
+        if (parameters.global_result) {
+            if (testApp.test.equation) {
+                const appResults: ApplicationResult[] =
+                    testApp.application_result;
+
+                const data = {
+                    c: 0,
+                    i: 0,
+                    o: 0,
+                    r: 0,
+                };
+
+                await this.defineDataGlobalResult(data, appResults, testApp);
+                final_results['global_result'] = this.evaluateData(
+                    testApp.test.equation.equation,
+                    data,
+                );
+            }
+        }
+
         return final_results;
+    }
+
+    evaluateData(
+        expr: string,
+        data: { c: number; i: number; o: number; r: number },
+    ): any {
+        const node = mathjs.parse(expr);
+        return node.compile().evaluate(data);
     }
 
     private findQuestion(series, questionKey) {
@@ -640,5 +671,44 @@ export class ExecuteTestService {
         const key = bcrypt.hashSync(now.toString(), 10);
         this.cacheManager.set(key, now);
         return key;
+    }
+
+    async defineDataGlobalResult(
+        data,
+        appResults: Array<ApplicationResult>,
+        testApp: TestApplication,
+    ) {
+        const appAnswer = await this.applicationAnswerService.getAll({
+            where: {
+                fk_id_test_aplication: testApp.id_test_application,
+            },
+            relations: ['answer.correct_answer'],
+        });
+
+        const appAnswerValue = await this.applicationAnswerValueService.getAll({
+            where: {
+                fk_id_test_aplication: testApp.id_test_application,
+            },
+            relations: ['answer.correct_answer'],
+        });
+
+        const answers = [...appAnswer, ...appAnswerValue];
+
+        appResults.forEach((appResult) => {
+            switch (appResult.item.name) {
+                case 'correctas':
+                    data.c += appResult.value_result;
+                    break;
+                case 'incorrectas':
+                    data.i += appResult.value_result;
+                    break;
+            }
+        });
+
+        answers.forEach((a: { answer: { correct_answer: any } }) => {
+            if (!a.answer.correct_answer) data.o++;
+        });
+
+        data.r = answers.length;
     }
 }
