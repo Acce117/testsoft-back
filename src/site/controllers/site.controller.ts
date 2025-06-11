@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    Inject,
     Param,
     Patch,
     Post,
@@ -14,12 +15,24 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { UserDto } from 'src/tenant/dto/user.dto';
+import { User } from 'src/tenant/models/user.entity';
+import { instanceToPlain } from 'class-transformer';
+import { InjectQueue } from '@nestjs/bullmq';
+import { BulkJobOptions, Queue } from 'bullmq';
+import { AuthAssignmentService } from 'src/tenant/services/AuthAssignment.service';
+import { AuthAssignment } from 'src/tenant/models/auth_assignment.entity';
+import { ISendMailOptions } from '@nestjs-modules/mailer';
 
 @Controller()
 export class SiteController {
     @InjectDataSource() private readonly dataSource: DataSource;
+    @Inject(AuthAssignmentService)
+    private readonly authAssignmentService: AuthAssignmentService;
 
-    constructor(private readonly siteService: SiteService) {}
+    constructor(
+        private readonly siteService: SiteService,
+        @InjectQueue('mails') readonly mailsQueue: Queue,
+    ) {}
 
     @Post('/login')
     async login(
@@ -30,7 +43,7 @@ export class SiteController {
     }
 
     @Post('/sign_in')
-    signIn(
+    async signIn(
         @Body(
             'user',
             new ValidationPipe({
@@ -40,11 +53,47 @@ export class SiteController {
         user: UserDto,
         @Body('group') group,
     ) {
-        return handleTransaction(
+        const result = await handleTransaction(
             this.dataSource,
             async (manager) =>
                 await this.siteService.signIn(user, group, manager),
         );
+
+        if (result instanceof User) this.notifySuperAdmins(result);
+
+        return instanceToPlain(result);
+    }
+
+    async notifySuperAdmins(result: User) {
+        const assignments: AuthAssignment[] =
+            await this.authAssignmentService.getAll({
+                relations: ['users'],
+                where: {
+                    item_id: 4,
+                },
+            });
+
+        const jobs: {
+            name: string;
+            data: ISendMailOptions;
+            options?: BulkJobOptions;
+        }[] = [];
+
+        assignments.forEach((assignment) => {
+            jobs.push({
+                name: 'do_test',
+                data: {
+                    to: assignment.users.email,
+                    subject: 'A new client has been registered',
+                    template: './new_client',
+                    context: {
+                        client: result.name,
+                    },
+                },
+            });
+        });
+
+        this.mailsQueue.addBulk(jobs);
     }
 
     @Get('/select_group/:group_id')

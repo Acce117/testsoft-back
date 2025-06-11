@@ -42,21 +42,7 @@ export class SiteService {
             manager,
         );
 
-        return {
-            token: this.jwtService.sign({
-                user_id: newUser.user_id,
-                group: newGroup.id_group,
-            }),
-            refresh_token: this.jwtService.sign(
-                {
-                    user_id: newUser.user_id,
-                    group: newGroup.id_group,
-                },
-                {
-                    expiresIn: '5h',
-                },
-            ),
-        };
+        return newUser;
     }
 
     public async login(credentials: UserCredentials) {
@@ -68,6 +54,8 @@ export class SiteService {
                 deleted: 0,
             },
         });
+
+        let result = null;
 
         if (
             !user ||
@@ -113,34 +101,50 @@ export class SiteService {
                         }
                     }
             }
+
+            const assignments = user.assignments.map((assignment) => {
+                const role = assignment.role;
+                const groups = user.groups;
+
+                let result = null;
+                let i = 0;
+                while (!result) {
+                    if (groups[i].id_group === assignment.group_id) {
+                        result = {
+                            id_group: groups[i].id_group,
+                            name: groups[i].name_group,
+                            role: role.name,
+                        };
+                    }
+
+                    i++;
+                }
+                return result;
+            });
+
+            result = {
+                token: this.jwtService.sign({
+                    user_id: user.user_id,
+                }),
+                groups: assignments,
+            };
+        } else {
+            result = {
+                token: this.jwtService.sign({
+                    user_id: user.user_id,
+                }),
+                refresh_token: this.jwtService.sign(
+                    {
+                        user_id: user.user_id,
+                    },
+                    {
+                        expiresIn: '5h',
+                    },
+                ),
+            };
         }
 
-        const assignments = user.assignments.map((assignment) => {
-            const role = assignment.role;
-            const groups = user.groups;
-
-            let result = null;
-            let i = 0;
-            while (!result) {
-                if (groups[i].id_group === assignment.group_id) {
-                    result = {
-                        id_group: groups[i].id_group,
-                        name: groups[i].name_group,
-                        role: role.name,
-                    };
-                }
-
-                i++;
-            }
-            return result;
-        });
-
-        return {
-            token: this.jwtService.sign({
-                user_id: user.user_id,
-            }),
-            groups: assignments,
-        };
+        return result;
     }
 
     public async selectGroup(user_id, group_id) {
