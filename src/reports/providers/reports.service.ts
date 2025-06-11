@@ -88,9 +88,11 @@ export class ReportsService {
                 where: data.map((e: any) => e.id_test_application),
             });
 
-            const testResults = testApps.map((ta) =>
-                this.executeTestService.testResult(ta),
-            );
+            const testResults = [];
+            for (const ta of testApps) {
+                const tr = await this.executeTestService.testResult(ta);
+                testResults.push(tr);
+            }
 
             result.testResults = testResults;
         }
