@@ -1,15 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, FindTreeOptions, TreeRepository } from 'typeorm';
-import { Injectable, Type } from '@nestjs/common';
+import { Inject, Injectable, Type } from '@nestjs/common';
 import { CrudBaseService, ServiceOptions } from './service';
 import { ICrudTreeService } from './service.interface';
+import { QueryFactory } from './query-factory';
 
 export function TreeBaseService<T extends { children }>(
     options: ServiceOptions,
 ): Type<ICrudTreeService> {
     @Injectable()
     class TreeService extends CrudBaseService(options) {
+        @Inject(QueryFactory) queryFactory: QueryFactory;
+
         constructor(
             @InjectRepository(options.model)
             public readonly treeRepository: TreeRepository<T>,
@@ -73,14 +76,17 @@ export function TreeBaseService<T extends { children }>(
         }
 
         async create(data: any, manager: EntityManager) {
-            // const group = this.model.create(data);
-            const group = super.create(data, manager);
+            const group: any = await this.queryFactory.createQuery(
+                data,
+                this.model,
+            );
+
             if (data.father_group) {
                 const father = await this.getOne({}, data.father_group);
                 group.parent = father;
             }
 
-            // manager.save(group);
+            await manager.withRepository(this.treeRepository).save(group);
             return group;
         }
 

@@ -13,7 +13,7 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
     @Injectable()
     class AbstractService implements ICrudService {
         model = options.model;
-        @Inject(QueryFactory) readonly queryFactory: QueryFactory;
+        @Inject(QueryFactory) queryFactory: QueryFactory;
 
         getAll(params): Promise<any> {
             // params.limit = params.limit ? params.limit : DATA_LIMIT;
@@ -35,8 +35,25 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
             return query.getOne();
         }
 
-        create(data, manager?: EntityManager): Promise<any> {
-            return this.queryFactory.createQuery(data, this.model, manager);
+        async create(data, manager?: EntityManager): Promise<any> {
+            const element = await this.queryFactory.createQuery(
+                data,
+                this.model,
+            );
+
+            let result = null;
+
+            const repository = this.model.getRepository();
+
+            if (manager) {
+                if (Array.isArray(element))
+                    result = manager
+                        .withRepository(repository)
+                        .save(element.map((e) => repository.create(e)));
+                else result = manager.withRepository(repository).save(element);
+            } else result = repository.save(element);
+
+            return result;
         }
 
         async update(id: any, data: any, manager?: EntityManager) {
