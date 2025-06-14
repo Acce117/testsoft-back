@@ -81,7 +81,6 @@ import { Client } from './models/client.entity';
             Compatibility,
             SelectedRole,
         ]),
-        // SendMailModule,
         JwtModule,
     ],
     exports: [UserService, AuthAssignmentService, GroupService],

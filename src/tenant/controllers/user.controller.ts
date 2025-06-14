@@ -23,10 +23,10 @@ export class UserController extends CrudBaseController({
     service: UserService,
     dto: UserDto,
 
-    decorators: [
-        UseGuards(RoleGuard),
-        Roles(['Admin', 'Super Admin', 'Client']),
-    ],
+    // decorators: [
+    //     UseGuards(RoleGuard),
+    //     Roles(['Admin', 'Super Admin', 'Client']),
+    // ],
 
     getOne: {
         decorators: [UseGuards(RoleGuard), Roles(['Executor'])],
