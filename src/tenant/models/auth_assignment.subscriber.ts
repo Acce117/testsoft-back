@@ -1,30 +1,42 @@
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
 import {
     DataSource,
     EntitySubscriberInterface,
     EventSubscriber,
+    InsertEvent,
 } from 'typeorm';
 import { AuthAssignment } from './auth_assignment.entity';
-import { Inject } from '@nestjs/common';
-import { UserService } from '../services/user.service';
-import { GroupService } from '../services/group.service';
-import { AuthItemService } from '../services/authItem.service';
+import { AuthAssignmentService } from '../services/AuthAssignment.service';
+import { BadRequestException, Inject } from '@nestjs/common';
 
 @EventSubscriber()
-export class AuthAssignmentSubscriber implements EntitySubscriberInterface {
-    @Inject(UserService) userService: UserService;
-    @Inject(GroupService) groupService: GroupService;
-    @Inject(AuthItemService) authItemService: AuthItemService;
+export class AuthAssignmentSubscriber
+    implements EntitySubscriberInterface<AuthAssignment>
+{
+    @Inject(AuthAssignmentService) authAssignmentService: AuthAssignmentService;
 
-    constructor(
-        dataSource: DataSource,
-        @InjectQueue('mails') private mailsQueue: Queue,
-    ) {
+    constructor(dataSource: DataSource) {
         dataSource.subscribers.push(this);
     }
 
     listenTo() {
         return AuthAssignment;
+    }
+
+    async beforeInsert(event: InsertEvent<AuthAssignment>): Promise<any> {
+        const element = event.entity;
+
+        const existingAssignment = await this.authAssignmentService.getOne({
+            where: {
+                user_id: element.user_id,
+                group_id: element.group_id,
+            },
+        });
+
+        if (existingAssignment)
+            throw new BadRequestException(
+                'This user already has a role in this group',
+            );
+
+        return element;
     }
 }
