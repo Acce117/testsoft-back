@@ -57,17 +57,16 @@ export class SiteService {
 
         let result = null;
 
+        const role = user.assignments.find(
+            (assignment) => assignment.role.name === 'Super Admin',
+        );
         if (
             !user ||
             !bcrypt.compareSync(credentials.password, (user as User).password)
         )
             throw new UnauthorizedException('Wrong credentials');
 
-        if (
-            !user.assignments.find(
-                (assignment) => assignment.role.name === 'Super Admin',
-            )
-        ) {
+        if (!role) {
             const assignment = user.assignments.find(
                 (assignment) => (assignment.group_id = user.groups[0].id_group),
             );
@@ -132,10 +131,12 @@ export class SiteService {
             result = {
                 token: this.jwtService.sign({
                     user_id: user.user_id,
+                    role: role.role.name,
                 }),
                 refresh_token: this.jwtService.sign(
                     {
                         user_id: user.user_id,
+                        role: role.role.name,
                     },
                     {
                         expiresIn: '5h',
