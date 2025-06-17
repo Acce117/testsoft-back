@@ -19,7 +19,9 @@ export class MeController implements IController {
             ...plain_user,
             assignments: undefined,
             assignment: user.assignments.find(
-                (assign) => assign.group_id == payload.group,
+                (assign) =>
+                    assign.group_id == payload.group ||
+                    assign.role.name === 'Super Admin',
             ),
         };
     }
