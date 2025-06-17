@@ -10,10 +10,10 @@ export class FileStreamerController {
         return new StreamableFile(file);
     }
 
-    @Get('get-csv')
+    @Get('get-xlsx')
     async getCsv() {
         const file = createReadStream(
-            join(process.cwd(), '/resources/template.csv'),
+            join(process.cwd(), '/resources/template.xlsx'),
         );
         return new StreamableFile(file);
     }
