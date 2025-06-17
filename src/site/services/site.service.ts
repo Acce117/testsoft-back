@@ -49,7 +49,7 @@ export class SiteService {
         const user: User = await this.userService.getOne({
             relations: ['groups', 'assignments.role'],
             where: {
-                username: credentials.username,
+                email: credentials.email,
                 enabled: 1,
                 deleted: 0,
             },

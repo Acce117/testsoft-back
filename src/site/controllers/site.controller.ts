@@ -36,7 +36,8 @@ export class SiteController {
 
     @Post('/login')
     async login(
-        @Body(new ValidationPipe({ groups: ['login'] }))
+        // new ValidationPipe({ groups: ['login'] })
+        @Body()
         credentials: UserCredentials,
     ) {
         return this.siteService.login(credentials);
