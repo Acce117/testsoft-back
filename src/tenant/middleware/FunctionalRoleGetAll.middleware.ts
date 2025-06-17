@@ -25,7 +25,8 @@ export class FunctionalRoleGetAllMiddleware implements NestMiddleware {
 
         const assignment: AuthAssignment = user.assignments.find(
             (assignment: AuthAssignment) =>
-                assignment.group_id == payload.group,
+                assignment.group_id == payload.group ||
+                assignment.role.name === 'Super Admin',
         );
 
         const query = req.query;
