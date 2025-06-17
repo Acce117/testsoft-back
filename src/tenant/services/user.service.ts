@@ -21,6 +21,7 @@ import { promisify } from 'util';
 import { AuthAssignment } from '../models/auth_assignment.entity';
 import { EntityManager } from 'typeorm';
 import { readFile, utils } from 'xlsx';
+import { CountryService } from './country.service';
 
 export class UserService extends CrudBaseService({ model: User }) {
     @Inject(GroupService) private readonly groupService: GroupService;
@@ -33,6 +34,8 @@ export class UserService extends CrudBaseService({ model: User }) {
     @Inject(JwtService) private readonly jwtService: JwtService;
 
     @Inject(FSFileHandler) fileHandler: FSFileHandler;
+
+    @Inject(CountryService) countryService: CountryService;
 
     constructor(@InjectQueue('mails') private readonly mailsQueue: Queue) {
         super();
@@ -159,12 +162,13 @@ export class UserService extends CrudBaseService({ model: User }) {
 
         const workbook = readFile(
             join(process.cwd(), `/uploads/xlsx/${file_name}`),
+            { cellText: true },
         );
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const data = utils.sheet_to_json(worksheet);
+        const data: any[] = utils.sheet_to_json(worksheet);
 
-        const { validationResult } = validateArray(data, UserDto);
+        const { validationResult } = validateArray(data, UserDto, ['create']);
 
         if (validationResult.length > 0)
             throw new BadRequestException(validationResult);
@@ -172,7 +176,18 @@ export class UserService extends CrudBaseService({ model: User }) {
         const result = await handleTransaction(
             dataSource,
             async (manager: EntityManager) => {
-                const result: User[] = await this.create(data, manager);
+                const users = [];
+                for (const d of data) {
+                    const country = await this.countryService.getOne({
+                        where: {
+                            name: d.country,
+                        },
+                    });
+
+                    users.push({ ...d, country });
+                }
+
+                const result: User[] = await this.create(users, manager);
 
                 result.forEach((user) => {
                     const assignment = new AuthAssignment();

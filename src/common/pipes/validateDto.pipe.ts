@@ -6,7 +6,7 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-export function validateArray(value, dtoType) {
+export function validateArray(value, dtoType, scenario: string[]) {
     const validationResult = [];
     const data = [];
     let validation = null;
@@ -14,7 +14,7 @@ export function validateArray(value, dtoType) {
 
     for (let i = 0; i < value.length; i++) {
         entity = plainToInstance(dtoType, value[i]);
-        validation = validateSync(entity);
+        validation = validateSync(entity, { groups: scenario });
         data.push(entity);
 
         if (validation.length > 0)
@@ -35,7 +35,9 @@ export class ValidateDtoPipe implements PipeTransform {
         if (this.dtoType) {
             let validationResult = null;
             if (value instanceof Array) {
-                const result = validateArray(value, this.dtoType);
+                const result = validateArray(value, this.dtoType, [
+                    this.scenario,
+                ]);
                 data = result.data;
                 validationResult = result.validationResult;
             } else {

@@ -27,11 +27,11 @@ export class UserDto {
     @IsOptional({ groups: ['update'] })
     last_name: string;
 
-    @IsString({
-        groups: ['create', 'update', 'sign_in'],
-    })
-    @IsOptional({ groups: ['update'] })
-    username: string;
+    // @IsString({
+    //     groups: ['create', 'update', 'sign_in'],
+    // })
+    // @IsOptional({ groups: ['update'] })
+    // username: string;
 
     @IsString({
         groups: ['login', 'sign_in'],
