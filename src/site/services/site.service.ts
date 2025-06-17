@@ -57,14 +57,15 @@ export class SiteService {
 
         let result = null;
 
-        const role = user.assignments.find(
-            (assignment) => assignment.role.name === 'Super Admin',
-        );
         if (
             !user ||
             !bcrypt.compareSync(credentials.password, (user as User).password)
         )
             throw new UnauthorizedException('Wrong credentials');
+
+        const role = user.assignments.find(
+            (assignment) => assignment.role.name === 'Super Admin',
+        );
 
         if (!role) {
             const assignment = user.assignments.find(
