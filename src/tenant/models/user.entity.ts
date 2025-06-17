@@ -39,8 +39,8 @@ export class User extends BaseModel {
     @Column({ type: 'varchar', nullable: false })
     last_name: string;
 
-    @Column({ type: 'varchar', nullable: false, unique: true })
-    username: string;
+    // @Column({ type: 'varchar', nullable: false, unique: true })
+    // username: string;
 
     @Exclude()
     @Column({ type: 'varchar', nullable: false })

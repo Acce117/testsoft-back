@@ -21,8 +21,8 @@ export class Client extends BaseModel {
     @ViewColumn()
     last_name: string;
 
-    @ViewColumn()
-    username: string;
+    // @ViewColumn()
+    // username: string;
 
     @ViewColumn()
     @Exclude()
