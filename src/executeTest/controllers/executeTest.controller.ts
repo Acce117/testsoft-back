@@ -54,7 +54,10 @@ export class ExecuteTestController implements IController {
             await this.testAppService.getOne(
                 {
                     relations: [
-                        'test.display_parameters',
+                        {
+                            name: 'test',
+                            relations: ['display_parameters', 'equation'],
+                        },
                         {
                             name: 'application_result',
                             relations: [
