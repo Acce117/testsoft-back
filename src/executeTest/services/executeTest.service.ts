@@ -545,7 +545,7 @@ export class ExecuteTestService {
 
                 final_results['global_result'] = {
                     classification: classification.name_classification,
-                    indicator: range.indicator,
+                    indicator: range ? range.indicator : 'out of ranges',
                     result,
                 };
             }
