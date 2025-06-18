@@ -9,7 +9,7 @@ const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
         database: config.get('DB_NAME'),
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
-        logging: false,
+        logging: true,
         autoLoadEntities: true,
         synchronize: false,
         subscribers: [],

@@ -11,7 +11,6 @@ import { TestApplication } from '../models/testApplication.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager } from 'typeorm';
 import { TributeService } from 'src/psiTest/services/tribute.service';
-import { Tribute } from 'src/psiTest/models/tribute.entity';
 import { EquationService } from 'src/psiTest/services/equation.service';
 import { Item } from 'src/psiTest/models/item.entity';
 import { ApplicationResultService } from './appResult.service';
@@ -66,9 +65,10 @@ export class ExecuteTestService {
         manager: EntityManager,
     ) {
         const start_time: number = await this.cacheManager.get(start_time_key);
+        await this.cacheManager.del(start_time_key);
 
-        if (start_time === null)
-            throw new BadRequestException('Start time key is invalid');
+        // if (start_time === null)
+        //     throw new BadRequestException('Start time key is invalid');
 
         const execution_time = (Date.now() - start_time) / 1000;
 
@@ -279,9 +279,11 @@ export class ExecuteTestService {
     ) {
         const accumulated = {};
         // let corrects = null;
+
+        const tribute_ids = [];
         for (const type_question in finalAnswers) {
-            if (type_question === MULTIPLE_OPTION_ALL_OR_NOTHING) {
-                for (const id_question in finalAnswers[`${type_question}`]) {
+            for (const id_question in finalAnswers[`${type_question}`]) {
+                if (type_question === MULTIPLE_OPTION_ALL_OR_NOTHING) {
                     const correctAnswers: Array<any> =
                         await this.findCorrectAnswers(id_question);
 
@@ -296,26 +298,7 @@ export class ExecuteTestService {
                         )
                             result = true;
                     }
-
-                    for (const id_answer of finalAnswers[`${type_question}`][
-                        `${id_question}`
-                    ]) {
-                        const tribute = await this.tributeService.getOne({
-                            where: {
-                                fk_id_answer: id_answer,
-                            },
-                        });
-
-                        if (!accumulated[tribute.fk_id_item])
-                            accumulated[tribute.fk_id_item] =
-                                tribute.tribute_value;
-                        else
-                            accumulated[tribute.fk_id_item] +=
-                                tribute.tribute_value;
-                    }
-                }
-            } else if (type_question === WRITTEN_ANSER_ALL_OR_NOTHING) {
-                for (const id_question in finalAnswers[`${type_question}`]) {
+                } else if (type_question === WRITTEN_ANSER_ALL_OR_NOTHING) {
                     const correctAnswers: Array<any> =
                         await this.findCorrectAnswers(id_question);
 
@@ -331,26 +314,8 @@ export class ExecuteTestService {
                             )
                                 result = true;
                         }
-                        for (const id_answer in finalAnswers[
-                            `${type_question}`
-                        ][`${id_question}`]) {
-                            const tribute = await this.tributeService.getOne({
-                                where: {
-                                    fk_id_answer: id_answer,
-                                },
-                            });
-
-                            if (!accumulated[tribute.fk_id_item])
-                                accumulated[tribute.fk_id_item] =
-                                    tribute.tribute_value;
-                            else
-                                accumulated[tribute.fk_id_item] +=
-                                    tribute.tribute_value;
-                        }
                     }
-                }
-            } else if (type_question === SIMPLE_OPTION) {
-                for (const id_question in finalAnswers[`${type_question}`]) {
+                } else if (type_question === SIMPLE_OPTION) {
                     // corrects = await this.findCorrectAnswers(id_question);
                     // const equation = await this.equationService.getOne({
                     //     where: {
@@ -358,54 +323,17 @@ export class ExecuteTestService {
                     //     },
                     // });
 
-                    const answers =
-                        finalAnswers[`${type_question}`][`${id_question}`];
-
-                    if (typeof answers === 'number') {
-                        const tribute: Tribute =
-                            await this.tributeService.getOne({
-                                where: {
-                                    fk_id_answer: answers,
-                                },
-                            });
-
-                        if (!accumulated[tribute.fk_id_item])
-                            accumulated[tribute.fk_id_item] =
-                                tribute.tribute_value;
-                        else
-                            accumulated[tribute.fk_id_item] +=
-                                tribute.tribute_value;
-                    }
+                    finalAnswers[`${type_question}`][`${id_question}`];
 
                     // if (equation) {
                     //     //TODO
                     // }
-                }
-            } else if (type_question === MULTIPLE_OPTIONS_VALUE_ASSIGN) {
-                for (const id_question in finalAnswers[`${type_question}`]) {
-                    const answers =
-                        finalAnswers[`${type_question}`][`${id_question}`];
-
-                    for (const id_answer in answers) {
-                        const tribute: Tribute =
-                            await this.tributeService.getOne({
-                                where: {
-                                    fk_id_answer: id_answer,
-                                },
-                            });
-
-                        if (!accumulated[tribute.fk_id_item])
-                            accumulated[tribute.fk_id_item] =
-                                answers[`${id_answer}`];
-                        else
-                            accumulated[tribute.fk_id_item] +=
-                                answers[`${id_answer}`];
-                    }
-                }
-            } else if (type_question === WRITTEN_ANSER) {
-                const questions = finalAnswers[type_question];
-                for (const id_question in questions) {
-                    if (typeof questions[id_question] !== 'string') {
+                } else if (type_question === MULTIPLE_OPTIONS_VALUE_ASSIGN) {
+                } else if (type_question === WRITTEN_ANSER) {
+                    if (
+                        typeof finalAnswers[`${type_question}`][id_question] !==
+                        'string'
+                    ) {
                         const correctAnswers: any[] =
                             await this.findCorrectAnswers(id_question);
 
@@ -415,33 +343,34 @@ export class ExecuteTestService {
                             while (!result && i < correctAnswers.length) {
                                 if (
                                     correctAnswers[i].text ===
-                                    questions[id_question][
-                                        correctAnswers[i++].fk_id_answer
-                                    ]
+                                    finalAnswers[`${type_question}`][
+                                        id_question
+                                    ][correctAnswers[i++].fk_id_answer]
                                 )
                                     result = true;
-                            }
-
-                            for (const id_answer in questions[
-                                id_question
-                            ] as ValueAnswer) {
-                                const tribute =
-                                    await this.tributeService.getOne({
-                                        where: { fk_id_answer: id_answer },
-                                    });
-
-                                if (!accumulated[tribute.fk_id_item])
-                                    accumulated[tribute.fk_id_item] =
-                                        tribute.tribute_value;
-                                else
-                                    accumulated[tribute.fk_id_item] +=
-                                        tribute.tribute_value;
                             }
                         }
                     }
                 }
+
+                await this.manageAccumulated(
+                    tribute_ids,
+                    finalAnswers,
+                    type_question,
+                    id_question,
+                );
             }
         }
+
+        const tributes = await this.tributeService.getAll({
+            where: tribute_ids,
+        });
+
+        tributes.forEach((t) => {
+            if (!accumulated[t.fk_id_item])
+                accumulated[t.fk_id_item] = t.tribute_value;
+            else accumulated[t.fk_id_item] += t.tribute_value;
+        });
 
         //TODO save application result
         const app_result = [];
@@ -453,6 +382,18 @@ export class ExecuteTestService {
             });
         }
         return this.appResultService.create(app_result, manager);
+    }
+
+    private async manageAccumulated(
+        tribute_ids,
+        finalAnswers,
+        type_question,
+        id_question,
+    ) {
+        const answers = finalAnswers[`${type_question}`][`${id_question}`];
+
+        if (type_question === SIMPLE_OPTION) tribute_ids.push(answers);
+        else for (const id_answer of answers) tribute_ids.push(id_answer);
     }
 
     async testResult(testApp: TestApplication) {

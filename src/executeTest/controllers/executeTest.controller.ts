@@ -17,6 +17,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { TestApplicationService } from '../services/testApplication.service';
 import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
+import { TestApplication } from '../models/testApplication.entity';
 
 @Controller('execute_test')
 export class ExecuteTestController implements IController {
@@ -50,28 +51,30 @@ export class ExecuteTestController implements IController {
             },
         );
 
-        return this.service.testResult(
-            await this.testAppService.getOne(
-                {
-                    relations: [
-                        {
-                            name: 'test',
-                            relations: ['display_parameters', 'equation'],
-                        },
-                        {
-                            name: 'application_result',
-                            relations: [
-                                {
-                                    name: 'item',
-                                    relations: ['ranges', 'category'],
-                                },
-                            ],
-                        },
-                    ],
-                },
-                testApp.id_test_application,
-            ),
-        );
+        if (testApp instanceof TestApplication) {
+            return this.service.testResult(
+                await this.testAppService.getOne(
+                    {
+                        relations: [
+                            {
+                                name: 'test',
+                                relations: ['display_parameters', 'equation'],
+                            },
+                            {
+                                name: 'application_result',
+                                relations: [
+                                    {
+                                        name: 'item',
+                                        relations: ['ranges', 'category'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    testApp.id_test_application,
+                ),
+            );
+        } else throw new Error();
     }
 
     @Get('/:id')
