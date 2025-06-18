@@ -55,7 +55,6 @@ export class ExecuteTestController implements IController {
                 {
                     relations: [
                         'test.display_parameters',
-                        // 'application_result.item.category',
                         {
                             name: 'application_result',
                             relations: [
