@@ -1,6 +1,7 @@
 import { BaseModel } from 'src/common/models/baseModel';
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -31,4 +32,7 @@ export class FunctionalRole extends BaseModel {
         referencedColumnName: 'id_group',
     })
     group: Group;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 }
