@@ -13,6 +13,7 @@ const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
         autoLoadEntities: true,
         synchronize: false,
         subscribers: [],
+        poolSize: 200,
     };
 };
 

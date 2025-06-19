@@ -15,7 +15,7 @@ import { AppService } from './app.service';
 import { TenantModule } from './tenant/tenant.module';
 import { ExecuteTestModule } from './executeTest/executeTest.module';
 import { FileStreamerModule } from './fileStreamer/fileStreamer.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { throttlerConfig } from './config/throttler.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from './config/mailer.config';
@@ -26,6 +26,7 @@ import { ReportsModule } from './reports/reports.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { JwtMiddleware } from './common/middlewares/jwtMiddleware';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -62,7 +63,7 @@ import { JwtModule } from '@nestjs/jwt';
         }),
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

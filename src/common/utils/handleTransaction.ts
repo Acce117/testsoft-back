@@ -9,6 +9,7 @@ export async function handleTransaction(
     let result = null;
     try {
         await queryRunner.startTransaction();
+
         result = await cb(queryRunner.manager);
 
         await queryRunner.commitTransaction();
