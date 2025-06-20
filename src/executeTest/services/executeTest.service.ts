@@ -394,8 +394,7 @@ export class ExecuteTestService {
 
         if (type_question === SIMPLE_OPTION) tribute_ids.push(answers);
         else if (type_question === MULTIPLE_OPTIONS_VALUE_ASSIGN)
-            for (const id_answer in answers)
-                tribute_ids.push(answers[id_answer]);
+            for (const id_answer in answers) tribute_ids.push(id_answer);
         else for (const id_answer of answers) tribute_ids.push(id_answer);
     }
 
