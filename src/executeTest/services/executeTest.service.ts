@@ -393,6 +393,9 @@ export class ExecuteTestService {
         const answers = finalAnswers[`${type_question}`][`${id_question}`];
 
         if (type_question === SIMPLE_OPTION) tribute_ids.push(answers);
+        else if (type_question === MULTIPLE_OPTIONS_VALUE_ASSIGN)
+            for (const id_answer in answers)
+                tribute_ids.push(answers[id_answer]);
         else for (const id_answer of answers) tribute_ids.push(id_answer);
     }
 
