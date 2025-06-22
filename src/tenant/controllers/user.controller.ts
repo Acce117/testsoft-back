@@ -2,6 +2,7 @@ import { CrudBaseController } from 'src/common/controllers/controller';
 import { UserService } from '../../tenant/services/user.service';
 
 import {
+    BadRequestException,
     Body,
     Get,
     Param,
@@ -76,6 +77,7 @@ export class UserController extends CrudBaseController({
         @UploadedFile('file') file: Express.Multer.File,
         @Body('group_id') group_id: number,
     ) {
+        if (!file) throw new BadRequestException('A file must be uploaded');
         try {
             return (this.service as UserService).loadUsersFromCSV(
                 file,
