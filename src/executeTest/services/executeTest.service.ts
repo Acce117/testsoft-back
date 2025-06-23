@@ -32,6 +32,7 @@ import { Cache } from 'cache-manager';
 import { ApplicationResult } from '../models/applicationResult.entity';
 import * as mathjs from 'mathjs';
 import { ClassificationService } from 'src/psiTest/services/classification.service';
+import { Tribute } from 'src/psiTest/models/tribute.entity';
 @Injectable()
 export class ExecuteTestService {
     @Inject(ClassificationService) classificationService: ClassificationService;
@@ -363,13 +364,27 @@ export class ExecuteTestService {
         }
 
         const tributes = await this.tributeService.getAll({
+            relations: ['answer.question.type'],
             where: tribute_ids,
         });
 
-        tributes.forEach((t) => {
-            if (!accumulated[t.fk_id_item])
-                accumulated[t.fk_id_item] = t.tribute_value;
-            else accumulated[t.fk_id_item] += t.tribute_value;
+        tributes.forEach((t: Tribute) => {
+            const question = t.answer.question;
+            const answers =
+                finalAnswers[`${question.type.name}`][
+                    `${question.id_question}`
+                ];
+            if (!accumulated[t.fk_id_item]) {
+                if (question.type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN)
+                    accumulated[t.fk_id_item] =
+                        answers[`${t.answer.id_answer}`];
+                else accumulated[t.fk_id_item] = t.tribute_value;
+            } else {
+                if (question.type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN)
+                    accumulated[t.fk_id_item] +=
+                        answers[`${t.answer.id_answer}`];
+                else accumulated[t.fk_id_item] += t.tribute_value;
+            }
         });
 
         //TODO save application result
@@ -459,12 +474,7 @@ export class ExecuteTestService {
                         items: [],
                     };
 
-                final_results['categories'][[`${category_name}`]].items.push({
-                    ...items_ordered[i].item,
-                    category: undefined,
-                    value: items_ordered[i].value,
-                });
-
+                let items_length = 0;
                 if (parameters.tops_values) {
                     if (
                         final_results['categories'][`${category_name}`].items
@@ -487,33 +497,18 @@ export class ExecuteTestService {
                                     `${category_name}`
                                 ].items.pop();
                     }
-                    const items_length =
+                    items_length =
                         final_results['categories'][[`${category_name}`]].items
                             .length;
-
-                    if (items_length < parameters.count_max) {
-                        final_results['categories'][
-                            `${category_name}`
-                        ].items.push({
-                            ...items_ordered[i].item,
-                            value: items_ordered[i].value,
-                            category: undefined,
-                        });
-                    }
+                }
+                if (items_length < parameters.count_max) {
+                    final_results['categories'][`${category_name}`].items.push({
+                        ...items_ordered[i].item,
+                        value: items_ordered[i].value,
+                        category: undefined,
+                    });
                 }
             }
-            // else {
-            //     for (const app_result of items_ordered) {
-            //         const item = app_result.item;
-            //         const category = item.category.name;
-
-            //         final_results[`${category}`] = {
-            //             ...app_result.item.category,
-            //             items: [{ ...app_result.item, category: undefined }],
-            //             value: app_result.value,
-            //         };
-            //     }
-            // }
         }
 
         if (parameters.global_result) {
