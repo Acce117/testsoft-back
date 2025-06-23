@@ -370,20 +370,19 @@ export class ExecuteTestService {
 
         tributes.forEach((t: Tribute) => {
             const question = t.answer.question;
-            const answers =
-                finalAnswers[`${question.type.name}`][
-                    `${question.id_question}`
-                ];
+            const type = question.type.name;
+
+            const answers = finalAnswers[`${type}`][`${question.id_question}`];
+
+            const value =
+                type === MULTIPLE_OPTIONS_VALUE_ASSIGN
+                    ? answers[`${t.answer.id_answer}`]
+                    : t.tribute_value;
+
             if (!accumulated[t.fk_id_item]) {
-                if (question.type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN)
-                    accumulated[t.fk_id_item] =
-                        answers[`${t.answer.id_answer}`];
-                else accumulated[t.fk_id_item] = t.tribute_value;
+                accumulated[t.fk_id_item] = value;
             } else {
-                if (question.type.name === MULTIPLE_OPTIONS_VALUE_ASSIGN)
-                    accumulated[t.fk_id_item] +=
-                        answers[`${t.answer.id_answer}`];
-                else accumulated[t.fk_id_item] += t.tribute_value;
+                accumulated[t.fk_id_item] += value;
             }
         });
 
