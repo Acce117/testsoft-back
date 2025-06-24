@@ -20,7 +20,21 @@ export class QueryFactory {
                 query = query.skip(params.offset);
             }
         }
+        if (params.ordered_by) query = this.orderedBy(params.ordered_by, query);
 
+        return query;
+    }
+
+    private orderedBy(ordered_by, query: SelectQueryBuilder<any>) {
+        const fields: Array<string> = [];
+        let sortMethod: 'ASC' | 'DESC' = 'ASC';
+        if (Array.isArray(ordered_by)) fields.push(...ordered_by);
+        else {
+            fields.push(...ordered_by.fields);
+            sortMethod = ordered_by.sort_method || 'ASC';
+        }
+
+        query.orderBy(`${fields}`, sortMethod);
         return query;
     }
 
