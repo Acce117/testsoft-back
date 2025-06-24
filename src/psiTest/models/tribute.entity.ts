@@ -12,9 +12,7 @@ export class Tribute extends BaseModel {
     })
     fk_id_answer: number;
 
-    @PrimaryColumn({
-        type: 'int',
-    })
+    @Column()
     fk_id_item: number;
 
     @Column()

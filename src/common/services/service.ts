@@ -65,11 +65,11 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
                 throw new NotFoundException('Entidad no encontrada');
             }
 
-            Object.keys(data).forEach((key) => {
-                existingEntity[key] = data[key];
-            });
+            // Object.keys(data).forEach((key) => {
+            //     existingEntity[key] = data[key];
+            // });
 
-            return manager.save(existingEntity);
+            return manager.update(this.model, id, data);
         }
 
         async delete(id: any, manager?: EntityManager): Promise<any> {
