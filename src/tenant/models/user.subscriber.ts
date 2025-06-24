@@ -39,7 +39,11 @@ export class UserSubscriber implements EntitySubscriberInterface {
     async beforeInsert(event: InsertEvent<User>): Promise<any> {
         const result = await this.verifyUniqueEmail(event.entity.email);
 
-        if (!result) throw new BadRequestException('this email already exist');
+        if (!result)
+            throw new BadRequestException({
+                message: 'this email already exist',
+                data: event.entity.email,
+            });
 
         if (event.entity.created_scenario === 'created')
             event.entity.password = process.env.DEFAULT_PASSWORD;
