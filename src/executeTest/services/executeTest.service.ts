@@ -500,7 +500,10 @@ export class ExecuteTestService {
                         final_results['categories'][[`${category_name}`]].items
                             .length;
                 }
-                if (items_length < parameters.count_max) {
+                if (
+                    items_length < parameters.count_max ||
+                    parameters.count_max == 0
+                ) {
                     final_results['categories'][`${category_name}`].items.push({
                         ...items_ordered[i].item,
                         value: items_ordered[i].value,

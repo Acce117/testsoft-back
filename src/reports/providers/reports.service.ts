@@ -99,10 +99,12 @@ export class ReportsService {
 
         const view_name = (reportModel.getRepository() as Repository<any>)
             .metadata.tableName;
-        const examined = await this.belbinGeneralResultsRepository.query(
-            `SELECT count(DISTINCT user_id, \`group\`) examined FROM ${view_name} where \`group\` in (?)`,
-            [groups],
-        );
+        const examined = await reportModel
+            .getRepository()
+            .query(
+                `SELECT count(DISTINCT user_id, \`group\`) examined FROM ${view_name} where \`group\` in (?)`,
+                [groups],
+            );
 
         result.examined = examined;
 
