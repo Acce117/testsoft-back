@@ -9,7 +9,7 @@ export class TestApplicationController extends CrudBaseController({
     getAll: {
         decorators: [
             UseGuards(RoleGuard),
-            Roles(['Analyst', 'Executor', 'Super Admin']),
+            Roles(['Analyst', 'Executor', 'Super Admin', 'Client']),
         ],
     },
 }) {}
