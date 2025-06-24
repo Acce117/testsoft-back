@@ -65,10 +65,6 @@ export function CrudBaseService(options: ServiceOptions): Type<ICrudService> {
                 throw new NotFoundException('Entidad no encontrada');
             }
 
-            // Object.keys(data).forEach((key) => {
-            //     existingEntity[key] = data[key];
-            // });
-
             return manager.update(this.model, id, data);
         }
 
