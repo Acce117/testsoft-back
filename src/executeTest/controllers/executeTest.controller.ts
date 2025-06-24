@@ -78,6 +78,8 @@ export class ExecuteTestController implements IController {
     }
 
     @Get('/:id')
+    @UseGuards(RoleGuard)
+    @Roles(['Client', 'Analyst', 'Executor', 'Super Admin', 'Admin'])
     getTestResult(@Param('id') id_test_app: number) {
         let result = null;
 
