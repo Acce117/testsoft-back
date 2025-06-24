@@ -5,6 +5,7 @@ import {
     BadRequestException,
     Body,
     Get,
+    Inject,
     Param,
     Post,
     Query,
@@ -17,6 +18,7 @@ import { handleTransaction } from 'src/common/utils/handleTransaction';
 import { UserDto } from '../dto/user.dto';
 import { RoleGuard, Roles } from 'src/tenant/guards/RoleGuard.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthAssignmentService } from '../services/AuthAssignment.service';
 
 export class UserController extends CrudBaseController({
     prefix: 'user',
@@ -32,6 +34,8 @@ export class UserController extends CrudBaseController({
         decorators: [UseGuards(RoleGuard), Roles(['Executor'])],
     },
 }) {
+    @Inject(AuthAssignmentService) authAssignmentService: AuthAssignmentService;
+
     @Get('tests')
     @UseGuards(RoleGuard)
     @Roles(['Executor'])
@@ -69,6 +73,13 @@ export class UserController extends CrudBaseController({
         @Body() data: { group_id: string; user_id: string; item_id: string },
     ): Promise<any> {
         return (this.service as UserService).inviteToGroup(data);
+    }
+
+    @Post('accept-invitation')
+    acceptInvitation(@Body() body: any) {
+        return handleTransaction(this.dataSource, async (manager) =>
+            this.authAssignmentService.create(body, manager),
+        );
     }
 
     @Post('load-users')
