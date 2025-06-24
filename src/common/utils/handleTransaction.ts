@@ -1,4 +1,5 @@
-import { DataSource } from 'typeorm';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { DataSource, TypeORMError } from 'typeorm';
 
 export async function handleTransaction(
     dataSource: DataSource,
@@ -16,9 +17,17 @@ export async function handleTransaction(
     } catch (e) {
         await queryRunner.rollbackTransaction();
 
+        BadRequestException;
         if (errorCb) errorCb();
 
-        result = e;
+        if (e instanceof TypeORMError) {
+            if ((e as any).errno === 1451) {
+                throw new HttpException(
+                    'Related element, not possible to delete',
+                    HttpStatus.CONFLICT,
+                );
+            }
+        } else result = e;
     } finally {
         await queryRunner.release();
     }
