@@ -82,7 +82,7 @@ export class SiteController {
 
         assignments.forEach((assignment) => {
             jobs.push({
-                name: 'do_test',
+                name: 'client_registered',
                 data: {
                     to: assignment.users.email,
                     subject: 'A new client has been registered',

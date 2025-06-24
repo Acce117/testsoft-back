@@ -62,7 +62,7 @@ export class GroupForTestSubscriber
                         duration: test.time_duration,
                         deadline: '7 days',
                         groupName: group.name_group,
-                        testLink: '#',
+                        testLink: `http:/${process.env.FRONT_DOMAIN}/execute_test/${test.id_test}`,
                         supportEmail: 'support@email.com',
                         supportPhone: 1234567,
                     },
