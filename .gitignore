@@ -4,4 +4,4 @@
 .env
 *.jpg
 *.jpeg
-/uploads/*
+*.png

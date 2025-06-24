@@ -48,7 +48,10 @@ export class UserSubscriber implements EntitySubscriberInterface {
     }
 
     beforeUpdate(event: UpdateEvent<User>): Promise<any> | void {
-        if (event.entity.password)
+        const result = event.updatedColumns.find(
+            (column) => column.propertyName === 'password',
+        );
+        if (result)
             event.entity.password = this.hashPassword(event.entity.password);
     }
 
@@ -71,6 +74,41 @@ export class UserSubscriber implements EntitySubscriberInterface {
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    afterUpdate(event: UpdateEvent<User>): Promise<any> | void {
+        const user = event.entity;
+
+        const mailOptions: ISendMailOptions = {
+            to: event.entity.email,
+            subject: 'Account created successfully',
+            template: './notify_account_state',
+        };
+
+        const result = event.updatedColumns.find(
+            (column) => column.propertyName === 'enabled',
+        );
+        if (result) {
+            if (user.enabled) {
+                mailOptions.context = {
+                    name: event.entity.name,
+                    supportEmail: 'support@email.com',
+                    supportPhone: 1234567,
+                    message:
+                        'Your account has been enabled, since now you can enjoy our service.',
+                };
+            } else {
+                mailOptions.context = {
+                    name: event.entity.name,
+                    supportEmail: 'support@email.com',
+                    supportPhone: 1234567,
+                    message:
+                        'We sorry to announce that your account has been banned, if you have any question please contact our support team',
+                };
+            }
+
+            this.mailsQueue.add('account_state_changed', mailOptions);
         }
     }
 }
