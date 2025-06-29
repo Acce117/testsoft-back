@@ -128,7 +128,8 @@ export class QueryFactory {
                 recursiveCall = this.buildWhere(params[key], alias, key);
                 resultString += `(${recursiveCall.resultString})`;
             } else {
-                const regex = /^(?:=|!=|<>|<|>|<=|>=|LIKE|like)\s+(%[\S\s]*%)$/;
+                const regex =
+                    /^(?:=|!=|<>|<|>|<=|>=|LIKE|like|IN|in)\s+(%[\S\s]*%)$/;
 
                 if (resultString !== '') resultString += ` ${oper} `;
 

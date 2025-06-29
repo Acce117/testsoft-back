@@ -72,4 +72,11 @@ export class ReportsController implements IController {
     mostConsidered(@Param('group_id') group_id) {
         return this.service.mostConsidered(group_id);
     }
+
+    @Get('mbti-belbin_analytics')
+    MBTIWithBelbinAnalytics(
+        @Query('groups', ParseArrayPipe) groups: Array<string>,
+    ) {
+        return this.service.MBTIWithBelbinAnalytics(groups);
+    }
 }

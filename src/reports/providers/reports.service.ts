@@ -408,4 +408,101 @@ export class ReportsService {
 
         return result;
     }
+
+    async MBTIWithBelbinAnalytics(groups: Array<string>) {
+        const result: {
+            [key: string]: {
+                cerebro: number;
+                'monitor-evaluador': number;
+                especialista: number;
+                impulsor: number;
+                implementador: number;
+                finalizador: number;
+                'investigador de recursos': number;
+                coordinador: number;
+                cohesionador: number;
+            };
+        } = {};
+
+        const mbtiTestApps = await this.testAppService.getAll({
+            relations: [
+                'test.display_parameters',
+                {
+                    name: 'application_result',
+                    relations: [
+                        {
+                            name: 'item',
+                            relations: ['ranges', 'category'],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                fk_id_group: groups,
+                fk_id_test: 4,
+            },
+        });
+
+        const belbinTestApps = await await this.testAppService.getAll({
+            relations: [
+                'test.display_parameters',
+                {
+                    name: 'application_result',
+                    relations: [
+                        {
+                            name: 'item',
+                            relations: ['ranges', 'category'],
+                        },
+                    ],
+                },
+            ],
+            where: {
+                fk_id_group: groups,
+                fk_id_test: 3,
+            },
+        });
+
+        let mta = null;
+        let bta = null;
+        for (let i = 0; i < mbtiTestApps.length; i++) {
+            mta = mbtiTestApps[i];
+
+            bta = belbinTestApps.find((b) => b.fk_id_user === mta.fk_id_user);
+
+            if (bta) {
+                const mtr: any = await this.executeTestService.getResult(
+                    mta.id_test_application,
+                );
+                const btr: any = await this.executeTestService.getResult(
+                    bta.id_test_application,
+                );
+
+                const mtype =
+                    `${mtr.categories['Energía'].items[0].name}` +
+                    `${mtr.categories['Percepción'].items[0].name}` +
+                    `${mtr.categories['Decisión'].items[0].name}` +
+                    `${mtr.categories['Vida'].items[0].name}`;
+
+                if (!result[mtype]) {
+                    result[mtype] = {
+                        'investigador de recursos': 0,
+                        'monitor-evaluador': 0,
+                        cerebro: 0,
+                        cohesionador: 0,
+                        coordinador: 0,
+                        especialista: 0,
+                        finalizador: 0,
+                        implementador: 0,
+                        impulsor: 0,
+                    };
+                }
+
+                btr.preferred.forEach((p) => {
+                    result[mtype][p.item.name.toLowerCase().trim()] += 1;
+                });
+            }
+        }
+
+        return result;
+    }
 }
