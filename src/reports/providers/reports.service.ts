@@ -470,12 +470,8 @@ export class ReportsService {
             bta = belbinTestApps.find((b) => b.fk_id_user === mta.fk_id_user);
 
             if (bta) {
-                const mtr: any = await this.executeTestService.getResult(
-                    mta.id_test_application,
-                );
-                const btr: any = await this.executeTestService.getResult(
-                    bta.id_test_application,
-                );
+                const mtr: any = await this.executeTestService.testResult(mta);
+                const btr: any = await this.executeTestService.testResult(bta);
 
                 const mtype =
                     `${mtr.categories['Energía'].items[0].name}` +
