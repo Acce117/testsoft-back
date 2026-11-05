@@ -9,11 +9,11 @@ const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => {
         database: config.get('DB_NAME'),
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
-        logging: true,
+        logging: config.get('DB_LOGGING') === 'true',
         autoLoadEntities: true,
         synchronize: false,
         subscribers: [],
-        poolSize: 200,
+        poolSize: Number.parseInt(config.get('DB_POOL_SIZE') ?? '10', 10) || 10,
     };
 };
 

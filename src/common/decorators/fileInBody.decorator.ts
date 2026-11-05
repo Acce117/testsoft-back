@@ -12,6 +12,10 @@ interface FileInBodyOptions {
     multipleFiles?: boolean;
 }
 
+const uploadOptions = {
+    limits: { fileSize: 10 * 1024 * 1024 },
+};
+
 export class FileInBodyInterceptor implements NestInterceptor {
     constructor(
         private fieldName: string,
@@ -33,8 +37,8 @@ export function FileInBody(
     return applyDecorators(
         UseInterceptors(
             options.multipleFiles
-                ? FilesInterceptor(fieldName)
-                : FileInterceptor(fieldName, {}),
+                ? FilesInterceptor(fieldName, undefined, uploadOptions)
+                : FileInterceptor(fieldName, uploadOptions),
             new FileInBodyInterceptor(fieldName),
         ),
     );

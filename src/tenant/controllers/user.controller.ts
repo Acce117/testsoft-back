@@ -83,7 +83,9 @@ export class UserController extends CrudBaseController({
     }
 
     @Post('load-users')
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(
+        FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }),
+    )
     loadUsers(
         @UploadedFile('file') file: Express.Multer.File,
         @Body('group_id') group_id: number,

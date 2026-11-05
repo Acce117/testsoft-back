@@ -1,3 +1,7 @@
+allowBuilds:
+  '@nestjs/core': true
+  bcrypt: true
+  msgpackr-extract: true
 onlyBuiltDependencies:
   - '@nestjs/core'
   - bcrypt

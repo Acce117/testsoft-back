@@ -131,7 +131,7 @@ export class UserService extends CrudBaseService({ model: User }) {
                     name: user.name,
                     group: group.name_group,
                     role: role.name,
-                    link: `http:/${process.env.FRONT_DOMAIN}/accept-invitation?token=${this.jwtService.sign(
+                    link: `${process.env.FRONT_DOMAIN}/accept-invitation?token=${this.jwtService.sign(
                         data,
                         {
                             secret: process.env.JWT_SECRET,

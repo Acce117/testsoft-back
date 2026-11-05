@@ -27,6 +27,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { JwtMiddleware } from './common/middlewares/jwtMiddleware';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
+import { HealthController } from './health/health.controller';
 
 @Module({
     imports: [
@@ -62,7 +63,7 @@ import { APP_GUARD } from '@nestjs/core';
             inject: [ConfigService],
         }),
     ],
-    controllers: [AppController],
+    controllers: [AppController, HealthController],
     providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule implements NestModule {
@@ -73,6 +74,7 @@ export class AppModule implements NestModule {
                 { path: 'login', method: RequestMethod.POST },
                 { path: 'sign_in', method: RequestMethod.POST },
                 { path: 'file', method: RequestMethod.GET },
+                { path: 'health', method: RequestMethod.GET },
             )
             .forRoutes('*');
     }
