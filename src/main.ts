@@ -91,13 +91,19 @@ function startDiagnostics(error: unknown) {
         console.error('Diagnostics server failed', serverError);
     });
 
-    server.listen(80, '0.0.0.0', () => {
+    // DIAG_PORT solo se usa para probar el diagnostico en local.
+    const diagPort = Number.parseInt(process.env.DIAG_PORT ?? '80', 10) || 80;
+    server.listen(diagPort, '0.0.0.0', () => {
         console.error(`Diagnostics available at ${DIAG_PATH}`);
     });
 }
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    // abortOnError: false permite que el error de arranque llegue al catch
+    // en lugar de que Nest termine el proceso con process.exit(1).
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        abortOnError: false,
+    });
 
     // CapRover/nginx esta delante de la API.
     app.set('trust proxy', 1);
